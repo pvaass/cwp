@@ -1,0 +1,23 @@
+# Get PHP base image and install extensions
+FROM php:7.0.11-apache
+
+RUN ln -sf /config/apache2.conf /etc/apache2/apache2.conf
+RUN ln -sf /config/php.ini /usr/local/etc/php/php.ini
+
+RUN docker-php-ext-install pdo_mysql
+
+# Update repos / Install / Remove repos
+RUN apt-get update && apt-get install -y git unzip zlib1g-dev \
+    && apt-get clean && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN docker-php-ext-install zip
+# Install Composer and make it available in the PATH
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
+
+COPY apache2.conf /config/apache2.conf
+COPY php.ini /config/php.ini
+
+# Enable MOD_REWRITE and restart apache
+RUN a2enmod rewrite && a2enmod ssl && service apache2 restart

@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euo pipefail
+
+docker kill cwp 2&> /dev/null || true
+docker rm   cwp 2&> /dev/null || true
+docker run  -d       \
+  --name cwp \
+  --volume $1:/var/www/html \
+  -p 80:80 \
+  pvaass/cwp:latest
