@@ -4,6 +4,7 @@ use File;
 use BackendAuth;
 use Cms\Classes\Content;
 use Cms\Classes\ComponentBase;
+use Model;
 
 class Editable extends ComponentBase
 {
@@ -75,6 +76,16 @@ class Editable extends ComponentBase
     {
         if (!$this->checkEditor())
             return;
+
+        Content::clearBootedModels();
+//        Content::extend(function($model) {
+//            $model->addDynamicMethod('wadup', function() use ($model) {
+//                return 'oi';
+//            });
+//        });
+
+        var_dump(Content::all());
+
 
         $fileName = post('file');
         $template = Content::load($this->getTheme(), $fileName);
