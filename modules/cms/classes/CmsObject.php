@@ -21,11 +21,6 @@ class CmsObject extends HalcyonModel implements CmsObjectContract
     use \October\Rain\Halcyon\Traits\Validation;
 
     /**
-     * @var null Override maxNesting for infinite directory nesting
-     */
-    protected $maxNesting = null;
-
-    /**
      * @var array The rules to be applied to the data.
      */
     public $rules = [];
