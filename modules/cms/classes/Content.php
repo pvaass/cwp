@@ -11,6 +11,12 @@ use Markdown;
  */
 class Content extends CmsCompoundObject
 {
+
+    /**
+     * @var null Fix max nesting
+     */
+    protected $maxNesting = null;
+    
     /**
      * @var string The container name associated with the model, eg: pages.
      */
