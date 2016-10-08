@@ -1,5 +1,6 @@
 # Get PHP base image and install extensions
 FROM php:7.0.11-apache
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 
 RUN ln -sf /config/apache2.conf /etc/apache2/apache2.conf
 RUN ln -sf /config/php.ini /usr/local/etc/php/php.ini

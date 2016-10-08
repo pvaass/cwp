@@ -1,5 +1,6 @@
 <?php namespace RainLab\Editable\Components;
 
+use App;
 use File;
 use BackendAuth;
 use Cms\Classes\Content;
@@ -76,16 +77,6 @@ class Editable extends ComponentBase
     {
         if (!$this->checkEditor())
             return;
-
-        Content::clearBootedModels();
-//        Content::extend(function($model) {
-//            $model->addDynamicMethod('wadup', function() use ($model) {
-//                return 'oi';
-//            });
-//        });
-
-        var_dump(Content::all());
-
 
         $fileName = post('file');
         $template = Content::load($this->getTheme(), $fileName);
