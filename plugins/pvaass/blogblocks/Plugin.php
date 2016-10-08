@@ -1,4 +1,4 @@
-<?php namespace pvaass\FixStupid;
+<?php namespace pvaass\BlogBlocks;
 
 use App;
 use Cms\Classes\Content;
@@ -18,15 +18,22 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name' => 'Fix stupid october shit',
-            'description' => 'fuck you',
+            'name' => 'BlogBlocks',
+            'description' => 'Extends Blog plugin',
             'author' => 'pvaass',
             'icon' => 'icon-leaf'
         ];
     }
 
+    public function registerComponents()
+    {
+        return [
+            'pvaass\BlogBlocks\Components\BlogBlock' => 'blogBlock'
+        ];
+    }
+
+
     public function boot()
     {
-        var_dump('WADUP');
     }
 }

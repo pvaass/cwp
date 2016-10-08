@@ -1,4 +1,17 @@
+[blogPosts]
+pageNumber = "{{ :page }}"
+postsPerPage = 3
+noPostsMessage = "No posts found"
+sortOrder = "published_at desc"
+categoryPage = "home"
+postPage = "home"
+==
 <div class="container">
+    {% for post in blogPosts.posts %}
+        {{ post.id }}
+        {{ post.summary }}
+        {{ post. }}
+    {% endfor %}
     <div class="section-header">
         <h2 class="section-title text-center wow fadeInDown">Het Laatste Nieuws</h2>
         <p class="text-center wow fadeInDown">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
