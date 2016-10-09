@@ -1,0 +1,16 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        searchable: true
+    voornaam:
+        label: Voornaam
+    achternaam:
+        label: Achternaam
+    email:
+        label: Email
+    zwembad_string:
+        label: Zwembad

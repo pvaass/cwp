@@ -1,0 +1,85 @@
+# ===================================
+#  Field Definitions
+# ===================================
+fields:
+  voornaam:
+    label: Voornaam
+    type: text
+    span: left
+    placeholder: Uw voornaam
+    required: true
+  achternaam:
+    label: Achternaam
+    type: text
+    span: right
+    placeholder: Uw achternaam
+    required: true
+  geslacht:
+    label: Geslacht
+    type: dropdown
+    required: true
+    options:
+      man: Man
+      vrouw: Vrouw
+  geboortedatum:
+    label: Geboortedatum (dd/mm/yyyy)
+    type: datepicker
+    mode: date
+    minDate: 1900-01-01
+    required: true
+    placeholder: Uw geboortedatum
+  adres:
+    label: Adres
+    type: text
+    span: left
+    placeholder: bv. Zeezwaluwstraat
+    required: true
+  huisnummer:
+    label: Huisnummer
+    type: text
+    span: right
+    required: true
+    placeholder: bv. 1a
+  plaatsnaam:
+    label: Plaatsnaam
+    type: text
+    span: left
+    required: true
+    placeholder: bv. Den Haag
+  postcode:
+    label: Postcode
+    type: text
+    span: right
+    required: true
+    placeholder: bv. 2583RG
+  email:
+    label: Email
+    type: text
+    span: left
+    required: true
+    placeholder: Uw emailadres
+  telefoonnummer:
+    label: Telefoonnummer
+    type: text
+    span: right
+    required: true
+    placeholder: Uw telefoonnummer
+  zwembad:
+    label: Ik wil op de volgende locatie zwemmen
+    type: pvaass\Inschrijven\FormWidgets\ZwembadPicker
+    required: true
+  zwemdiplomas:
+    label: Ik heb de volgende zwemdiploma's
+    type: text
+    placeholder: -
+  vorige_vereninging:
+    label: Ik ben al eerder lid geweest van een zwemvereniging, namelijk:
+    type: text
+    placeholder: -
+  ziektes:
+    label: Ik heb de volgende lichamelijke afwijkingen/ziekteverschijnselen:
+    type: text
+    placeholder: -
+  opmerkingen:
+    label: Opmerkingen
+    type: textarea

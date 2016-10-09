@@ -2,6 +2,8 @@ description = "Default layout"
 
 [editable]
 file = "about/capabilities.htm"
+
+[inschrijfFormulier]
 ==
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +11,6 @@ file = "about/capabilities.htm"
 
 
 <body id="home" class="homepage">
-
 <header id="header">
     {% partial "main/nav" %}
 </header><!--/header-->
@@ -91,7 +92,7 @@ file = "about/capabilities.htm"
 <section id="get-in-touch">
     <div class="container">
         <div class="section-header">
-            {% content 'main/precontact.htm' %}
+            {% component 'editable' file='main/precontact.htm' %}
         </div>
     </div>
 </section><!--/#get-in-touch-->

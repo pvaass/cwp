@@ -1,0 +1,18 @@
+# ===================================
+#  Field Definitions
+# ===================================
+
+tabs:
+  stretch: true
+  defaultTab: Instellingen
+  fields:
+    email:
+      label: Naar wie worden de inschrijvingen verstuurd?
+      type: text
+      tab: Instellingen
+    zwembaden:
+        label: Wijzig hier de zwembaden die de gebruiker kan uitkiezen
+        type: codeeditor
+        size: giant
+        language: javascript
+        tab: Zwembaden

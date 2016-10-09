@@ -1,0 +1,58 @@
+<?php if (!$this->fatalError): ?>
+    <style type="text/css">
+
+        form {
+            background: #e6b051;
+        }
+        .fancy-layout .form-buttons {
+            float: right;
+            padding-right: 30px;
+        }
+        .fancy-layout .form-buttons .btn  {
+            padding: 8px 19.5px;
+            background: #45aed6;
+            border-color: #2a95be;
+            opacity: 1;
+        }
+        .fancy-layout .form-tabless-fields {
+            padding-bottom: 30px;
+        }
+    </style>
+    <div class="layout fancy-layout">
+        <?= Form::open([
+            'class' => 'layout',
+            'data-change-monitor' => 'true',
+            'data-window-close-confirm' => e(trans('rainlab.blog::lang.post.close_confirm')),
+            'id' => 'post-form'
+        ]) ?>
+            <?= $this->formRender() ?>
+
+            <div class="form-buttons" >
+                <div class="loading-indicator-container">
+
+                    <button
+                            type="button"
+                            data-request="onSave"
+                            data-request-data="close:true"
+                            data-hotkey="ctrl+enter, cmd+enter"
+                            data-load-indicator="Creating Category..."
+                            class="btn btn-primary">
+                        Create and Close
+                    </button>
+                    <span class="btn-text">
+                    or <a href="<?=     Backend::url('acme/blog/categories') ?>">Cancel</a>
+                    </span>
+                </div>
+            </div>
+        <?= Form::close() ?>
+    </div>
+
+<?php else: ?>
+    <div class="control-breadcrumb">
+        <?= Block::placeholder('breadcrumb') ?>
+    </div>
+    <div class="padded-container">
+        <p class="flash-message static error"><?= e(trans($this->fatalError)) ?></p>
+        <p><a href="<?= Backend::url('rainlab/blog/posts') ?>" class="btn btn-default"><?= e(trans('rainlab.blog::lang.post.return_to_posts')) ?></a></p>
+    </div>
+<?php endif ?>

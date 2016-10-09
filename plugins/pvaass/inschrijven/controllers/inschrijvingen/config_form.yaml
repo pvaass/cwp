@@ -1,0 +1,14 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+name: Nieuwe inschrijving
+form: ~/plugins/pvaass/inschrijven/models/inschrijving/fields.yaml
+modelClass: pvaass\Inschrijven\Models\Inschrijving
+defaultRedirect: pvaass/inschrijven/inschrijvingen
+
+create:
+    redirectClose: pvaass/inschrijven/inschrijvingen
+
+update:
+    redirectClose: pvaass/inschrijven/inschrijvingen

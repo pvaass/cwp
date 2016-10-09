@@ -1,0 +1,54 @@
+<div id="inschrijf-zwembaden" />
+    <select class="inschrijf-zwembaden_type form-control " name="<?= $name ?>[type]"></select>
+    <select class="inschrijf-zwembaden_baden form-control " name="<?= $name ?>[bad]"></select>
+    <select class="inschrijf-zwembaden_dagen form-control " name="<?= $name ?>[dag]"></select>
+</div>
+<style type="text/css">
+</style>
+<script type="text/javascript">
+
+    function defer(method) {
+        if (window.jQuery)
+            method();
+        else
+            setTimeout(function() { defer(method) }, 50);
+    }
+    defer(function() {
+        $(document).ready(function() {
+            window.zwembaden = JSON.parse('<?php echo preg_replace("/[\n\r]/","",$zwembaden); ?>');
+
+
+            var $el = jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_type');
+            var fields = window.zwembaden;
+
+            $el.append($("<option></option>").attr("value", 'invalid').text('Selecteer...'));
+            jQuery.each(fields.zwembaden, function(key, value){
+                $el.append($("<option></option>").attr("value", key).text(value.name))
+            });
+
+
+            jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_type').on('change', function(e) {
+                var id = jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_type option:selected').val();
+                var $el = jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_baden');
+                $el.empty();
+                jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_dagen').empty();
+                if(id === 'invalid') {
+                    return;
+                }
+                jQuery.each(fields.zwembaden[id].fields, function(key, value){
+                    $el.append($("<option></option>").attr("value", key).text(value.name))
+                });
+            });
+
+            jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_baden').on('change', function(e) {
+                var typeId = jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_type option:selected').val();
+                var badId = jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_baden option:selected').val();
+                var $el = jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_dagen');
+                $el.empty();
+                jQuery.each(fields.zwembaden[typeId].fields[badId].fields, function(key, value){
+                    $el.append($("<option></option>").attr("value", key).text(value.name))
+                });
+            });
+        });
+    });
+</script>
