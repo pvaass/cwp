@@ -38,6 +38,7 @@
                 jQuery.each(fields.zwembaden[id].fields, function(key, value){
                     $el.append($("<option></option>").attr("value", key).text(value.name))
                 });
+                $el.trigger('change');
             });
 
             jQuery('#inschrijf-zwembaden .inschrijf-zwembaden_baden').on('change', function(e) {

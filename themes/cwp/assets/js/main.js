@@ -18,6 +18,9 @@ jQuery(function($) {'use strict';
 		var rangeTop    =   200;
 		var rangeBottom =   500;
 		$('.navbar-collapse').find('.scroll a').each(function(){
+			if(!$( $(this).attr('href')).offset()) {
+				return;
+			}
 			contentTop.push( $( $(this).attr('href') ).offset().top);
 			contentBottom.push( $( $(this).attr('href') ).offset().top + $( $(this).attr('href') ).height() );
 		})

@@ -3,6 +3,7 @@
 
 use Cms\Classes\ComponentBase;
 use pvaass\Inschrijven\Controllers\Inschrijvingen;
+use pvaass\Inschrijven\Models\Inschrijving;
 
 class Formulier extends ComponentBase
 {
@@ -38,6 +39,6 @@ class Formulier extends ComponentBase
 
     public function onSave()
     {
-        die('wat');
+        return ['error' => Inschrijving::create(post('Inschrijving'))];
     }
 }

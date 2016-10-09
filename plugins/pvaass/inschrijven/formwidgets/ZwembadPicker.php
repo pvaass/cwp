@@ -20,11 +20,6 @@ class ZwembadPicker extends FormWidgetBase
         ];
     }
 
-    protected function loadAssets()
-    {
-        $this->addJs('javascript/zwembaden.js');
-    }
-
     public function render()
     {
         $this->vars['name'] = $this->formField->getName();

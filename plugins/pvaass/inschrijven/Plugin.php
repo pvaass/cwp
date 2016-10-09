@@ -7,6 +7,8 @@ use Cms\Classes\Content;
 use Config;
 use Event;
 use System\Classes\PluginBase;
+use System\Classes\SettingsManager;
+use System\Controllers\Settings;
 
 /**
  * Editable Plugin Information File
@@ -83,5 +85,31 @@ class Plugin extends PluginBase
                 'order'       => 1
             ]
         ];
+    }
+
+    public function boot()
+    {
+        Event::listen('backend.page.beforeDisplay', function( $manager = null) {
+            if($manager instanceof Settings) {
+                $this->addPermissionsToSEOExt();
+            }
+        });
+    }
+
+    public function addPermissionsToSEOExt() {
+        foreach(\BackendAuth::getUser()->groups as $group) {
+            if($group->code === 'owners') {
+                return;
+            }
+        }
+        $items = SettingsManager::instance()->listItems();
+        $reflection = new \ReflectionProperty(SettingsManager::instance(), 'items');
+        $reflection->setAccessible(true);
+        foreach($items[SettingsManager::CATEGORY_MYSETTINGS] as $key => &$value ) {
+            if($value->label === 'anandpatel.seoextension::lang.settings.label') {
+                unset($items[SettingsManager::CATEGORY_MYSETTINGS][$key]);
+            }
+        }
+        $reflection->setValue(SettingsManager::instance(), $items);
     }
 }

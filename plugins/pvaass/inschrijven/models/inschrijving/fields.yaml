@@ -23,9 +23,7 @@ fields:
       vrouw: Vrouw
   geboortedatum:
     label: Geboortedatum (dd/mm/yyyy)
-    type: datepicker
-    mode: date
-    minDate: 1900-01-01
+    type: text
     required: true
     placeholder: Uw geboortedatum
   adres:
