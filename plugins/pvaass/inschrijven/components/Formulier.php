@@ -26,7 +26,14 @@ class Formulier extends ComponentBase
         // Append the formController to the page
         $this->page['form'] = $formController;
         $this->addCss('/modules/backend/assets/css/controls.css', 'core');
+
         $this->addCss('/modules/system/assets/ui/storm.css?v1', 'core');
+
+    }
+
+
+    public function onRender()
+    {
     }
 
     public function onSave()
