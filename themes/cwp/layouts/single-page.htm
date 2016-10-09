@@ -4,6 +4,12 @@ description = "Default layout"
 file = "about/capabilities.htm"
 
 [inschrijfFormulier]
+
+[breadcrumbs]
+main-ol-class = "breadcrumb"
+main-li-class = "oi"
+active-class = "active"
+disabled-class = "disabled"
 ==
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +22,9 @@ file = "about/capabilities.htm"
 </header><!--/header-->
 
 <section id="content">
+
     <div class="container">
+        {%  component 'breadcrumbs' %}
         {%  component 'inschrijfFormulier' %}
     </div>
 </section>
