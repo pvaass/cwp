@@ -1,8 +1,14 @@
 <?php namespace pvaass\BlogBlocks;
 
 use App;
+use Backend\Classes\WidgetBase;
+use Backend\Widgets\Form;
 use Cms\Classes\Content;
 use Config;
+use Event;
+use October\Rain\Database\Model;
+use RainLab\Blog\Controllers\Posts;
+use RainLab\Blog\Models\Post;
 use System\Classes\PluginBase;
 
 /**
@@ -35,5 +41,37 @@ class Plugin extends PluginBase
 
     public function boot()
     {
+        // Local event hook that affects all users
+        Post::extend(function(Model $model) {
+            $model->hasOne['blogblock'] = ['pvaass\BlogBlocks\Models\BlogBlock'];
+        });
+        // Extend all backend form usage
+        Event::listen('backend.form.extendFields', function(Form $widget) {
+
+            if(!$widget->getController() instanceof Posts) {
+                return;
+            }
+            if(!$widget->model instanceof Post) {
+                return;
+            }
+
+
+            $widget->addFields(
+                [
+                    'blogblock[block_image_big]' => [
+                        'label'   => 'Voorpagina (groot)',
+                        'type' => 'fileupload',
+                        'mode' => 'image',
+                        'imageWidth' => 200,
+                        'imageHeight' => 200,
+                        'tab'     => 'rainlab.blog::lang.post.tab_manage'
+                    ]
+                ],
+                'secondary'
+            );
+
+            var_dump(get_class($widget->model));
+
+        });
     }
 }

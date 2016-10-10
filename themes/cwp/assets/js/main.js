@@ -215,21 +215,42 @@ jQuery(function($) {'use strict';
 		social_tools: false
 	});
 
+	var locations = [
+		['Het Zuiderpark', 52.0528355, 4.2851475, 1],
+		['De Waterthor', 52.0658249, 4.2463693, 2],
+		['De Blinkerd', 52.1062128, 4.2807188, 3],
+		['De Houtzagerij', 52.0699413, 4.3019263, 4],
+		['Steenvoorde', 52.0388966, 4.3071353, 5],
+		['Het Hoofbad', 52.0530853, 4.3808283, 6],
+		['Escamphof', 52.0650032, 4.2747264, 7]
+	];
+
 	//Google Map
 	var latitude = $('#google-map').data('latitude');
 	var longitude = $('#google-map').data('longitude');
 	function initialize_map() {
-		var myLatlng = new google.maps.LatLng(latitude,longitude);
+		var myLatlng = new google.maps.LatLng(52.0699413,4.3019263);
 		var mapOptions = {
-			zoom: 14,
+			zoom: 12,
 			scrollwheel: false,
-			center: myLatlng
+			center: myLatlng,
+			zoomControl: false,
+			scaleControl: false,
+			streetViewControl: false,
+			mapTypeControl: false
 		};
 		var map = new google.maps.Map(document.getElementById('google-map'), mapOptions);
-		var marker = new google.maps.Marker({
-			position: myLatlng,
-			map: map
-		});
+
+		for (var i = 0; i < locations.length; i++) {
+			new google.maps.Marker({
+				position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+				map: map
+			});
+		}
+		// var marker = new google.maps.Marker({
+		// 	position: myLatlng,
+		// 	map: map
+		// });
 	}
 	google.maps.event.addDomListener(window, 'load', initialize_map);
 

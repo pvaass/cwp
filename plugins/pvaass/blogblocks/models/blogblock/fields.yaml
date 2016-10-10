@@ -1,0 +1,10 @@
+# ===================================
+#  Field Definitions
+# ===================================
+fields:
+  block_image_big:
+    label: Afbeelding voorpagina (groot)
+    type: fileupload
+    mode: image
+    imageWidth: 200
+    imageHeight: 200
