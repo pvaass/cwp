@@ -6,5 +6,5 @@ fields:
     label: Afbeelding voorpagina (groot)
     type: fileupload
     mode: image
-    imageWidth: 200
-    imageHeight: 200
+    imageWidth: 184
+    imageHeight: 100

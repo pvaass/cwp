@@ -16,7 +16,8 @@ class BlogBlock extends Model
     protected $guarded = [];
 
 
-    public $attachMany = [
+    public $attachOne = [
         'block_image_big' => ['System\Models\File', 'order' => 'sort_order'],
+        'block_image_small' => ['System\Models\File', 'order' => 'sort_order'],
     ];
 }

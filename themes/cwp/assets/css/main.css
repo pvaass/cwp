@@ -936,3 +936,10 @@ ul.nostyle i {
   box-shadow: none;
   -webkit-box-shadow: none;
 }
+
+
+/* CWP */
+#blog .blog-post.blog-large .post-format [class^="cwp-"]{
+
+  line-height: 70px;
+}

@@ -55,6 +55,7 @@ class Plugin extends PluginBase
                 return;
             }
 
+            $widget->getController()->addCss('/plugins/pvaass/blogblocks/assets/css/main.css');
 
             $widget->addFields(
                 [
@@ -62,15 +63,25 @@ class Plugin extends PluginBase
                         'label'   => 'Voorpagina (groot)',
                         'type' => 'fileupload',
                         'mode' => 'image',
-                        'imageWidth' => 200,
-                        'imageHeight' => 200,
-                        'tab'     => 'rainlab.blog::lang.post.tab_manage'
+                        'imageWidth' => 184,
+                        'imageHeight' => 100,
+                        'tab'     => 'rainlab.blog::lang.post.tab_manage',
+                        'span' => 'inline-block',
+                        'cssClass' => 'blogblock-image-picker'
+                    ],
+                    'blogblock[block_image_small]' => [
+                        'label'   => 'Voorpagina (klein)',
+                        'type' => 'fileupload',
+                        'mode' => 'image',
+                        'imageWidth' => 100,
+                        'imageHeight' => 87,
+                        'tab'     => 'rainlab.blog::lang.post.tab_manage',
+                        'span' => 'inline-block',
+                        'cssClass' => 'blogblock-image-picker'
                     ]
                 ],
                 'secondary'
             );
-
-            var_dump(get_class($widget->model));
 
         });
     }
