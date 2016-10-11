@@ -94,6 +94,24 @@ class Plugin extends PluginBase
                 $this->addPermissionsToSEOExt();
             }
         });
+
+        Event::listen('backend.menu.extendItems', function(NavigationManager $manager) {
+
+            $settingsItem = $manager->listMainMenuItems()['OCTOBER.SYSTEM.SYSTEM'];
+            $settingsItem->iconSvg = null;
+            $manager->removeMainMenuItem('October.System', 'system');
+            $manager->addMainMenuItem('October.System', 'system', json_decode(json_encode($settingsItem), true));
+
+            $blogItem = $manager->listMainMenuItems()['RAINLAB.BLOG.BLOG'];
+
+            $blogItem->label = 'Nieuws';
+            $blogItem->iconSvg = null;
+            $blogItem->icon = 'icon-comments';
+            $manager->removeMainMenuItem('RainLab.Blog', 'blog');
+
+            $manager->addMainMenuItem('RainLab.Blog', 'blog', json_decode(json_encode($blogItem), true));
+
+        });
     }
 
     public function addPermissionsToSEOExt() {
