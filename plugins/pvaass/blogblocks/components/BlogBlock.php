@@ -1,6 +1,7 @@
 <?php namespace pvaass\BlogBlocks\Components;
 
 
+use Backend\FormWidgets\FileUpload;
 use Cms\Classes\ComponentBase;
 use Model;
 use RainLab\Blog\Models\Category;

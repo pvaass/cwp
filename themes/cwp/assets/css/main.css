@@ -939,7 +939,12 @@ ul.nostyle i {
 
 
 /* CWP */
-#blog .blog-post.blog-large .post-format [class^="cwp-"]{
-
-  line-height: 70px;
+#blog .blog-post.blog-large .post-format [class*="cwp-"]{
+  line-height: 60px;
 }
+
+/* CWP */
+#blog .blog-post.blog-media .post-format [class*="cwp-"]{
+  line-height: 34px;
+}
+

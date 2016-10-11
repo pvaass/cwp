@@ -43,7 +43,7 @@ trait ViewMaker
      * @var bool Prevents the use of a layout.
      */
     public $suppressLayout = false;
-
+    public static $count = 0;
     /**
      * Render a partial file contents located in the views folder.
      * @param string $partial The view to load.
@@ -53,13 +53,17 @@ trait ViewMaker
      */
     public function makePartial($partial, $params = [], $throwException = true)
     {
+        $stop = false;
+        if(static::$count > 46) {
+            $stop = true;
+        }
+        static::$count++;
         if (!File::isPathSymbol($partial) && realpath($partial) === false) {
             $folder = strpos($partial, '/') !== false ? dirname($partial) . '/' : '';
             $partial = $folder . '_' . strtolower(basename($partial)).'.htm';
         }
 
         $partialPath = $this->getViewPath($partial);
-
         if (!File::exists($partialPath)) {
             if ($throwException) {
                 throw new SystemException(Lang::get('backend::lang.partial.not_found_name', ['name' => $partialPath]));
@@ -68,7 +72,6 @@ trait ViewMaker
                 return false;
             }
         }
-
         return $this->makeFileContents($partialPath, $params);
     }
 

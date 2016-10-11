@@ -6,9 +6,11 @@ use Backend\Widgets\Form;
 use Cms\Classes\Content;
 use Config;
 use Event;
+use League\Flysystem\Exception;
 use October\Rain\Database\Model;
 use RainLab\Blog\Controllers\Posts;
 use RainLab\Blog\Models\Post;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use System\Classes\PluginBase;
 
 /**
@@ -31,6 +33,15 @@ class Plugin extends PluginBase
         ];
     }
 
+    public function registerFormWidgets()
+    {
+        return [
+            'vaass\BlogBlocks\FormWidgets\ValidatableFileUpload' => [
+                'label' => 'File upload',
+                'code'  => 'validatablefileupload'
+            ]
+        ];
+    }
     public function registerComponents()
     {
         return [
@@ -61,7 +72,7 @@ class Plugin extends PluginBase
                 [
                     'blogblock[block_image_big]' => [
                         'label'   => 'Voorpagina (groot)',
-                        'type' => 'fileupload',
+                        'type' => 'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload',
                         'mode' => 'image',
                         'imageWidth' => 184,
                         'imageHeight' => 100,
@@ -71,7 +82,7 @@ class Plugin extends PluginBase
                     ],
                     'blogblock[block_image_small]' => [
                         'label'   => 'Voorpagina (klein)',
-                        'type' => 'fileupload',
+                        'type' => 'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload',
                         'mode' => 'image',
                         'imageWidth' => 100,
                         'imageHeight' => 87,
@@ -83,6 +94,23 @@ class Plugin extends PluginBase
                 'secondary'
             );
 
+        });
+
+        // Extend all backend form usage
+        Event::listen('pvaass.blogblocks.file.beforeUpload', function($formField, UploadedFile $file) {
+            if($formField === 'blogblock[block_image_big]') {
+                $imageSize = getimagesize($file->getRealPath());
+                if($imageSize[0] !== 555 || $imageSize[1] !== 303) {
+                    throw new \Exception("Afbeelding moet 555x303 zijn");
+                }
+
+            }
+            if($formField === 'blogblock[block_image_small]') {
+                $imageSize = getimagesize($file->getRealPath());
+                if($imageSize[0] !== 263 || $imageSize[1] !== 301) {
+                    throw new \Exception("Afbeelding moet 263x301 zijn");
+                }
+            }
         });
     }
 }
