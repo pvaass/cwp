@@ -18,6 +18,8 @@ use System\Classes\PluginBase;
  */
 class Plugin extends PluginBase
 {
+    public $require = ['RainLab.Blog'];
+
     /**
      * Returns information about this plugin.
      *
@@ -38,10 +40,11 @@ class Plugin extends PluginBase
         return [
             'vaass\BlogBlocks\FormWidgets\ValidatableFileUpload' => [
                 'label' => 'File upload',
-                'code'  => 'validatablefileupload'
+                'code' => 'validatablefileupload'
             ]
         ];
     }
+
     public function registerComponents()
     {
         return [
@@ -49,20 +52,11 @@ class Plugin extends PluginBase
         ];
     }
 
-
-    public function boot()
+    protected function registerBlogListener()
     {
-        // Local event hook that affects all users
-        Post::extend(function(Model $model) {
-            $model->hasOne['blogblock'] = ['pvaass\BlogBlocks\Models\BlogBlock'];
-        });
         // Extend all backend form usage
-        Event::listen('backend.form.extendFields', function(Form $widget) {
-
-            if(!$widget->getController() instanceof Posts) {
-                return;
-            }
-            if(!$widget->model instanceof Post) {
+        Event::listen('backend.form.extendFields', function (Form $widget) {
+            if (!$widget->getController() instanceof Posts || !$widget->model instanceof Post) {
                 return;
             }
 
@@ -71,22 +65,22 @@ class Plugin extends PluginBase
             $widget->addFields(
                 [
                     'blogblock[block_image_big]' => [
-                        'label'   => 'Voorpagina (groot)',
+                        'label' => 'Voorpagina (groot)',
                         'type' => 'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload',
                         'mode' => 'image',
                         'imageWidth' => 184,
                         'imageHeight' => 100,
-                        'tab'     => 'rainlab.blog::lang.post.tab_manage',
+                        'tab' => 'rainlab.blog::lang.post.tab_manage',
                         'span' => 'inline-block',
                         'cssClass' => 'blogblock-image-picker'
                     ],
                     'blogblock[block_image_small]' => [
-                        'label'   => 'Voorpagina (klein)',
+                        'label' => 'Voorpagina (klein)',
                         'type' => 'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload',
                         'mode' => 'image',
                         'imageWidth' => 100,
                         'imageHeight' => 87,
-                        'tab'     => 'rainlab.blog::lang.post.tab_manage',
+                        'tab' => 'rainlab.blog::lang.post.tab_manage',
                         'span' => 'inline-block',
                         'cssClass' => 'blogblock-image-picker'
                     ]
@@ -95,22 +89,35 @@ class Plugin extends PluginBase
             );
 
         });
+    }
 
+    protected function registerFileUploadListener() {
         // Extend all backend form usage
-        Event::listen('pvaass.blogblocks.file.beforeUpload', function($formField, UploadedFile $file) {
-            if($formField === 'blogblock[block_image_big]') {
+        Event::listen('pvaass.blogblocks.file.beforeUpload', function ($formField, UploadedFile $file) {
+            if ($formField === 'blogblock[block_image_big]') {
                 $imageSize = getimagesize($file->getRealPath());
-                if($imageSize[0] !== 555 || $imageSize[1] !== 303) {
+                if ($imageSize[0] !== 555 || $imageSize[1] !== 303) {
                     throw new \Exception("Afbeelding moet 555x303 zijn");
                 }
 
             }
-            if($formField === 'blogblock[block_image_small]') {
+            if ($formField === 'blogblock[block_image_small]') {
                 $imageSize = getimagesize($file->getRealPath());
-                if($imageSize[0] !== 263 || $imageSize[1] !== 301) {
+                if ($imageSize[0] !== 263 || $imageSize[1] !== 301) {
                     throw new \Exception("Afbeelding moet 263x301 zijn");
                 }
             }
         });
+    }
+
+    public function boot()
+    {
+        // Local event hook that affects all users
+        Post::extend(function (Model $model) {
+            $model->hasOne['blogblock'] = ['pvaass\BlogBlocks\Models\BlogBlock'];
+        });
+
+        $this->registerBlogListener();
+        $this->registerFileUploadListener();
     }
 }
