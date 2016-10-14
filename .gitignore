@@ -19,3 +19,7 @@ composer.lock
 # for netbeans
 nbproject
 /plugins/pvaass/flexicontact/vendor/
+storage/cms/cache/
+storage/cms/twig
+storage/framework/cache
+vendor/
