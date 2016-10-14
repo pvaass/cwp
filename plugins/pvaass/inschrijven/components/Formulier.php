@@ -4,6 +4,7 @@
 use Cms\Classes\ComponentBase;
 use pvaass\Inschrijven\Controllers\Inschrijvingen;
 use pvaass\Inschrijven\Models\Inschrijving;
+use Redirect;
 
 class Formulier extends ComponentBase
 {
@@ -26,9 +27,8 @@ class Formulier extends ComponentBase
         $formController->create('frontend');
         // Append the formController to the page
         $this->page['form'] = $formController;
-        $this->addCss('/modules/backend/assets/css/controls.css', 'core');
 
-        $this->addCss('/modules/system/assets/ui/storm.css?v1', 'core');
+        //$this->addCss('/modules/system/assets/ui/storm.css?v1', 'core');
 
     }
 
@@ -39,6 +39,7 @@ class Formulier extends ComponentBase
 
     public function onSave()
     {
-        return ['error' => Inschrijving::create(post('Inschrijving'))];
+        Inschrijving::create(post('Inschrijving'));
+        return Redirect::to('inschrijven/success');
     }
 }

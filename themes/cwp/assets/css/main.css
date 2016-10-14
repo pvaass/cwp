@@ -948,3 +948,75 @@ ul.nostyle i {
   line-height: 34px;
 }
 
+.breadcrumb {
+  background: none;
+  border-bottom: 1px solid #ccc;
+}
+
+
+button,input,optgroup,select,textarea{color:inherit;font:inherit;margin:0}
+button{overflow:visible}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+input{line-height:normal}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height:auto}
+input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}
+fieldset{border:1px solid #c0c0c0;margin:0 2px;padding:0.35em 0.625em 0.75em}
+legend{border:0;padding:0}
+textarea{overflow:auto}
+optgroup{font-weight:bold}
+input,button,select,textarea{font-family:inherit;font-size:inherit;line-height:inherit}
+button,input,select[multiple],textarea{background-image:none}
+.form-control{display:block;width:100%;height:38px;padding:8px 13px 9px;font-size:14px;line-height:1.42857143;color:#385487;background-color:#ffffff;background-image:none;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-transition:border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;transition:border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s}
+.form-control:focus{border-color:#d1d6d9;outline:0}
+.form-control::-moz-placeholder{color:#cccccc;opacity:1}
+.form-control:-ms-input-placeholder{color:#cccccc}
+.form-control::-webkit-input-placeholder{color:#cccccc}
+.form-control[disabled],.form-control[readonly],fieldset[disabled] .form-control{cursor:not-allowed;background-color:#eeeeee;color:#999999;opacity:1}
+textarea.form-control{height:auto}
+.form-control.align-right{text-align:right}
+.form-control{position:relative;-webkit-appearance:none;border:1px solid #d1d6d9;-webkit-box-shadow:inset 0 1px 0 rgba(209,214,217,0.25),0 1px 0 rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(209,214,217,0.25),0 1px 0 rgba(255,255,255,.5)}
+.form-control:focus{border:1px solid #d1d6d9}
+.form-control.icon{background-repeat:no-repeat;background-position:right -2px;padding-right:30px !important;background-image:url('images/bitmap-icons.png')}
+.form-control.icon.plus{background-position:right -124px}
+.form-control.icon.search{background-position:right -83px}
+.form-control.icon.user{background-position:right -41px}
+.form-control.icon.lock{background-position:right 0}
+.form-control.growable{width:110px}
+.form-control.growable:focus,.form-control.growable:active{width:200px !important}
+.form-group{position:relative;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
+.form-group:empty{display:none}
+.form-group,.form-group.layout-item{padding-bottom:20px;margin-bottom:0}
+.form-group.is-required > label:after{background-color:#c20a0a;width:5px;height:5px;margin-left:3px;vertical-align:super;font-size:60%;content:"";display:inline-block;-webkit-border-radius:8px;-moz-border-radius:8px;border-radius:8px}
+.form-group.span-full{width:100%;float:left}
+.form-group.span-left{float:left;width:48.5%;clear:left}
+.form-group.span-right{float:right;width:48.5%;clear:right}
+.form-group.layout-relative{padding-bottom:0}
+.form-group.checkbox-field{padding-bottom:5px}
+.form-group.number-field > .form-control{text-align:right}
+.form-group.checkbox-align{padding-left:28px;margin-top:-5px}
+.form-group.field-align-above{margin-top:-5px}
+.form-group.field-slim.span-left,.form-group.field-slim.span-right{width:50%}
+.form-group.field-indent{padding-left:23px}
+.form-group.input-sidebar-control{padding-right:35px}
+.form-group.input-sidebar-control .sidebar-control{position:absolute;right:8px;top:34px;font-size:16px;color:#c4c4c4}
+.form-group.input-sidebar-control .sidebar-control:hover,.form-group.input-sidebar-control .sidebar-control:focus{text-decoration:none;color:#0181b9;outline:none}
+.form-group-preview .form-control{background-color:#f6f6f6;color:#555555;height:auto;min-height:38px;border-color:#eee;-webkit-box-shadow:none;box-shadow:none}
+.form-group-preview .custom-checkbox label,.form-group-preview .custom-radio label{cursor:default}
+
+
+.flexiContactForm .form-group{
+  margin-bottom: 0;
+  padding-bottom: 5px;
+}
+.flexiContactForm .pull-right, .flexiContactForm button{
+  float: none !important;
+  width: 100%;
+}
+.contact-form {
+  overflow: hidden;
+}

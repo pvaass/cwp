@@ -1,0 +1,45 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+  recipient_email:
+    label: pvaass.flexicontact::lang.strings.recipient_email
+    comment: pvaass.flexicontact::lang.strings.recipient_email_comment
+    description: pvaass.flexicontact::lang.strings.recipient_email_desc
+    type: text
+  recipient_name:
+    label: pvaass.flexicontact::lang.strings.recipient_name
+    comment: pvaass.flexicontact::lang.strings.recipient_name_comment
+    description: pvaass.flexicontact::lang.strings.recipient_name_desc
+    type: text
+  subject:
+    label: pvaass.flexicontact::lang.strings.subject
+    comment: pvaass.flexicontact::lang.strings.subject_comment
+    description: pvaass.flexicontact::lang.strings.subject_desc
+    type: text
+  confirmation_text:
+    label: pvaass.flexicontact::lang.strings.confirmation_text
+    comment: pvaass.flexicontact::lang.strings.confirmation_text_comment
+    description: pvaass.flexicontact::lang.strings.confirmation_text_desc
+    type: textarea
+  enable_captcha:
+    label: pvaass.flexicontact::lang.strings.enable_captcha
+    comment: pvaass.flexicontact::lang.strings.enable_captcha_comment
+    description: pvaass.flexicontact::lang.strings.enable_captcha_desc
+    type: switch
+  site_key:
+    label: pvaass.flexicontact::lang.strings.site_key
+    comment: pvaass.flexicontact::lang.strings.site_key_comment
+    description: pvaass.flexicontact::lang.strings.site_key_desc
+    type: text
+  secret_key:
+    label: pvaass.flexicontact::lang.strings.secret_key
+    comment: pvaass.flexicontact::lang.strings.secret_key_comment
+    description: pvaass.flexicontact::lang.strings.secret_key_desc
+    type: text
+  enable_server_captcha_validation:
+    label: pvaass.flexicontact::lang.strings.enable_server_captcha_validation
+    comment: pvaass.flexicontact::lang.strings.enable_server_captcha_validation_comment
+    description: pvaass.flexicontact::lang.strings.enable_server_captcha_validation_desc
+    type: switch

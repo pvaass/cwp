@@ -1,15 +1,12 @@
-<div class="confirm-container bg-success hide">
-    <p>Succesvol ingeschreven!</p>
-</div>
-
 <form role="form"
       method="post"
-      data-request="{{ __SELF__ }}::onSave"
-      data-request-success="$el.hide();$('.confirm-container').removeClass('hide');">
+      data-request="{{ __SELF__ }}::onSave">
 
     {{ form.formRender()|raw }}
 
     <div class="form-group">
-        <button style="text-align: center;" class="btn btn-primary btn-block btn-lg" type="submit" value="register">Schrijf je in!</button>
+        <button style="text-align: center;" class="btn btn-primary btn-block btn-lg" type="submit" value="register">
+            Schrijf je in!
+        </button>
     </div>
 </form>

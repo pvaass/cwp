@@ -7,12 +7,17 @@ file = "about/capabilities.htm"
 main-ol-class = "breadcrumb"
 active-class = "active"
 disabled-class = "disabled"
+
+[contactForm]
+injectBootstrapAssets = 0
+injectMainScript = 1
+
+[SeoCmsPage]
 ==
 <!DOCTYPE html>
 <html lang="en">
     {% partial "meta" %}
-
-
+    
 <body id="home" class="homepage">
 <header id="header">
     {% partial "main/nav" %}
@@ -29,7 +34,7 @@ disabled-class = "disabled"
                 {% component 'editable' file='main/start-tekst.htm' %}
             </div>
             <div class="col-sm-3 text-right">
-                <a class="btn btn-primary btn-lg" href="https://github.com/jtherczeg/multi-theme/archive/master.zip">Schrijf je in!</a>
+                <a class="btn btn-primary btn-lg" href="{{ '/inschrijven'|app }}">Schrijf je in!</a>
             </div>
         </div>
     </div>

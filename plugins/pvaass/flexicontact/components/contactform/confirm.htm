@@ -1,0 +1,8 @@
+{% if errorHappened %}
+    {% partial __SELF__~'::flash-messages' %}
+{% else %}
+    <h2 style="text-align:center">Bedankt!</h2>
+    <p>
+        {{confirmation_text}}
+    </p>
+{% endif %}
