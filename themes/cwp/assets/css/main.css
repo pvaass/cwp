@@ -953,6 +953,15 @@ ul.nostyle i {
   border-bottom: 1px solid #ccc;
 }
 
+#articles .breadcrumb {
+  border: 0;
+  padding-left: 0;
+}
+
+#articles #content p {
+  line-height: 2em;
+}
+
 
 button,input,optgroup,select,textarea{color:inherit;font:inherit;margin:0}
 button{overflow:visible}

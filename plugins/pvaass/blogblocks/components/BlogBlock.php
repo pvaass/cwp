@@ -56,6 +56,8 @@ class BlogBlock extends ComponentBase
         $this->page['title'] = $post->title;
         $this->page['summary'] = $post->summary;
         $this->page['entry_date'] = $post->updated_at;
+        $this->page['slug'] = $post->slug;
+
         $size = $this->property('size', 'small');
         $this->page['big'] = $size === 'large';
 

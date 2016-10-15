@@ -6,14 +6,14 @@
                     <img class="img-responsive" src="{{ image }}" alt="">
                     <span class="post-format post-format-video"><i class="fa cwp-swimming"></i></span>
                 </div>
-                <div class="entry-date">{{ entry_date|date("d F Y") }}</div>
+                <div class="entry-date">{{ entry_date|localizeddate("long", 'none', 'nl_NL') }}</div>
                 <h2 class="entry-title"><a href="#">{{ title }}</a></h2>
 
             </header>
 
             <div class="entry-content">
                 <p>{{ summary }}</p>
-                <a class="btn btn-primary" href="#">Read More</a>
+                <a class="btn btn-primary" href="{{ ('articles/' ~ slug)|app }}">Read More</a>
             </div>
             <footer class="entry-meta">
             </footer>
@@ -26,13 +26,13 @@
             </div>
             <div class="media-body">
                 <header class="entry-header">
-                    <div class="entry-date">{{ entry_date|date("d F Y") }}</div>
+                    <div class="entry-date">{{ entry_date|localizeddate("long", 'none', 'nl_NL') }}</div>
                     <h2 class="entry-title"><a href="#">{{ title }}</a></h2>
                 </header>
 
                 <div class="entry-content">
                     <p>{{ summary }}</p>
-                    <a class="btn btn-primary" href="#">Read More</a>
+                    <a class="btn btn-primary" href="{{ ('articles/' ~ slug)|app }}">Read More</a>
                 </div>
 
                 <footer class="entry-meta">

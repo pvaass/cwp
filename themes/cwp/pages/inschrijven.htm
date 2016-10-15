@@ -9,3 +9,33 @@ crumb_disabled = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
+{% put hero %}
+{% if this.param.success == 'success' %}
+    {% partial "main/inschrijven/bedankt" %}
+    <section id="content">
+        <div class="container">
+            <div class="text-center" style="padding:100px 0 150px 0">
+                <a href="{{ '/'|app }}" class="btn btn-primary btn-lg" style="padding:50px">
+                    Klik hier om terug te gaan naar de index
+                </a>
+            </div>
+        </div>
+    </section>
+{% else %}
+    <section id="cta2" style="padding-bottom: 70px;" >
+        <div class="container">
+            <div class="text-center">
+                {% partial "main/inschrijven-cta" %}
+            </div>
+        </div>
+    </section>
+{% endif %}
+{% endput %}
+
+{% if this.param.success != 'success' %}
+    <section id="content">
+        <div class="container">
+            {%  component 'inschrijfFormulier' %}
+        </div>
+    </section>
+{% endif %}
