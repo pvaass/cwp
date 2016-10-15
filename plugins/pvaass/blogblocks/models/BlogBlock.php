@@ -20,5 +20,6 @@ class BlogBlock extends Model
     public $attachOne = [
         'block_image_big' => ['System\Models\File', 'order' => 'sort_order'],
         'block_image_small' => ['System\Models\File', 'order' => 'sort_order'],
+        'header_image' => ['System\Models\File', 'order' => 'sort_order'],
     ];
 }

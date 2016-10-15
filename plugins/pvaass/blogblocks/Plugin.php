@@ -83,6 +83,16 @@ class Plugin extends PluginBase
                         'tab' => 'rainlab.blog::lang.post.tab_manage',
                         'span' => 'inline-block',
                         'cssClass' => 'blogblock-image-picker'
+                    ],
+                    'blogblock[header_image]' => [
+                        'label' => 'Header',
+                        'type' => 'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload',
+                        'mode' => 'image',
+                        'imageWidth' => 652,
+                        'imageHeight' => 87,
+                        'tab' => 'rainlab.blog::lang.post.tab_manage',
+                        'span' => 'inline-block',
+                        'cssClass' => 'blogblock-image-picker'
                     ]
                 ],
                 'secondary'
@@ -105,6 +115,13 @@ class Plugin extends PluginBase
                 $imageSize = getimagesize($file->getRealPath());
                 if ($imageSize[0] !== 263 || $imageSize[1] !== 301) {
                     throw new \Exception("Afbeelding moet 263x301 zijn");
+                }
+            }
+
+            if ($formField === 'blogblock[header_image]') {
+                $imageSize = getimagesize($file->getRealPath());
+                if ($imageSize[0] < 1350 || $imageSize[1] < 180) {
+                    throw new \Exception("Afbeelding moet minstens 1350x180 zijn");
                 }
             }
         });

@@ -10,18 +10,15 @@ crumb_disabled = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
-<?php
-function onEnd()
-{
-    // Optional - set the page title to the post title
-    if (isset($this->post))
-$this->page->title = $this->post->title;
-}
-?>
-==
 {% if post %}
     {% put hero %}
-    <section id="cta2" style="padding: 0 0 30px 0; background: rgba(0,0,0,0.7) url(http://cw.p/storage/app/uploads/public/57f/c2f/244/57fc2f2448954314440339.jpg) no-repeat 50% 50%;background-size: cover; background-blend-mode: overlay;  ">
+    {% if post.blogblock.header_image %}
+        {% set header = post.blogblock.header_image.getPath()|app %}
+    {% elseif post.blogblock.block_image_big %}
+        {% set header = post.blogblock.block_image_big.getPath()|app %}
+    {% endif %}
+
+    <section id="cta2" style="padding: 0 0 30px 0; {% if header %}background: rgba(0,0,0,0.7) url({{ header }}) no-repeat 50% 50%;background-size: cover; background-blend-mode: overlay;{% endif %}">
         <div class="container">
             {%  component 'breadcrumbs' %}
 
