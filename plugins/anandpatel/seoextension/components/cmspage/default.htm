@@ -4,7 +4,7 @@
     {% endplaceholder %}
 
 {% else %}
-
+    {{ hasBlog }}
     {% if __SELF__.redirect_url %}
         <meta http-equiv="refresh" content="0; url={{__SELF__.redirect_url}}" />
     {% endif %}

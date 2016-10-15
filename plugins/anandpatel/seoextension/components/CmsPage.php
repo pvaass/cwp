@@ -38,14 +38,21 @@ class CmsPage extends ComponentBase
 
     public function defineProperties()
     {
-        return [];
+        return [
+            'blog' => [
+                'title' => 'Get fields from blog',
+                'description' => 'yes/no',
+                'type' => 'checkbox'
+            ]
+        ];
     }
 
     public function onRun()
     {
         $theme = Theme::getActiveTheme();
         $page = Page::load($theme,$this->page->baseFileName);
-        $this->page["hasBlog"] = false;
+
+        $this->page['hasBlog'] = $this->property('blog', false);
 
         if(!$page->hasComponent("blogPost"))
         {
@@ -67,11 +74,6 @@ class CmsPage extends ComponentBase
                 $this->ogSiteName = $settings->og_sitename;
                 $this->ogFbAppId = $settings->og_fb_appid;
             }
-
-        }
-        else{
-            $this->hasBlog = $this->page["hasBlog"] = true;
         }
     }
-
 }

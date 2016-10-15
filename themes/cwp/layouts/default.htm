@@ -16,8 +16,11 @@ injectMainScript = 1
 ==
 <!DOCTYPE html>
 <html lang="en">
+<head>
     {% partial "meta" %}
     
+    {% component 'SeoCmsPage' %}
+</head>
 <body id="home" class="homepage">
 <header id="header">
     {% partial "main/nav" %}

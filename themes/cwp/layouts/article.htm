@@ -1,4 +1,4 @@
-description = "Default layout"
+description = "Article layout"
 
 [breadcrumbs]
 main-ol-class = "breadcrumb"
@@ -8,11 +8,21 @@ disabled-class = "disabled"
 
 [SeoBlogPost]
 post = "post"
+
+[SeoCmsPage]
+blog = 1
+
+[blogPost]
+slug = "{{ :slug }}"
+categoryPage = "articles"
 ==
 <!DOCTYPE html>
 <html lang="en">
+<head>
     {% partial "meta" %}
     {% component 'SeoBlogPost' %}
+    {% component 'SeoCmsPage' %}
+</head>
 
 <body id="articles" class="homepage">
 <header id="header">
