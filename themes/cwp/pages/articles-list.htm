@@ -1,12 +1,49 @@
-title = "Articles"
+title = "Nieuws"
 url = "/articles"
-layout = "default"
+layout = "single-page"
+meta_title = "Al het laatste nieuws in een handige lijst"
 is_hidden = 0
-child_of = "mey_no_parent"
+child_of = "home"
 hide_crumb = 0
 remove_crumb_trail = 0
 crumb_disabled = 0
-redirect_url = "/"
 robot_index = "index"
 robot_follow = "follow"
+
+[blogBlock]
 ==
+<?php
+    function onStart() {
+        $this->page->count = \pvaass\BlogBlocks\Models\BlogBlock::all()->count() - 1;
+}
+?>
+==
+<div class="container" id="blog" style="padding-top: 20px">
+    <div class="section-header">
+        <h2 class="section-title text-center wow fadeInDown animated"
+            style="visibility: visible; animation-name: fadeInDown;">Al ons nieuws</h2>
+        <p class="text-center wow fadeInDown animated" style="visibility: visible; animation-name: fadeInDown;">
+            Een handige lijst van al het nieuws binnen CWP, gesorteerd op datum.
+        </p>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            {% for i in range(0, this.page.count) %}
+                {% if i % 3 == 0 %}
+                    <div class="blog-post blog-large wow fadeInLeft" data-wow-duration="300ms" data-wow-delay="0ms">
+                        {% component 'blogBlock' size="large" offset=i %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="col-sm-6">
+            {% for i in range(0, this.page.count) %}
+                {% if i % 3 == 1 or i % 3 == 2 %}
+                    <div class="blog-post blog-media wow fadeInRight" data-wow-duration="300ms" data-wow-delay="100ms">
+                        {% component 'blogBlock' size="small" offset=i %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

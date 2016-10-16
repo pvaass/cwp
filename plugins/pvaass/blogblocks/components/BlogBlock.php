@@ -47,6 +47,7 @@ class BlogBlock extends ComponentBase
             ->skip($this->property('offset', 0))
             ->first();
 
+
         if (!$this->isValid($post)) {
             $this->page['render'] = false;
             return;
