@@ -1081,3 +1081,21 @@ input[type="radio"][disabled],input[type="checkbox"][disabled],.radio[disabled],
 .contact-form {
   overflow: hidden;
 }
+
+#zwemscore {
+  padding-top: 70px;
+}
+#zwemscore .container {
+
+  padding-bottom: 60px;
+}
+
+@media (max-width: 768px) {
+  #google-map {
+    display:none;
+  }
+  #contact .container-wrapper {
+    position: relative;
+    padding-bottom: 20px;
+  }
+}
