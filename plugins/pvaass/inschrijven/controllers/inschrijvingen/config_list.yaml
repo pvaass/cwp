@@ -12,7 +12,7 @@ modelClass: pvaass\Inschrijven\Models\Inschrijving
 title: TITEL
 
 # Link URL for each record
-recordUrl: rainlab/blog/posts/update/:id
+recordUrl: pvaass/inschrijven/inschrijvingen/preview/:id
 
 # Message to display if the list is empty
 noRecordsMessage: Geen inschrijvingen

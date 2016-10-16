@@ -2,6 +2,7 @@
 
 
 use BackendMenu;
+use Doctrine\Common\Util\Debug;
 
 class Inschrijvingen extends \Backend\Classes\Controller
 {
@@ -35,5 +36,18 @@ class Inschrijvingen extends \Backend\Classes\Controller
         $this->bodyClass = 'compact-container';
 
         return $this->asExtension('FormController')->create();
+    }
+
+    public function preview($recordId = null, $context = null)
+    {
+        BackendMenu::setContextSideMenu('new_inschrijving');
+        $this->bodyClass = 'compact-container';
+        $return = $this->asExtension('FormController')->preview($recordId, $context);
+        return $return;
+    }
+
+    public function getZwembadValues() {
+
+        Debug::dump($this->formWidgets);
     }
 }

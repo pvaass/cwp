@@ -81,3 +81,10 @@ fields:
   opmerkingen:
     label: Opmerkingen
     type: textarea
+  algemene_voorwaarden:
+    label: Ik accepteer de algemene voorwaarden
+    commentHtml: true
+    commentAbove: U dient <a href="google.com">de algemene voorwaarden</a> te accepteren om uzelf in te schrijven
+    type: checkbox
+    default: false
+    required: true

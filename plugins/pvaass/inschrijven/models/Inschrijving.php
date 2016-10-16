@@ -20,6 +20,7 @@ class Inschrijving extends Model
     protected $appends = ['zwembad_string'];
 
     public $rules = [
+        'algemene_voorwaarden' => 'required|accepted',
         'zwembad' => 'required|notInvalid',
         'voornaam' => 'required',
         'achternaam' => 'required',
@@ -47,6 +48,7 @@ class Inschrijving extends Model
 
     public function beforeSave()
     {
+        unset($this->algemene_voorwaarden);
         $zwembadReference = json_decode(InschrijfSettings::get('zwembaden'), true);
         $oldZwembad = $this->zwembad;
         $this->zwembad = [
