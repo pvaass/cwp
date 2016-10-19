@@ -23,7 +23,7 @@ robot_follow = "follow"
             {%  component 'breadcrumbs' %}
 
 
-            <h2 id="author">{{ post.title }}</h2>
+            <h2 id="author" style="color: white;">{{ post.title }}</h2>
             <p style="font-style: italic; padding-left: 30px;">
                 Door {{ post.user.first_name }} op {{ post.published_at|localizeddate("full", 'none', 'nl_NL') }}
             </p>
