@@ -31,7 +31,8 @@
         "october/cms": "~1.0",
         "laravel/framework": "5.1.*",
         "wikimedia/composer-merge-plugin": "dev-master",
-        "twig/extensions": "^1.4"
+        "twig/extensions": "^1.4",
+        "google/apiclient": "^2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
