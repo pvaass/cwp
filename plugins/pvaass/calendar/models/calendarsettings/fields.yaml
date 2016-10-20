@@ -1,0 +1,31 @@
+# ===================================
+#  Field Definitions
+# ===================================
+
+tabs:
+  stretch: true
+  defaultTab: Instellingen
+  fields:
+    link:
+      type: pvaass\Calendar\FormWidgets\GoogleAuth
+      tab: Instellingen
+    token:
+#        type: pvaass\Calendar\FormWidgets\GoogleAuth
+#        tab: Instellingen
+        label: Vul hier de token in die hierboven is verkregen
+        type: codeeditor
+        size: tiny
+        tab: Instellingen
+
+
+    application_name:
+        label: Project naam
+        type: text
+        size: giant
+        tab: API instellingen
+    config:
+        label: Plak hier de google json
+        type: codeeditor
+        size: giant
+        tab: API instellingen
+

@@ -49,7 +49,7 @@ class Inschrijving extends Model
     public function beforeSave()
     {
         unset($this->algemene_voorwaarden);
-        $zwembadReference = json_decode(InschrijfSettings::get('zwembaden'), true);
+        $zwembadReference = json_decode(CalendarSettings::get('zwembaden'), true);
         $oldZwembad = $this->zwembad;
         $this->zwembad = [
             'type' => $zwembadReference['zwembaden'][$oldZwembad['type']]['name'],

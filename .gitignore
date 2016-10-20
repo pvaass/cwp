@@ -22,3 +22,5 @@ storage/cms/cache/
 storage/cms/twig
 storage/framework/cache
 vendor/
+
+*.sqlite*

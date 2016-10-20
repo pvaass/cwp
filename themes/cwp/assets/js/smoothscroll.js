@@ -132,6 +132,9 @@ function ssc_keydown(e) {
   var r, i = 0,
       s = 0;
   var o = ssc_overflowingAncestor(ssc_activeElement);
+  if(typeof o === 'undefined') {
+    return true
+  }
   var u = o.clientHeight;
   if (o == document.body) {
     u = window.innerHeight

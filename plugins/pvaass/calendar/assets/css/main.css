@@ -1,0 +1,9 @@
+.blogblock-image-picker {
+    float:left;
+    clear:right;
+    margin-right: 20px;
+}
+
+[data-field-name='featured_images'] {
+    display: none;
+}

@@ -2,7 +2,7 @@
 
 
 use Backend\Classes\FormWidgetBase;
-use pvaass\Inschrijven\Models\InschrijfSettings;
+use pvaass\Inschrijven\Models\CalendarSettings;
 
 class ZwembadPicker extends FormWidgetBase
 {
@@ -24,7 +24,7 @@ class ZwembadPicker extends FormWidgetBase
     {
         $this->vars['name'] = $this->formField->getName();
         $this->vars['value'] = $this->getLoadValue();
-        $this->vars['zwembaden'] = InschrijfSettings::get('zwembaden');
+        $this->vars['zwembaden'] = CalendarSettings::get('zwembaden');
         return $this->makePartial('zwembadpicker');
     }
 }
