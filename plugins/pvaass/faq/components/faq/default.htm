@@ -1,0 +1,74 @@
+<div data-accordion-group>
+    <div class="accordion" data-accordion>
+        <div data-control class="faq-question">
+            <span class="faq-question_id">#1</span>
+            <span class="faq-question_string">Wat kost een lidmaatschap bij CWP?</span>
+        </div>
+        <div data-content>
+            <p class="faq-content">
+                De kosten van een lidmaatschap zijn afhankelijk van de soort activiteit.<br/>
+                Voor zwemles: 5000 euro <br />
+                Voor waterpolo: 5 euro. <br />
+                gr peter
+            </p>
+        </div>
+    </div>
+    <div class="accordion" data-accordion>
+        <div data-control class="faq-question">
+            <span class="faq-question_id">#2</span>
+            <span class="faq-question_string">Is het verplicht om te zwemmen bij CWP?</span>
+        </div>
+        <div data-content>
+            <p class="faq-content">
+                Yeap.
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    .accordion {
+        margin:20px 0;
+        /*border: 1px solid grey;*/
+        line-height: 2em;
+        background: #fff;
+    }
+    .faq-question {
+        font-family: Roboto, sans-serif;
+        font-weight: 600;
+        padding: 20px;
+        border-bottom: 4px solid orange;
+        cursor: pointer;
+        transition: border-bottom 0.7s;
+    }
+    .faq-question:hover, .accordion.open .faq-question {
+        border-bottom-color: blue;
+    }
+
+    .faq-question .faq-question_string{
+        padding-left: 10px;
+        vertical-align: middle;
+    }
+    .faq-question .faq-question_id {
+        font-size: 2em;
+        vertical-align: middle;
+        color: #ccc;
+        padding-right: 10px;
+        border-right: 1px solid #ccc;
+    }
+
+    .faq-content {
+        padding-top: 10px;
+        padding-left: 76px;
+    }
+
+</style>
+
+{% put scripts %}
+    <script>
+        $('.accordion').accordion({
+            "transitionSpeed": 400
+        });
+    </script>
+{% endput %}

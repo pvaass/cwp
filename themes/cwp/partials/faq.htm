@@ -1,0 +1,18 @@
+[faq]
+==
+{% put hero %}
+
+<section id="cta2" style="padding-bottom: 40px">
+    <div class="container">
+        <div class="text-center">
+            {% component 'editable' file='faq/intro.htm' %}
+        </div>
+    </div>
+</section>
+
+{% endput %}
+<div class="container">
+    <div class="content">
+        {% component 'faq' %}
+    </div>
+</div>

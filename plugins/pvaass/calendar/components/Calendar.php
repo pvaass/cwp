@@ -33,12 +33,16 @@ class Calendar extends ComponentBase
         $client->setAuthConfig(json_decode(CalendarSettings::get('config'), true));
         $client->setAccessType('offline');
 
-        $client->setAccessToken(json_decode(CalendarSettings::get('token'), true));
+//        die(CalendarSettings::get('token'));
+        $token = json_decode(CalendarSettings::get('token'), true);
+        $client->setAccessToken($token);
 
         // Refresh the token if it's expired.
         if ($client->isAccessTokenExpired()) {
             $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-            CalendarSettings::set('token', json_encode($client->getAccessToken()));
+            CalendarSettings::set('token', json_encode(array_merge(
+                $client->getAccessToken(), ['refresh_token' => $token['refresh_token']]
+            )));
         }
         return $client;
     }
