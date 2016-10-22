@@ -27,6 +27,14 @@ RUN docker-php-ext-install zip
 # Install Composer and make it available in the PATH
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
+RUN chown www-data:www-data /var/www
+USER www-data
+RUN git config --global user.name "CWP Dev"
+RUN git config --global user.email "dev@cwp.nu"
+USER root
+COPY .ssh /var/www/.ssh
+RUN ssh-keyscan github.com >> /var/www/.ssh/known_hosts
+RUN chown www-data:www-data /var/www/.ssh -R && chmod 400 /var/www/.ssh/id_rsa
 
 COPY apache2.conf /config/apache2.conf
 COPY php.ini /config/php.ini
