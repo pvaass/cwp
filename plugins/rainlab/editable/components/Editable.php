@@ -88,8 +88,7 @@ class Editable extends ComponentBase
         $this->page['tag'] = $this->property('tag');
         $this->page['class'] = $this->property('class');
         $this->page['extras'] = json_decode($this->property('extras'), true);
-        if (!$this->isEditor)
-            return $this->renderContent($this->file);
+        $this->page['isEditor'] = $this->isEditor;
 
         $this->content = $this->renderContent($this->file);
     }

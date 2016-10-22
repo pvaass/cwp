@@ -2,9 +2,11 @@
         {% for name,value in extras %}
         {{ name }}="{{ value }}"
         {% endfor %}
+        {% if isEditor %}
         data-control="editable"
         data-handler="{{ __SELF__ }}::onSave"
         data-file="{{ __SELF__.file }}"
-        data-file-mode="{{ __SELF__.fileMode }}">
+        data-file-mode="{{ __SELF__.fileMode }}"
+        {% endif %}>
     {{ __SELF__.content|raw }}
 </{{ tag }}>
