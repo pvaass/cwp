@@ -30,6 +30,24 @@ class Editable extends ComponentBase
                 'description' => 'rainlab.editable::lang.component_editable.property_file.description',
                 'default' => '',
                 'type' => 'dropdown',
+            ],
+            'tag' => [
+                'title' => 'Tag to use for editable element',
+                'description' => 'See title',
+                'default' => 'div',
+                'type' => 'text'
+            ],
+            'class' => [
+                'title' => 'Class',
+                'description' => 'Class',
+                'default' => '',
+                'type' => 'text'
+            ],
+            'extras' => [
+                'title' => 'Extras',
+                'description' => '',
+                'default' => '{}',
+                'type' => 'text'
             ]
         ];
     }
@@ -67,6 +85,9 @@ class Editable extends ComponentBase
                 $this->file = $fileName;
         }
 
+        $this->page['tag'] = $this->property('tag');
+        $this->page['class'] = $this->property('class');
+        $this->page['extras'] = json_decode($this->property('extras'), true);
         if (!$this->isEditor)
             return $this->renderContent($this->file);
 

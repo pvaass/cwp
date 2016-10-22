@@ -1,6 +1,17 @@
 <div class="container" style="overflow: hidden; padding-top: 10px; position:relative;">
     <div class="section-header">
-        {% component 'editable' file='leden/zwemscore/intro.htm' %}
+        {% component 'editable'
+            file='leden/zwemscore/intro_title.htm'
+            class='section-title text-center wow fadeInDown'
+            tag='h2'
+            extras='{}'
+        %}
+        {% component 'editable'
+            file='leden/zwemscore/intro_sub.htm'
+            class='text-center wow fadeInDown'
+            tag='p'
+            extras='{}'
+        %}
     </div>
     <form action="http://cwp.zwemscore.nl/ControleerInlog.asp" target="_blank" method="POST">
         <div class="form-group" style="overflow:hidden;">

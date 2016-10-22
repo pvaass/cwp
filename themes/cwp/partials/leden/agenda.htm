@@ -1,5 +1,9 @@
 [calendar]
 ==
-{% component 'editable' file='leden/agenda/intro.htm' %}
-
+<div class="section-header">
+    {% component 'editable' file='leden/agenda/intro.htm' tag='h2' class='section-title wow fadeInUp' extras='{
+"data-wow-duration": "300ms",
+"data-wow-delay": "0ms"
+}' %}
+</div>
 {% component 'calendar' %}

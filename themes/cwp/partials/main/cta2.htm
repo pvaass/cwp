@@ -1,6 +1,13 @@
 ==
-{% component 'editable' file='main/schrijf-je-in/intro.htm' %}
-<p class="wow fadeInUp animated animated" data-wow-duration="300ms" data-wow-delay="200ms"
+{% component 'editable' file='main/schrijf-je-in/intro_title.htm' tag='h2' class='wow fadeInUp' extras='{
+    "data-wow-duration": "300ms",
+    "data-wow-delay": "0ms"
+}' %}
+{% component 'editable' file='main/schrijf-je-in/intro_sub.htm' tag='p' class='wow fadeInUp' extras='{
+    "data-wow-duration": "300ms",
+    "data-wow-delay": "100ms"
+}' %}
+<p class="wow fadeInUp" data-wow-duration="300ms" data-wow-delay="200ms"
    style="visibility: visible; animation-duration: 300ms; animation-delay: 200ms; animation-name: fadeInUp;">
     <a class="btn btn-primary btn-lg" href="{{ '/inschrijven'|app }}">
         Schrijf je in!

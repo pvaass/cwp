@@ -1,7 +1,10 @@
-<div
-    data-control="editable"
-    data-handler="{{ __SELF__ }}::onSave"
-    data-file="{{ __SELF__.file }}"
-    data-file-mode="{{ __SELF__.fileMode }}">
+<{{ tag }} class="{{ class }}"
+        {% for name,value in extras %}
+        {{ name }}="{{ value }}"
+        {% endfor %}
+        data-control="editable"
+        data-handler="{{ __SELF__ }}::onSave"
+        data-file="{{ __SELF__.file }}"
+        data-file-mode="{{ __SELF__.fileMode }}">
     {{ __SELF__.content|raw }}
-</div>
+</{{ tag }}>
