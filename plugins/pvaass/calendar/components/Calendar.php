@@ -1,6 +1,7 @@
 <?php namespace pvaass\Calendar\Components;
 
 
+use BackendAuth;
 use Cache;
 use Cms\Classes\ComponentBase;
 use Google_Client;
@@ -49,8 +50,7 @@ class Calendar extends ComponentBase
 
     public function onRender()
     {
-        //Cache::forget('events');
-        $events = Cache::remember('events', 10, function () {
+        $events = Cache::rememberForever('events', function () {
             // Get the API client and construct the service object.
             $client = $this->getClient();
             $service = new Google_Service_Calendar($client);
@@ -80,5 +80,16 @@ class Calendar extends ComponentBase
         });
 
         $this->page['events'] =  $events;
+    }
+
+    public function onRefresh(){
+        Cache::forget('events');
+        return \Redirect::refresh();
+    }
+
+    public function isEditor()
+    {
+        $backendUser = BackendAuth::getUser();
+        return $backendUser && $backendUser->hasAccess('cms.manage_content');
     }
 }

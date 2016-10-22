@@ -1,5 +1,10 @@
 <div id="mini-clndr" class="agenda row" style="margin: 30px 0;overflow:hidden;text-align:left;"></div>
+{% if __SELF__.isEditor() %}
+<div class="row">
+    <button data-request="{{ __SELF__ }}::onRefresh" style="width: 100%; margin-bottom:20px; " class="btn btn-primary">Verversen</button>
+</div>
 
+{% endif %}
 <script type="text/template" id="cal-small-tpl">
     <div style="float:left" class="cal-left col-sm-5 col-lg-4 col-lg-offset-1">
         <div class="controls">

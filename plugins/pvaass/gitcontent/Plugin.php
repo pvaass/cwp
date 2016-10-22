@@ -14,6 +14,15 @@ class Plugin extends PluginBase
 {
     const CMS_SAVED_EVENT = 'saved';
 
+    public function pluginDetails()
+    {
+        return [
+            'name' => 'Auto git commit',
+            'description' => ''
+        ];
+    }
+
+
     protected function addThemeListener($name, $class, callable $function){
         \Event::listen('halcyon.' . $name . ': ' . $class, $function);
     }
