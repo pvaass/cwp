@@ -17,9 +17,11 @@ class BlogBlock extends Model
      */
     protected $guarded = [];
 
+    protected $fillable = ['post_id'];
+
     public $attachOne = [
-        'block_image_big' => ['System\Models\File', 'order' => 'sort_order'],
-        'block_image_small' => ['System\Models\File', 'order' => 'sort_order'],
-        'header_image' => ['System\Models\File', 'order' => 'sort_order'],
+        'block_image_big' => ['System\Models\File'],
+        'block_image_small' => ['System\Models\File'],
+        'header_image' => ['System\Models\File'],
     ];
 }

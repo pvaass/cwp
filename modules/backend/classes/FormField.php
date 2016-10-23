@@ -607,6 +607,7 @@ class FormField
         $last = array_pop($parts);
 
         foreach ($parts as $part) {
+//            var_dump($parts);
             $model = $model->{$part};
         }
 

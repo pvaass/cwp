@@ -1,13 +1,9 @@
 <?php namespace pvaass\BlogBlocks;
 
-use App;
-use Backend\Classes\WidgetBase;
 use Backend\Widgets\Form;
-use Cms\Classes\Content;
-use Config;
 use Event;
-use League\Flysystem\Exception;
 use October\Rain\Database\Model;
+use pvaass\BlogBlocks\Models\BlogBlock;
 use RainLab\Blog\Controllers\Posts;
 use RainLab\Blog\Models\Post;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -38,7 +34,7 @@ class Plugin extends PluginBase
     public function registerFormWidgets()
     {
         return [
-            'vaass\BlogBlocks\FormWidgets\ValidatableFileUpload' => [
+            'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload' => [
                 'label' => 'File upload',
                 'code' => 'validatablefileupload'
             ]
@@ -54,12 +50,53 @@ class Plugin extends PluginBase
 
     protected function registerBlogListener()
     {
+//        Posts::extendFormFields(function($form, $model, $context) {
+//            $form->addFields(
+//                [
+//                    'blogblock[block_image_big]' => [
+//                        'label' => 'Voorpagina (groot)',
+//                        'type' => 'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload',
+//                        'mode' => 'image',
+//                        'imageWidth' => 184,
+//                        'imageHeight' => 100,
+//                        'tab' => 'rainlab.blog::lang.post.tab_manage',
+//                        'span' => 'inline-block',
+//                        'cssClass' => 'blogblock-image-picker'
+//                    ],
+//                    'blogblock[block_image_small]' => [
+//                        'label' => 'Voorpagina (klein)',
+//                        'type' => 'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload',
+//                        'mode' => 'image',
+//                        'imageWidth' => 100,
+//                        'imageHeight' => 87,
+//                        'tab' => 'rainlab.blog::lang.post.tab_manage',
+//                        'span' => 'inline-block',
+//                        'cssClass' => 'blogblock-image-picker'
+//                    ],
+//                    'blogblock[header_image]' => [
+//                        'label' => 'Header',
+//                        'type' => 'pvaass\BlogBlocks\FormWidgets\ValidatableFileUpload',
+//                        'mode' => 'image',
+//                        'imageWidth' => 652,
+//                        'imageHeight' => 87,
+//                        'tab' => 'rainlab.blog::lang.post.tab_manage',
+//                        'span' => 'inline-block',
+//                        'cssClass' => 'blogblock-image-picker'
+//                    ]
+//                ],
+//                'secondary'
+//            );
+//        });
         // Extend all backend form usage
         Event::listen('backend.form.extendFields', function (Form $widget) {
             if (!$widget->getController() instanceof Posts || !$widget->model instanceof Post) {
                 return;
             }
-
+            if($widget->getContext() != 'update') return;
+//
+//            $p = new Post();
+//            var_dump($p->hasOne);
+//            die();
             $widget->getController()->addCss('/plugins/pvaass/blogblocks/assets/css/main.css');
 
             $widget->addFields(
@@ -131,7 +168,14 @@ class Plugin extends PluginBase
     {
         // Local event hook that affects all users
         Post::extend(function (Model $model) {
-            $model->hasOne['blogblock'] = ['pvaass\BlogBlocks\Models\BlogBlock'];
+            $model->hasOne['blogblock'] = ['pvaass\BlogBlocks\Models\BlogBlock', 'key' => 'post_id'];
+            $model->bindEvent('model.afterSave', function() use ($model) {
+               if(!$model->blogblock) {
+                   BlogBlock::create([
+                       'post_id' => $model->id
+                   ]);
+               }
+            });
         });
 
         $this->registerBlogListener();
