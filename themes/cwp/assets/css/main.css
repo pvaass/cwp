@@ -1099,3 +1099,13 @@ input[type="radio"][disabled],input[type="checkbox"][disabled],.radio[disabled],
     padding-bottom: 20px;
   }
 }
+
+.service-box a {
+  color: #64686d;
+}
+#contact .container-wrapper {
+  pointer-events: none;
+}
+#contact .contact-form {
+  pointer-events: all;
+}
