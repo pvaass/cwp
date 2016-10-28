@@ -1,4 +1,4 @@
-<?php namespace Acme\Blog\Updates;
+<?php namespace pvaass\BlogBlocks\Updates;
 
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\Schema\Blueprint;

@@ -41,6 +41,10 @@ class BlogBlock extends ComponentBase
     {
 
         $frontPage = Category::where('id', 2)->first();
+        if(!$frontPage) {
+            $this->page['render'] = false;
+            return false;
+        }
         $post = $frontPage->posts()
             ->where('published', 1)
             ->orderBy('published_at')

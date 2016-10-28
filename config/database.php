@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'default' => 'sqlite',
+    'default' => env('DATABASE_TYPE', 'sqlite'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,11 +54,11 @@ return [
 
         'mysql' => [
             'driver'    => 'mysql',
-            'host'      => 'localhost',
-            'port'      => '',
-            'database'  => 'database',
-            'username'  => 'root',
-            'password'  => '',
+            'host'      => env('DOKKU_MYSQL_CWP_DB_PORT_3306_TCP_ADDR', 'localhost'),
+            'port'      => env('DOKKU_MYSQL_CWP_DB_PORT_3306_TCP_PORT', '3306'),
+            'database'  => env('DOKKU_MYSQL_CWP_DB_ENV_MYSQL_DATABASE', 'cwp-web'),
+            'username'  => env('DOKKU_MYSQL_CWP_DB_ENV_MYSQL_USER', 'root'),
+            'password'  => env('DOKKU_MYSQL_CWP_DB_ENV_MYSQL_PASSWORD', ''),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
