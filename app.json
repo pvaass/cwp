@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dokku": {
-      "predeploy": "git init && git remote add origin https://${GITHUB_OAUTH_TOKEN}@github.com/pvaass/cwp.git && git fetch && git reset origin/master && git config --global user.name \"CWP Dev\" && git config --global user.email \"dev@cwp.nu\""
+      "predeploy": "git init && git remote add origin https://${GITHUB_OAUTH_TOKEN}@github.com/pvaass/cwp.git && git fetch && git reset origin/master && git config --global user.name CWP && git config --global user.email dev@cwp.nu"
     }
   }
 }

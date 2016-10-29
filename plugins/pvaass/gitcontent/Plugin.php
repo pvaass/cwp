@@ -34,7 +34,7 @@ class Plugin extends PluginBase
         $callable = function($event) {
             $command = 'git add themes && git commit -m "HOOK: Auto saved theme" && git push origin HEAD';
             $process = new Process($command, null, ['HOME' => '/var/www']);
-            $process->run();
+            $process->run(); $process->getErrorOutput()
         };
 
         $this->addThemeListener(static::CMS_SAVED_EVENT, Content::class, $callable);
