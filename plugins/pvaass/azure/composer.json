@@ -1,0 +1,9 @@
+{
+    "name": "pvaass/azure",
+    "type": "october-plugin",
+    "description": "Azure packages for October CMS",
+    "require": {
+        "league/flysystem-azure": "^1.0 "
+    },
+    "minimum-stability": "dev"
+}
