@@ -66,11 +66,6 @@
             "recurse": true,
             "replace": false,
             "merge-dev": false
-        },
-        "compile": [
-            "git init",
-            "git remote add origin https://${GITHUB_OAUTH_TOKEN}@github.com/pvaass/cwp.git",
-            "git reset origin/master"
-        ]
+        }
     }
 }

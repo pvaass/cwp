@@ -4,6 +4,7 @@ use Cms\Classes\Content;
 use Cms\Classes\Layout;
 use Cms\Classes\Page;
 use Cms\Classes\Partial;
+use League\Flysystem\Exception;
 use Symfony\Component\Process\Process;
 use System\Classes\PluginBase;
 
