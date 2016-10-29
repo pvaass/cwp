@@ -5,6 +5,7 @@ use Cms\Classes\Layout;
 use Cms\Classes\Page;
 use Cms\Classes\Partial;
 use League\Flysystem\Exception;
+use Log;
 use Symfony\Component\Process\Process;
 use System\Classes\PluginBase;
 
@@ -33,8 +34,12 @@ class Plugin extends PluginBase
         }
         $callable = function($event) {
             $command = 'git add themes && git commit -m "HOOK: Auto saved theme" && git push origin HEAD';
-            $process = new Process($command, null, ['HOME' => '/var/www']);
-            $process->run(); $process->getErrorOutput()
+            $process = new Process($command, null, ['HOME' => env('OCTOBER_PHP_HOME', '/var/www')]);
+            $process->run();
+            $err = $process->getErrorOutput();
+            if(!empty($err)) {
+                Log::info('GIT: ' . $err);
+            }
         };
 
         $this->addThemeListener(static::CMS_SAVED_EVENT, Content::class, $callable);
