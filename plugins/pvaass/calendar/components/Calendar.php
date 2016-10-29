@@ -50,36 +50,41 @@ class Calendar extends ComponentBase
 
     public function onRender()
     {
-        $events = Cache::rememberForever('events', function () {
-            // Get the API client and construct the service object.
-            $client = $this->getClient();
-            $service = new Google_Service_Calendar($client);
+        try {
+            $events = Cache::rememberForever('events', function () {
+                // Get the API client and construct the service object.
+                $client = $this->getClient();
+                $service = new Google_Service_Calendar($client);
 
-            // Print the next 10 events on the user's calendar.
-            $calendarId = 'primary';
-            $optParams = array(
-                'maxResults' => 10,
-                'orderBy' => 'startTime',
-                'singleEvents' => TRUE,
-                'timeMin' => date('c'),
-                'fields' => 'items(end%2Clocation%2Cstart%2Csummary)'
-            );
+                // Print the next 10 events on the user's calendar.
+                $calendarId = 'primary';
+                $optParams = array(
+                    'maxResults' => 10,
+                    'orderBy' => 'startTime',
+                    'singleEvents' => TRUE,
+                    'timeMin' => date('c'),
+                    'fields' => 'items(end%2Clocation%2Cstart%2Csummary)'
+                );
 
-            $rawEvents = $service->events->listEvents($calendarId, $optParams)['items'];
-            $formattedEvents = [];
-            /** @var Google_Service_Calendar_Event $rawEvent */
-            foreach($rawEvents as $rawEvent) {
-                $formattedEvents[] = [
-                    'name' => $rawEvent->getSummary(),
-                    'location' => $rawEvent->getLocation(),
-                    'start' => $rawEvent->getStart()->getDateTime(),
-                    'end' => $rawEvent->getEnd()->getDateTime()
-                ];
-            }
-            return $formattedEvents;
-        });
+                $rawEvents = $service->events->listEvents($calendarId, $optParams)['items'];
+                $formattedEvents = [];
+                /** @var Google_Service_Calendar_Event $rawEvent */
+                foreach($rawEvents as $rawEvent) {
+                    $formattedEvents[] = [
+                        'name' => $rawEvent->getSummary(),
+                        'location' => $rawEvent->getLocation(),
+                        'start' => $rawEvent->getStart()->getDateTime(),
+                        'end' => $rawEvent->getEnd()->getDateTime()
+                    ];
+                }
+                return $formattedEvents;
+            });
 
-        $this->page['events'] =  $events;
+            $this->page['events'] =  $events;
+        } catch (\Exception $e) {
+            Cache::forget('events');
+            return false;
+        }
     }
 
     public function onRefresh(){
