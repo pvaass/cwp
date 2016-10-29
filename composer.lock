@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ac2473d5c94616199f5c83a0ed9e4928",
-    "content-hash": "3ede7f3ba8edc6fbca06dd9fe4602d1b",
+    "hash": "5f6d2bfc3d8847457b3523a9fc02ab66",
+    "content-hash": "9d9e7e0f027723c76d57356f9cd420b8",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -327,16 +327,16 @@
         },
         {
             "name": "doctrine/cache",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "f8af318d14bdb0eff0336795b428b547bd39ccb6"
+                "reference": "b6f544a20f4807e81f7044d31e679ccbb1866dc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/f8af318d14bdb0eff0336795b428b547bd39ccb6",
-                "reference": "f8af318d14bdb0eff0336795b428b547bd39ccb6",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/b6f544a20f4807e81f7044d31e679ccbb1866dc3",
+                "reference": "b6f544a20f4807e81f7044d31e679ccbb1866dc3",
                 "shasum": ""
             },
             "require": {
@@ -393,7 +393,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2015-12-31 16:37:02"
+            "time": "2016-10-29 11:16:17"
         },
         {
             "name": "doctrine/collections",
@@ -1766,6 +1766,53 @@
             "time": "2016-10-19 20:38:46"
         },
         {
+            "name": "league/flysystem-azure",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-azure.git",
+                "reference": "0b9838c4f75ee41bc390357b0350e9a62e3b3a1f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-azure/zipball/0b9838c4f75ee41bc390357b0350e9a62e3b3a1f",
+                "reference": "0b9838c4f75ee41bc390357b0350e9a62e3b3a1f",
+                "shasum": ""
+            },
+            "require": {
+                "league/flysystem": "~1.0",
+                "microsoft/azure-storage": "~0.10.1",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\Azure\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frenky.net"
+                }
+            ],
+            "description": "Flysystem adapter for Windows Azure",
+            "time": "2016-07-10 19:08:39"
+        },
+        {
             "name": "linkorb/jsmin-php",
             "version": "1.0.0",
             "source": {
@@ -1821,6 +1868,64 @@
                 "minify"
             ],
             "time": "2013-03-15 13:16:35"
+        },
+        {
+            "name": "microsoft/azure-storage",
+            "version": "v0.10.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Azure/azure-storage-php.git",
+                "reference": "27de05b00c1858d6e1c6adbc489efa90e0342f82"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Azure/azure-storage-php/zipball/27de05b00c1858d6e1c6adbc489efa90e0342f82",
+                "reference": "27de05b00c1858d6e1c6adbc489efa90e0342f82",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.6",
+                "pdepend/pdepend": "~2.2",
+                "phploc/phploc": "~2.1",
+                "phpmd/phpmd": "@stable",
+                "phpunit/phpunit": "~4.0",
+                "sebastian/phpcpd": "~2.0",
+                "squizlabs/php_codesniffer": "2.*",
+                "theseer/phpdox": "~0.8"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.10.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MicrosoftAzure\\Storage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Azure Storage PHP SDK",
+                    "email": "dmsh@microsoft.com"
+                }
+            ],
+            "description": "This project provides a set of PHP client libraries that make it easy to access Microsoft Azure storage APIs.",
+            "keywords": [
+                "azure",
+                "php",
+                "sdk",
+                "storage"
+            ],
+            "time": "2016-08-19 08:32:57"
         },
         {
             "name": "monolog/monolog",
@@ -2048,12 +2153,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/octoberrain/backend.git",
-                "reference": "1b731aeb15388dd122981f8417be44786c5d471e"
+                "reference": "9efa3dec61cddc2c8136d15eaae4fc1f6e51edf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/octoberrain/backend/zipball/1b731aeb15388dd122981f8417be44786c5d471e",
-                "reference": "1b731aeb15388dd122981f8417be44786c5d471e",
+                "url": "https://api.github.com/repos/octoberrain/backend/zipball/9efa3dec61cddc2c8136d15eaae4fc1f6e51edf7",
+                "reference": "9efa3dec61cddc2c8136d15eaae4fc1f6e51edf7",
                 "shasum": ""
             },
             "require": {
@@ -2093,7 +2198,7 @@
                 "october",
                 "october cms"
             ],
-            "time": "2016-09-08 20:16:24"
+            "time": "2016-10-24 20:33:24"
         },
         {
             "name": "october/cms",
@@ -2101,12 +2206,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/octoberrain/cms.git",
-                "reference": "3c13b19e2f32c86edeb2bf0758d2cd3714455b8c"
+                "reference": "9cd9a2e0a872891c0bbcd6e41241347c9f55d72c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/octoberrain/cms/zipball/3c13b19e2f32c86edeb2bf0758d2cd3714455b8c",
-                "reference": "3c13b19e2f32c86edeb2bf0758d2cd3714455b8c",
+                "url": "https://api.github.com/repos/octoberrain/cms/zipball/9cd9a2e0a872891c0bbcd6e41241347c9f55d72c",
+                "reference": "9cd9a2e0a872891c0bbcd6e41241347c9f55d72c",
                 "shasum": ""
             },
             "require": {
@@ -2146,7 +2251,7 @@
                 "october",
                 "october cms"
             ],
-            "time": "2016-09-02 23:44:32"
+            "time": "2016-10-13 08:57:54"
         },
         {
             "name": "october/rain",
@@ -2154,12 +2259,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/octobercms/library.git",
-                "reference": "762bb0a048d103db4d659d3749a02ea4877ba48f"
+                "reference": "7325e017c3c0228384d7ca1c2a2f2772db1c6198"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/octobercms/library/zipball/762bb0a048d103db4d659d3749a02ea4877ba48f",
-                "reference": "762bb0a048d103db4d659d3749a02ea4877ba48f",
+                "url": "https://api.github.com/repos/octobercms/library/zipball/7325e017c3c0228384d7ca1c2a2f2772db1c6198",
+                "reference": "7325e017c3c0228384d7ca1c2a2f2772db1c6198",
                 "shasum": ""
             },
             "require": {
@@ -2241,7 +2346,7 @@
                 "october",
                 "rain"
             ],
-            "time": "2016-09-08 20:15:40"
+            "time": "2016-10-22 04:44:27"
         },
         {
             "name": "october/system",
@@ -2249,12 +2354,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/octoberrain/system.git",
-                "reference": "acdd5dcdafdff43afa25c18facac7e79177d9a6d"
+                "reference": "badbc24fc0268539ef225f221fc537729b9598f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/octoberrain/system/zipball/acdd5dcdafdff43afa25c18facac7e79177d9a6d",
-                "reference": "acdd5dcdafdff43afa25c18facac7e79177d9a6d",
+                "url": "https://api.github.com/repos/octoberrain/system/zipball/badbc24fc0268539ef225f221fc537729b9598f1",
+                "reference": "badbc24fc0268539ef225f221fc537729b9598f1",
                 "shasum": ""
             },
             "require": {
@@ -2294,7 +2399,7 @@
                 "october cms",
                 "system"
             ],
-            "time": "2016-09-05 15:35:43"
+            "time": "2016-10-20 20:15:08"
         },
         {
             "name": "oyejorge/less.php",

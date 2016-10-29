@@ -2,6 +2,7 @@
 
 use Lang;
 use ApplicationException;
+use Exception;
 
 /**
  * Form Model Widget Trait
@@ -24,8 +25,15 @@ trait FormModelWidget
      */
     public function resolveModelAttribute($attribute)
     {
-        $k = $this->formField->resolveModelAttribute($this->model, $attribute);
-        return $k;
+        try {
+            return $this->formField->resolveModelAttribute($this->model, $attribute);
+        }
+        catch (Exception $ex) {
+            throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
+                'class' => get_class($this->model),
+                'relation' => $attribute
+            ]));
+        }
     }
 
     /**
@@ -64,7 +72,6 @@ trait FormModelWidget
         list($model, $attribute) = $this->resolveModelAttribute($this->valueFrom);
 
         if (!$model) {
-//            die($model);
             throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
                 'class' => get_class($this->model),
                 'relation' => $this->valueFrom
