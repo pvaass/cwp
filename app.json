@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dokku": {
+      "predeploy": "git init && git remote add origin https://${GITHUB_OAUTH_TOKEN}@github.com/pvaass/cwp.git && git fetch && git reset origin/master"
+    }
+  }
+}
