@@ -1,0 +1,3 @@
+[submodule "plugins/pvaass/azurefiledriver"]
+	path = plugins/pvaass/azurefiledriver
+	url = git@github.com:pvaass/octobercms-azurefiledriver.git
