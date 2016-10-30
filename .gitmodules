@@ -7,3 +7,6 @@
 [submodule "plugins/rainlab/sitemap"]
 	path = plugins/rainlab/sitemap
 	url = git@github.com:rainlab/sitemap-plugin.git
+[submodule "plugins/anandpatel/seoextension"]
+	path = plugins/anandpatel/seoextension
+	url = git@github.com:pvaass/oc-seo-extension.git
