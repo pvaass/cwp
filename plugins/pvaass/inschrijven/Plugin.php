@@ -110,14 +110,7 @@ class Plugin extends PluginBase
 
     public function boot()
     {
-        Event::listen('backend.page.beforeDisplay', function( $manager = null) {
-            if($manager instanceof Settings || $manager instanceof \RainLab\Sitemap\Controllers\Definitions) {
-                $this->addPermissionsToSEOExt();
-            }
-        });
-
         Event::listen('backend.menu.extendItems', function(NavigationManager $manager) {
-
             $settingsItem = $manager->listMainMenuItems()['OCTOBER.SYSTEM.SYSTEM'];
             $settingsItem->iconSvg = null;
             $manager->removeMainMenuItem('October.System', 'system');
@@ -131,24 +124,6 @@ class Plugin extends PluginBase
             $manager->removeMainMenuItem('RainLab.Blog', 'blog');
 
             $manager->addMainMenuItem('RainLab.Blog', 'blog', json_decode(json_encode($blogItem), true));
-
         });
-    }
-
-    public function addPermissionsToSEOExt() {
-        foreach(\BackendAuth::getUser()->groups as $group) {
-            if($group->code === 'owners') {
-                return;
-            }
-        }
-        $items = SettingsManager::instance()->listItems();
-        $reflection = new \ReflectionProperty(SettingsManager::instance(), 'items');
-        $reflection->setAccessible(true);
-        foreach($items[SettingsManager::CATEGORY_MYSETTINGS] as $key => &$value ) {
-            if($value->label === 'anandpatel.seoextension::lang.settings.label') {
-                unset($items[SettingsManager::CATEGORY_MYSETTINGS][$key]);
-            }
-        }
-        $reflection->setValue(SettingsManager::instance(), $items);
     }
 }
