@@ -263,7 +263,7 @@ return [
     |
     */
 
-    'linkPolicy' => 'detect',
+    'linkPolicy' => env('OCTOBER_LINKING_POLICY', 'detect'),
 
     /*
     |--------------------------------------------------------------------------
