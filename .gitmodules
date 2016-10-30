@@ -4,3 +4,6 @@
 [submodule "plugins/pvaass/infinitemodelnesting"]
 	path = plugins/pvaass/infinitemodelnesting
 	url = git@github.com:pvaass/octobercms-infinitemodelnesting.git
+[submodule "plugins/rainlab/sitemap"]
+	path = plugins/rainlab/sitemap
+	url = git@github.com:rainlab/sitemap-plugin.git
