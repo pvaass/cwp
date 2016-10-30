@@ -1,0 +1,13 @@
+{
+	"name": "CWP",
+	"icons": [
+		{
+			"src": "\/android-chrome-144x144.png",
+			"sizes": "144x144",
+			"type": "image\/png"
+		}
+	],
+	"theme_color": "#c5e0ff",
+	"display": "standalone",
+	"orientation": "portrait"
+}
