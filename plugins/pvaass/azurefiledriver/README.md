@@ -11,7 +11,7 @@ Simply add another `disk` in `filesystems.php`.
 
 You will need your Azure Blob account name, API key and container name.
 
-```
+```php
 'disks' => [
     'azure' => [
         'driver' => 'azure',
