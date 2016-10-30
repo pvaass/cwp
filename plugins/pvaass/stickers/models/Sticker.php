@@ -17,13 +17,23 @@ class Sticker extends Model
 
     public $rules = [
         'text' => 'required',
-        'url' => 'required'
+        'url' => 'required',
+        'color' => 'required'
     ];
 
     public function beforeSave()
     {
         if($this->active) {
-            DB::table($this->table)->update(['active' => false]);
+            DB::table($this->table)
+                ->where('id', "!=", $this->id ? $this->id : 0)
+                ->update(['active' => false]);
         }
+    }
+
+    public function getColorOptions() {
+        return [
+            "#006600" => "Groen",
+            "#000066" => "Blauw"
+        ];
     }
 }

@@ -1,14 +1,9 @@
 <?php namespace pvaass\Inschrijven;
 
-use App;
 use Backend;
 use Backend\Classes\NavigationManager;
-use Cms\Classes\Content;
-use Config;
 use Event;
 use System\Classes\PluginBase;
-use System\Classes\SettingsManager;
-use System\Controllers\Settings;
 
 /**
  * Editable Plugin Information File

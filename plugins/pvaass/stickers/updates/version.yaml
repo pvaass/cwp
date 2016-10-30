@@ -2,3 +2,6 @@
 1.0.2:
   - Create tables
   - create_tables.php
+1.0.3:
+  - Add colors
+  - add_color.php

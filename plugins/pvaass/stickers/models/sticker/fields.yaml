@@ -12,6 +12,9 @@ fields:
     type: text
     placeholder: Bestemmings URL
     required: true
+  color:
+    label: Kleur
+    type: dropdown
   active:
     label: Actief?
     type: checkbox

@@ -1,6 +1,6 @@
 <?php namespace pvaass\Stickers\Components;
 
-
+use pvaass\Stickers\Models\Sticker as StickerModel;
 use Cms\Classes\ComponentBase;
 
 class Sticker extends ComponentBase
@@ -19,7 +19,14 @@ class Sticker extends ComponentBase
 
     public function onRender()
     {
-        $this->page['text'] = 'Korting met Ooievaarspas!';
-        $this->page['link'] = 'https://google.com';
+        $sticker = StickerModel::where('active', true)->first();
+
+        if(empty($sticker)) {
+            return false;
+        }
+
+        $this->page['color'] = $sticker->color;
+        $this->page['text'] = $sticker->text;
+        $this->page['link'] = $sticker->link;
     }
 }
