@@ -1,0 +1,45 @@
+# ===================================
+#  List Behavior Config
+# ===================================
+
+# Model List Column configuration
+list: ~/plugins/pvaass/stickers/models/sticker/columns.yaml
+
+# Model Class name
+modelClass: pvaass\Stickers\Models\Sticker
+
+# List Title
+title: Stickers!
+
+# Link URL for each record
+recordUrl: pvaass/stickers/stickers/update/:id
+
+# Message to display if the list is empty
+noRecordsMessage: Geen stickers
+
+# Records to display per page
+recordsPerPage: 25
+
+# Displays the list column set up button
+showSetup: false
+
+# Displays the sorting link on each column
+showSorting: true
+
+# Default sorting column
+defaultSort:
+    column: published_at
+    direction: desc
+
+# Display checkboxes next to each record
+showCheckboxes: true
+
+# Toolbar widget configuration
+toolbar:
+    # Partial for toolbar buttons
+    buttons: list_toolbar
+
+    # Search widget configuration
+    search:
+        prompt: backend::lang.list.search_prompt
+        mode: any

@@ -1,0 +1,36 @@
+<?= Form::open(['class'=>'layout']) ?>
+<?php if ($this->user->hasAccess('pvaass.stickers.delete')): ?>
+<div class="form-buttons">
+    <button
+            type="button"
+            class="oc-icon-trash-o btn btn-danger danger pull-right"
+            data-request="onDelete"
+            data-load-indicator="Sticker aan het wegsodemieteren"
+            data-request-confirm="Wil je deze sticker echt weggooien? :(((((">
+        Sticker in de prullenbak doen
+    </button>
+</div>
+<?php endif ?>
+
+<div class="layout-row">
+    <?= $this->formRender() ?>
+</div>
+
+<div class="form-buttons">
+    <div class="loading-indicator-container pull-right">
+        <button
+                type="button"
+                data-request="onSave"
+                data-request-data="close:true"
+                data-hotkey="ctrl+enter, cmd+enter"
+                data-load-indicator="Sticker aan het opslaan..."
+                class="btn btn-default">
+            Sticker opslaan
+        </button>
+        <span class="btn-text">
+                of <a href="<?= Backend::url('pvaass/stickers/stickers') ?>">Wegwezen</a>
+            </span>
+    </div>
+</div>
+
+<?= Form::close() ?>

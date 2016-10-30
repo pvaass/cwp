@@ -1,0 +1,17 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+name: Sticker
+form: ~/plugins/pvaass/stickers/models/sticker/fields.yaml
+modelClass: pvaass\Stickers\Models\Sticker
+defaultRedirect: pvaass/stickers/stickers
+
+create:
+    redirectClose: pvaass/stickers/stickers
+
+update:
+    redirectClose: pvaass/stickers/stickers
+
+preview:
+    redirectClose: pvaass/stickers/stickers

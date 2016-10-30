@@ -1,0 +1,17 @@
+# ===================================
+#  Field Definitions
+# ===================================
+fields:
+  text:
+    label: Tekst
+    type: text
+    placeholder: Tekst voor in de sticker
+    required: true
+  url:
+    label: Link
+    type: text
+    placeholder: Bestemmings URL
+    required: true
+  active:
+    label: Actief?
+    type: checkbox

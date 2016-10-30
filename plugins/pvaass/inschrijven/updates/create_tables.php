@@ -1,4 +1,4 @@
-<?php namespace Acme\Blog\Updates;
+<?php namespace pvaass\Inschrijven\Updates;
 
 use Illuminate\Database\Schema\Blueprint;
 use Schema;

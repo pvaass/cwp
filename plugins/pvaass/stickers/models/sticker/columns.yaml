@@ -1,0 +1,20 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        searchable: true
+        width: 50px
+    text:
+        label: Tekst
+        searchable: true
+        width: 50%
+    url:
+        label: Link
+        searchable: true
+    active:
+        label: Actief
+        type: switch
+        width: 100px
