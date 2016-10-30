@@ -18,7 +18,7 @@ class Inschrijvingen extends \Backend\Classes\Controller
     {
         parent::__construct();
 
-        BackendMenu::setContext('pvaass.Inschrijven', 'formulier', 'posts');
+        BackendMenu::setContext('pvaass.Inschrijven', 'formulier', 'all_inschrijving');
     }
 
 

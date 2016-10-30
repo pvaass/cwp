@@ -30,6 +30,20 @@ class Plugin extends PluginBase
         ];
     }
 
+    public function registerPermissions()
+    {
+        return [
+            'pvaass.inschrijven.inschrijving.view' => [
+                'label' => 'Inschrijvingen inzien',
+                'tab' => 'Inschrijvingen'
+            ],
+            'pvaass.inschrijven.settings.edit' => [
+                'label' => 'Inschrijfformulier aanpassen',
+                'tab' => 'Inschrijvingen'
+            ]
+        ];
+    }
+
     public function registerComponents()
     {
         return [
@@ -59,14 +73,20 @@ class Plugin extends PluginBase
                 'label' => 'Inschrijvingen',
                 'url' => Backend::url('pvaass/inschrijven/inschrijvingen'),
                 'icon' => 'icon-pencil',
-                'permissions' => ['pvaass.inschrijven.*'],
+                'permissions' => ['pvaass.inschrijven.inschrijving.view'],
                 'order' => 30,
                 'sideMenu' => [
+                    'all_inschrijving' => [
+                        'label'       => 'Alle inschrijvingen',
+                        'icon'        => 'icon-list',
+                        'url'         => Backend::url('pvaass/inschrijven/inschrijvingen'),
+                        'permissions' => ['pvaass.inschrijven.inschrijving.view'],
+                    ],
                     'new_inschrijving' => [
                         'label'       => 'Nieuwe inschrijving',
                         'icon'        => 'icon-plus',
                         'url'         => Backend::url('pvaass/inschrijven/inschrijvingen/create'),
-                        'permissions' => ['pvaass.inschrijven.create'],
+                        'permissions' => ['pvaass.inschrijven.*'],
                     ]
                 ]
             ]
@@ -82,7 +102,8 @@ class Plugin extends PluginBase
                 'category'    => 'Inschrijven',
                 'icon'        => 'icon-pencil',
                 'class'       => 'pvaass\Inschrijven\Models\InschrijfSettings',
-                'order'       => 1
+                'order'       => 1,
+                'permissions' => ['pvaass.inschrijven.settings.edit'],
             ]
         ];
     }
@@ -90,7 +111,7 @@ class Plugin extends PluginBase
     public function boot()
     {
         Event::listen('backend.page.beforeDisplay', function( $manager = null) {
-            if($manager instanceof Settings) {
+            if($manager instanceof Settings || $manager instanceof \RainLab\Sitemap\Controllers\Definitions) {
                 $this->addPermissionsToSEOExt();
             }
         });
