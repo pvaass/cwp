@@ -107,6 +107,47 @@ injectMainScript = 1
         <div class="section-header">
             {% component 'editable' file='main/precontact.htm' tag='div' class='' extras='{}'%}
         </div>
+
+        <style>
+            .info-item{
+                width: 100%;
+                min-height: 140px;
+                border: 3px dotted rgba(255,255,255,0.6);
+                border-radius: 10px;
+                transition: all 0.2s ease-in-out;
+                text-align: center;
+                padding: 10px 20px;
+            }
+            .info-item:hover {
+                background-color: rgba(255,255,255,0.1);
+            }
+            .info-item h3, .info-items a, .info-items a:hover, .info-items a:visited {
+                color: #fff;
+            }
+        </style>
+        <div class="row info-items">
+            <div class="col-md-4">
+                <a href="{{ 'veel-gestelde-vragen'|app }}">
+                    <div class="info-item">
+                        <i class="fa fa-question-circle fa-5x"></i>
+                        <h3>Veel Gestelde Vragen</h3>
+                        <p>
+                            Vanaf hoe oud kan mijn kind op zwemles? Hoe lang is de wachtlijst? Je ziet het hier
+                        </p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <div class="info-item">
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-item">
+
+                </div>
+            </div>
+        </div>
     </div>
 </section><!--/#get-in-touch-->
 
