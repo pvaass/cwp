@@ -1,0 +1,23 @@
+# ===================================
+#  Field Definitions
+# ===================================
+fields:
+  question:
+    label: Vraag
+    type: text
+    placeholder: Hoe plak ik een envelop?
+    required: true
+  answer:
+    label: Antwoord
+    type: markdown
+    size: huge
+    mode: split
+    required: true
+  category:
+    label: Categorie
+    type: dropdown
+    required: true
+  position:
+    label: Voeg deze vraag toe na:
+    type: dropdown
+    dependsOn: category

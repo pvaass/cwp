@@ -8,6 +8,7 @@ use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
 use GuzzleHttp\Client;
 use pvaass\Calendar\Models\CalendarSettings;
+use pvaass\Faq\Models\Question;
 
 class Faq extends ComponentBase
 {
@@ -25,12 +26,19 @@ class Faq extends ComponentBase
 
     public function onRun()
     {
-       $this->addJs('assets/js/jquery.accordion.js');
+        $this->addJs('assets/js/jquery.accordion.js');
     }
 
     public function onRender()
     {
+        $categories = ['Algemeen', 'Na je zwemdiploma', 'Veiligheid'];
 
-        $this->page['events'] =  '';
+        $faq = [];
+        foreach ($categories as $category) {
+            $questions = Question::where('category', $category)
+                ->orderBy('position')->get()->toArray();
+            $faq[$category] = $questions;
+        }
+        $this->page['faq'] = $faq;
     }
 }

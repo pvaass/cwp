@@ -1,29 +1,22 @@
 <div data-accordion-group>
-    <div class="accordion" data-accordion>
-        <div data-control class="faq-question">
-            <span class="faq-question_id">#1</span>
-            <span class="faq-question_string">Wat kost een lidmaatschap bij CWP?</span>
-        </div>
-        <div data-content>
-            <p class="faq-content">
-                De kosten van een lidmaatschap zijn afhankelijk van de soort activiteit.<br/>
-                Voor zwemles: 5000 euro <br />
-                Voor waterpolo: 5 euro. <br />
-                gr peter
-            </p>
-        </div>
-    </div>
-    <div class="accordion" data-accordion>
-        <div data-control class="faq-question">
-            <span class="faq-question_id">#2</span>
-            <span class="faq-question_string">Is het verplicht om te zwemmen bij CWP?</span>
-        </div>
-        <div data-content>
-            <p class="faq-content">
-                Yeap.
-            </p>
-        </div>
-    </div>
+    {% for category,questions in faq %}
+        {% if questions|length > 0 %}
+            <h2>{{ category }}</h2>
+        {% endif %}
+        {% for key,question in questions %}
+            <div class="accordion" data-accordion>
+                <div data-control class="faq-question">
+                    <span class="faq-question_id">#{{ key+1 }}</span>
+                    <span class="faq-question_string">{{ question.question }}</span>
+                </div>
+                <div data-content>
+                    <p class="faq-content">
+                        {{ question.answer|raw }}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
 </div>
 
 <style>

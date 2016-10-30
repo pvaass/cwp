@@ -1,0 +1,8 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+name: Vraag
+form: ~/plugins/pvaass/faq/models/question/fields.yaml
+modelClass: pvaass\Faq\Models\Question
+defaultRedirect: pvaass/faq/questions

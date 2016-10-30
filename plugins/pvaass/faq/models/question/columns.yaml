@@ -1,0 +1,19 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        searchable: true
+        width: 50px
+    question:
+        label: Vraag
+        searchable: true
+        width: 50%
+    category:
+        label: Categorie
+        searchable: true
+    position:
+        label: Plaats
+        width: 100px
