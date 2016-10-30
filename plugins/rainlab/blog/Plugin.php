@@ -2,6 +2,7 @@
 
 use Backend;
 use Controller;
+use RainLab\Blog\Models\Post;
 use System\Classes\PluginBase;
 use RainLab\Blog\Classes\TagProcessor;
 use RainLab\Blog\Models\Category;
@@ -133,7 +134,9 @@ class Plugin extends PluginBase
         Event::listen('pages.menuitem.listTypes', function() {
             return [
                 'blog-category'       => 'rainlab.blog::lang.menuitem.blog_category',
-                'all-blog-categories' => 'rainlab.blog::lang.menuitem.all_blog_categories'
+                'all-blog-categories' => 'rainlab.blog::lang.menuitem.all_blog_categories',
+                'blog-post'           => 'rainlab.blog::lang.menuitem.blog_post',
+                'all-blog-posts'      => 'rainlab.blog::lang.menuitem.all_blog_posts',
             ];
         });
 
@@ -141,11 +144,17 @@ class Plugin extends PluginBase
             if ($type == 'blog-category' || $type == 'all-blog-categories') {
                 return Category::getMenuTypeInfo($type);
             }
+            elseif ($type == 'blog-post' || $type == 'all-blog-posts') {
+                return Post::getMenuTypeInfo($type);
+            }
         });
 
         Event::listen('pages.menuitem.resolveItem', function($type, $item, $url, $theme) {
             if ($type == 'blog-category' || $type == 'all-blog-categories') {
                 return Category::resolveMenuItem($item, $url, $theme);
+            }
+            elseif ($type == 'blog-post' || $type == 'all-blog-posts') {
+                return Post::resolveMenuItem($item, $url, $theme);
             }
         });
     }

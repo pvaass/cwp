@@ -69,6 +69,7 @@ return [
     'category' => [
         'name' => 'Name',
         'name_placeholder' => 'New category name',
+        'description' => 'Description',
         'slug' => 'Slug',
         'slug_placeholder' => 'new-category-slug',
         'posts' => 'Posts',
@@ -78,7 +79,10 @@ return [
     ],
     'menuitem' => [
         'blog_category' => 'Blog category',
-        'all_blog_categories' => 'All blog categories'
+        'all_blog_categories' => 'All blog categories',
+        'blog_post' => 'Blog post',
+        'all_blog_posts' => 'All blog posts',
+
     ],
     'settings' => [
         'category_title' => 'Category List',
