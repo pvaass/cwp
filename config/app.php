@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'debug' => env('OCTOBER_DEBUG', false),
+    'debug' => env('OCTOBER_DEBUG', true),
 
     /*
     |--------------------------------------------------------------------------

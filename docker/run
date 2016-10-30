@@ -7,4 +7,5 @@ docker run  -d       \
   --name cwp \
   --volume $1:/var/www/html \
   -p 80:80 \
+  -e "APP_ENV=dev" \
   pvaass/cwp:latest

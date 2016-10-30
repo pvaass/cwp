@@ -224,19 +224,17 @@ return [
     */
 
     'storage' => [
-
         'uploads' => [
-            'disk'   => 'local',
-            'folder' => 'uploads',
-            'path'   => '/storage/app/uploads',
+            'disk'   => 'azure',
+            'folder' => 'media',
+            'path'   => 'https://cwp.blob.core.windows.net/media/uploads',
         ],
 
         'media' => [
-            'disk'   => 'local',
+            'disk'   => 'azure',
             'folder' => 'media',
-            'path'   => '/storage/app/media',
+            'path'   => 'https://cwp.blob.core.windows.net/media/assets',
         ],
-
     ],
 
     /*

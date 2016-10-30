@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => 'local',
+    'default' => 'azure',
 
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'cloud' => 's3',
+    'cloud' => 'azure',
 
     /*
     |--------------------------------------------------------------------------
@@ -46,6 +46,13 @@ return [
         'local' => [
             'driver' => 'local',
             'root'   => storage_path('app'),
+        ],
+
+        'azure' => [
+            'driver' => 'azure',
+            'account' => env('OCTOBER_AZURE_ACCOUNT'),
+            'key' => env('OCTOBER_AZURE_KEY'),
+            'container' => 'media'
         ],
 
         's3' => [
