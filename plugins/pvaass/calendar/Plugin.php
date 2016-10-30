@@ -48,8 +48,25 @@ class Plugin extends PluginBase
                 'category'    => 'Agenda',
                 'icon'        => 'icon-pencil',
                 'class'       => 'pvaass\Calendar\Models\CalendarSettings',
-                'order'       => 1
+                'order'       => 1,
+                'permissions' => ['pvaass.calendar.settings.edit']
             ]
         ];
     }
+
+
+    public function registerPermissions()
+    {
+        return [
+            'pvaass.calendar.refresh' => [
+                'label' => 'Agenda verversen',
+                'tab' => 'Agenda'
+            ],
+            'pvaass.calendar.settings.edit' => [
+                'label' => 'Agenda instellingen aanpassen',
+                'tab' => 'Agenda'
+            ]
+        ];
+    }
+
 }

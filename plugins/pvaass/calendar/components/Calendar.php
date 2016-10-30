@@ -95,6 +95,6 @@ class Calendar extends ComponentBase
     public function isEditor()
     {
         $backendUser = BackendAuth::getUser();
-        return $backendUser && $backendUser->hasAccess('cms.manage_content');
+        return $backendUser && $backendUser->hasAccess('pvaass.calendar.refresh');
     }
 }
