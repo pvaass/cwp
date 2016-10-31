@@ -29,6 +29,9 @@ $rootRoutes = [
     ],
     'json' => [
         'manifest.json',
+    ],
+    'svg' => [
+        'safari-pinned-tab.svg'
     ]
 ];
 
@@ -36,7 +39,8 @@ $mime = [
     'json' => 'application/json',
     'xml' => 'application/xml',
     'ico' => 'image/x-icon',
-    'png' => 'image/png'
+    'png' => 'image/png',
+    'svg' => 'image/svg+xml'
 ];
 
 foreach ($rootRoutes as $type => $files) {
