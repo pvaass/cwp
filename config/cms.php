@@ -226,7 +226,7 @@ return [
     'storage' => [
         'uploads' => [
             'disk'   => 'azure',
-            'folder' => 'media',
+            'folder' => 'uploads',
             'path'   => 'https://cwp.blob.core.windows.net/media/uploads',
         ],
 
