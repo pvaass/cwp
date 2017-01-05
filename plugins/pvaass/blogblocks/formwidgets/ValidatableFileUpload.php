@@ -13,7 +13,7 @@ class ValidatableFileUpload extends \Backend\FormWidgets\FileUpload
 
     public function getViewPath($fileName, $viewPath = null)
     {
-        return '/var/www/html/modules/backend/formwidgets/fileupload/partials/' . $fileName;
+        return env('OCTOBER_PHP_HOME', '/var/www') . '/modules/backend/formwidgets/fileupload/partials/' . $fileName;
     }
 
     /**
