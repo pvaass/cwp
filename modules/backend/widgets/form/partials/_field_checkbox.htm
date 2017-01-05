@@ -1,5 +1,15 @@
 <!-- Checkbox -->
+<?php
+    $fieldComment = $field->commentHtml ? trans($field->comment) : e(trans($field->comment));
+?>
+
 <div class="checkbox custom-checkbox" tabindex="0">
+
+
+    <?php if ($field->comment && $field->commentPosition === 'above'): ?>
+    <p class="help-block"><?= $field->comment ?></p>
+    <?php endif ?>
+
     <input
         type="hidden"
         name="<?= $field->getName() ?>"
@@ -17,7 +27,7 @@
     <label for="<?= $field->getId() ?>">
         <?= e(trans($field->label)) ?>
     </label>
-    <?php if ($field->comment): ?>
-        <p class="help-block"><?= e(trans($field->comment)) ?></p>
+    <?php if ($field->comment && $field->commentPosition === 'below'): ?>
+        <p class="help-block"><?= $field->comment ?></p>
     <?php endif ?>
 </div>
