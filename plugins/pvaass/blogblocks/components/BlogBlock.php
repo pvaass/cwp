@@ -72,7 +72,7 @@ class BlogBlock extends ComponentBase
 
     }
 
-    protected function isValid(Post $post)
+    protected function isValid(?Post $post)
     {
         return !empty($post) && is_object($post->blogblock)
         && is_object($post->blogblock->block_image_big)
