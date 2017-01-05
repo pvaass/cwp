@@ -42,7 +42,7 @@ class Question extends Model
 
     public function beforeSave()
     {
-        if ($this->position === 0 || !$this->isDirty('position')) {
+        if ($this->position === "0" || !$this->isDirty('position')) {
             return;
         }
 
@@ -56,22 +56,11 @@ class Question extends Model
 
 
         foreach ($questions as $question) {
-            try {
-
-                if ($question->id !== $this->id && $question->position > $placeAfter->position) {
-                    $question->position = $question->position + 1;
-
-                    $question->save();
-                    var_dump($question);
-                    die();
-                    throw new \Exception($question);
-                }
-            } catch (\Exception $e) {
-                throw $e;
-                throw new \Exception($question->position . "+" . $placeAfter->position . "-" . json_encode($questions->toArray()));
+            if ($question->id !== $this->id && $question->position > $placeAfter->position) {
+                $question->position = $question->position + 1;
+                $question->save();
             }
         }
-        throw new \Exception('asdasd');
         $this->position = $placeAfter->position + 1;
     }
 }
