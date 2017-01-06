@@ -50,6 +50,16 @@ class Plugin extends PluginBase
         ];
     }
 
+    public function registerPermissions()
+    {
+        return [
+            'pvaass.faq.create' => [
+                'label' => 'Maak nieuwe vragen aan',
+                'tab' => 'FAQ'
+            ]
+        ];
+    }
+
     public function registerComponents()
     {
         return [

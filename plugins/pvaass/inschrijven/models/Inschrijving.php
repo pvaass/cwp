@@ -1,5 +1,6 @@
 <?php namespace pvaass\Inschrijven\Models;
 
+use Doctrine\DBAL\Types\DateType;
 use Model;
 use Validator;
 
@@ -15,7 +16,6 @@ class Inschrijving extends Model
      * @var array Guarded fields
      */
     protected $guarded = [];
-
 
     protected $appends = ['zwembad_string'];
 
@@ -49,6 +49,7 @@ class Inschrijving extends Model
     public function beforeSave()
     {
         unset($this->algemene_voorwaarden);
+        $this->geboortedatum = \DateTime::createFromFormat('d/m/Y', $this->geboortedatum)->format('Y-m-d H:i:s');
         $zwembadReference = json_decode(InschrijfSettings::get('zwembaden'), true);
         $oldZwembad = $this->zwembad;
         $this->zwembad = [
