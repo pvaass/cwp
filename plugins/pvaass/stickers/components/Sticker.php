@@ -27,6 +27,6 @@ class Sticker extends ComponentBase
 
         $this->page['color'] = $sticker->color;
         $this->page['text'] = $sticker->text;
-        $this->page['link'] = $sticker->link;
+        $this->page['link'] = $sticker->url;
     }
 }
