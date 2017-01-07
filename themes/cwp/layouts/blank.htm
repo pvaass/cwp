@@ -1,1 +1,25 @@
 ==
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    {% partial "meta" %}
+    
+    {% component 'SeoCmsPage' %}
+</head>
+
+<body id="home" class="homepage">
+
+{% page %} 
+
+<footer id="footer">
+    {% partial "footer" %}
+</footer><!--/#footer-->
+
+
+{% partial 'scripts' %}
+
+{% framework extras %}
+{% scripts %}
+
+</body>
+</html>
