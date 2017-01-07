@@ -15,7 +15,7 @@ description = "Zwemscore inlog"
             extras='{}'
         %}
     </div>
-    <form action="https://cwp.zwemscore.nl/ControleerInlog.asp" target="_blank" method="POST">
+    <form style="overflow:hidden;" action="https://cwp.zwemscore.nl/ControleerInlog.asp" target="_blank" method="POST">
         <div class="form-group" style="overflow:hidden;">
             <div class="col-sm-offset-4 col-sm-4">
                 <label class="control-label">Gebruikersnaam</label>
@@ -34,7 +34,7 @@ description = "Zwemscore inlog"
             </div>
         </div>
     </form>
-     <div style="display:block;">Instructeurs...</div>
+     <div style="display:block;"><a href="{'/instructeurs'|app}">Instructeurs...</a></div>
     <img
             class="img-responsive wow bounceInUp animated"
             src="{{ 'assets/images/leden/zwemscore-logo.jpg'|theme }}"
