@@ -1,6 +1,6 @@
 title = "Instructeurs"
 url = "/instructeurs"
-layout = "default"
+layout = "blank"
 is_hidden = 0
 child_of = "mey_no_parent"
 hide_crumb = 0
@@ -9,16 +9,6 @@ crumb_disabled = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-    {% partial "meta" %}
-    
-    {% component 'SeoCmsPage' %}
-</head>
-
-<body id="home" class="homepage">
-
 <header id="header">
     {% partial "leden/nav" %}
 </header><!--/header-->
@@ -46,16 +36,3 @@ robot_follow = "follow"
 <section id="contact">
     {% partial "leden/contact" %}
 </section><!--/#contact-->
-
-<footer id="footer">
-    {% partial "footer" %}
-</footer><!--/#footer-->
-
-
-{% partial 'scripts' %}
-
-{% framework extras %}
-{% scripts %}
-
-</body>
-</html>
