@@ -1,6 +1,7 @@
 <?php namespace pvaass\Inschrijven\Models;
 
 use Doctrine\DBAL\Types\DateType;
+use Illuminate\Mail\Message;
 use Model;
 use Validator;
 
@@ -38,11 +39,12 @@ class Inschrijving extends Model
         return sprintf("%s, %s, %s", $this->zwembad['type'], $this->zwembad['bad'], $this->zwembad['dag']);
     }
 
-    public function beforeValidate() {
-        Validator::extend('notInvalid', function($attr, $val, $params) {
+    public function beforeValidate()
+    {
+        Validator::extend('notInvalid', function ($attr, $val, $params) {
             return $val['type'] !== 'invalid'
-            && array_key_exists('bad', $val)
-            && array_key_exists('dag', $val);
+                && array_key_exists('bad', $val)
+                && array_key_exists('dag', $val);
         }, 'Selecteer waar u wilt zwemmen');
     }
 
@@ -57,5 +59,32 @@ class Inschrijving extends Model
             'bad' => $zwembadReference['zwembaden'][$oldZwembad['type']]['fields'][$oldZwembad['bad']]['name'],
             'dag' => $zwembadReference['zwembaden'][$oldZwembad['type']]['fields'][$oldZwembad['bad']]['fields'][$oldZwembad['dag']]['name']
         ];
+    }
+
+    public function afterCreate()
+    {
+        // If everything is fine - send an email
+        \Mail::send('pvaass.inschrijven::emails.message',
+            [
+                'zwembad' => implode(", " , $this->zwembad),
+                'naam' => $this->voornaam . ' ' . $this->achternaam,
+                'geslacht' => $this->geslacht,
+                'geboortedatum' => $this->geboortedatum,
+                'adres' => $this->adres . ' ' . $this->huisnummer,
+                'plaats' => $this->postcode . ' ' . $this->plaatsnaam,
+                'email' => $this->email,
+                'telefoon' => $this->telefoonnummer,
+                'diplomas' => $this->diplomas,
+                'vorige_ver' => $this->vorige_vereniging,
+                'ziektes' => $this->ziektes,
+                'opmerkingen' => $this->opmerkingen,
+                'link' => '/backend/pvaass/inschrijven/inschrijvingen/preview/' . $this->id
+            ],
+            function (Message $message) {
+                $message
+                    ->to(InschrijfSettings::get('email'))
+                    ->subject('Nieuwe inschrijving van CWP.nu - ' . $this->voornaam . ' ' . $this->achternaam);
+            }
+        );
     }
 }
