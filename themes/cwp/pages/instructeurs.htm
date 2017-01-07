@@ -1,6 +1,5 @@
 title = "Instructeurs"
 url = "/instructeurs"
-layout = "single-page"
 is_hidden = 0
 child_of = "mey_no_parent"
 hide_crumb = 0
@@ -9,6 +8,53 @@ crumb_disabled = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
-<section id="zwemscore">
-    {% partial "instructeurs/zwemscore" %}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    {% partial "meta" %}
+    
+    {% component 'SeoCmsPage' %}
+</head>
+
+<body id="home" class="homepage">
+
+<header id="header">
+    {% partial "leden/nav" %}
+</header><!--/header-->
+
+<section id="cta2">
+    <div class="container">
+        <div class="text-center">
+            {% partial "leden/agenda" %}
+        </div>
+    </div>
 </section>
+
+<section id="zwemscore">
+    {% partial "leden/zwemscore" %}
+</section>
+
+{#<section id="get-in-touch">#}
+    {#<div class="container">#}
+        {#<div class="section-header">#}
+            {#{% content 'leden/precontact.htm' %}#}
+        {#</div>#}
+    {#</div>#}
+{#</section><!--/#get-in-touch-->#}
+
+<section id="contact">
+    {% partial "leden/contact" %}
+</section><!--/#contact-->
+
+<footer id="footer">
+    {% partial "footer" %}
+</footer><!--/#footer-->
+
+
+{% partial 'scripts' %}
+
+{% framework extras %}
+{% scripts %}
+
+</body>
+</html>
