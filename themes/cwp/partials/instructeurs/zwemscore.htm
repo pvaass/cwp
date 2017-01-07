@@ -1,3 +1,6 @@
+[editable]
+tag = "div"
+extras = "{}"
 ==
 <div class="container" style="overflow: hidden; padding-top: 10px; position:relative;">
     <div class="section-header">
@@ -16,7 +19,7 @@
     </div>
     <form style="overflow:hidden;" action="https://cwp.zwemscore.nl/ControleerInlog.asp" target="_blank" method="POST">
         <div class="form-group" style="overflow:hidden;">
-            <div class="col-sm-offset-4 col-sm-4">
+ {% component 'editable' %}           <div class="col-sm-offset-4 col-sm-4">
                 <label class="control-label">Gebruikersnaam</label>
                 <input class="form-control" type="text" name="txtToegangsNaam" />
             </div>
