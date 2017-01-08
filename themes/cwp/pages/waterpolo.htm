@@ -3,17 +3,31 @@ url = "/waterpolo"
 layout = "single-page"
 meta_title = "Waterpolo voor kinderen of volwassenen"
 is_hidden = 0
-child_of = "mey_no_parent"
+child_of = "home"
 hide_crumb = 0
 remove_crumb_trail = 0
 crumb_disabled = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
+{% put hero %}
+<section class="hero" id="cta2" style="padding-bottom: 70px;">
+    <div class="container">
+        <div class="text-center">
+            {% partial "waterpolo/intro" %}
+        </div>
+    </div>
+</section>
+{% endput %}
 <section class="content">
-
     <div class="container">
         {% component 'editable' file='waterpolo/content.htm' %}
     </div>
-
+</section>
+<section id="cta2" class="hero">
+    <div class="container">
+        <div class="text-center">
+            {% partial "main/cta2" %}
+        </div>
+    </div>
 </section>

@@ -950,7 +950,6 @@ ul.nostyle i {
 
 .breadcrumb {
   background: none;
-  border-bottom: 1px solid #ccc;
 }
 
 #articles .breadcrumb {
@@ -1108,4 +1107,19 @@ input[type="radio"][disabled],input[type="checkbox"][disabled],.radio[disabled],
 }
 #contact .contact-form {
   pointer-events: all;
+}
+
+.hero h1 {
+    color: #fff;
+    font-size: 44px;
+    line-height: 1;
+}
+
+.sidecol-title {
+  padding-right: 3em;
+}
+@media screen and (min-width: 992px) {
+  .sidecol-title {
+    text-align: right;
+  }
 }

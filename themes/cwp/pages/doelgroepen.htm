@@ -3,17 +3,36 @@ url = "/doelgroepen"
 layout = "single-page"
 meta_title = "Zwemles voor doelgroepen - Privé of gescheiden zwemmen"
 is_hidden = 0
-child_of = "mey_no_parent"
+child_of = "home"
 hide_crumb = 0
 remove_crumb_trail = 0
 crumb_disabled = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
-<section class="content">
-
+{% put hero %}
+<section class="hero" id="cta2" style="padding-bottom: 70px;">
     <div class="container">
-        {% component 'editable' file='doelgroepen/content.htm' %}
+        <div class="text-center">
+            {% partial "doelgroepen/intro" %}
+        </div>
     </div>
-
+</section>
+{% endput %}
+<section class="content" style="padding-top:60px" id="gescheiden">
+    <div class="container">
+        {% partial "doelgroepen/gescheiden" %}
+    </div>
+</section>
+<section id="cta2" class="hero">
+    <div class="container">
+        <div class="text-center">
+            {% partial "main/cta2" %}
+        </div>
+    </div>
+</section>
+<section class="content" style="padding-top:60px;" id="prive">
+    <div class="container">
+        {% partial "doelgroepen/prive" %}
+    </div>
 </section>

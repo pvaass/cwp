@@ -6,7 +6,7 @@ jQuery(function ($) {
         Scroll();
     });
 
-    $('.navbar-collapse ul li.scroll a').on('click', function () {
+    $('.scroll a').on('click', function () {
         $('html, body').animate({scrollTop: $(this.hash).offset().top - 50}, 1000);
         return false;
     });
@@ -18,7 +18,7 @@ jQuery(function ($) {
         var winTop = $(window).scrollTop();
         var rangeTop = 200;
         var rangeBottom = 500;
-        $('.navbar-collapse').find('.scroll a').each(function () {
+        $('.scroll a').each(function () {
             var hashSplit = $(this).attr('href').split('#');
             var hash = hashSplit.length > 1 ? $('#' + hashSplit[1]) : null;
             if (!hash || !hash.offset()) {
@@ -37,7 +37,6 @@ jQuery(function ($) {
     };
 
     $('#tohash').on('click', function () {
-        console.log('oioioioi');
         $('html, body').animate({scrollTop: $(this.hash).offset().top - 5}, 1000);
         return false;
     });
