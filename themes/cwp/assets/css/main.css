@@ -303,21 +303,21 @@ ul.nostyle i {
 #cta .btn {
   margin-top: 40px;
 }
-#cta2 {
+#cta2, .cta2 {
   background: #242a33 url(../images/cta2/cta2-bg.jpg) no-repeat 50% 50%;
   background-size: cover;
   color: #fff;
   padding-top: 70px;
 }
-#cta2 .btn {
+#cta2 .btn, .cta2 .btn {
   margin-top: 10px;
 }
-#cta2 h2 {
+#cta2 h2, .cta2 h2 {
   color: #fff;
   font-size: 44px;
   line-height: 1;
 }
-#cta2 h2 > span {
+#cta2 h2 > span, .cta2 h2 > span {
   color: #45aed6;
 }
 #features {

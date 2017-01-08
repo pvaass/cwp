@@ -10,12 +10,41 @@ crumb_disabled = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
+<style>
+    .pricing-other .price {
+        width: 5em;
+        display: inline-block;
+    }
+</style>
 
 <section id="pricing">
-    {% partial "main/pricing" %}
+    <div class="container">
+        {% partial "kosten/intro" %}
+        {% partial "kosten/pricing_tables" %}
+
+        {% partial "kosten/ooievaar_intro" %}
+        {% partial "kosten/ooievaar_korting" %}
+    </div>
 </section>
 <section class="content">
     <div class="container">
-        {% component 'editable' file='kosten/content.htm' %}
+        {% component 'editable' file='kosten/extra_title.htm' tag='h2' class='' extras='{}' %}
+        <hr />
+        <div class="row">
+            <div class="col-md-9">
+                {% component 'editable' file='kosten/content.htm' tag='div' class='' extras='{}' %}
+            </div>
+            <div class="col-md-3">
+                {% partial "kosten/proefles_table" %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="schrijf-in" class="cta2 hero">
+    <div class="container">
+        <div class="text-center">
+            {% partial "main/cta2" %}
+        </div>
     </div>
 </section>
