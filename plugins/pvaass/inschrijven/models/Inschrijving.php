@@ -26,7 +26,7 @@ class Inschrijving extends Model
         'voornaam' => 'required',
         'achternaam' => 'required',
         'geslacht' => 'required|in:man,vrouw',
-        'geboortedatum' => 'required|date|date_format:d/m/Y',
+        'geboortedatum' => 'required|date_format:d/m/Y',
         'adres' => 'required',
         'huisnummer' => 'required',
         'postcode' => 'required',
