@@ -8,9 +8,19 @@ columns:
         searchable: true
     voornaam:
         label: Voornaam
+        searchable: true
     achternaam:
         label: Achternaam
+        searchable: true
     email:
         label: Email
+        searchable: true
     zwembad_string:
         label: Zwembad
+    created_at:
+        label: Inschrijfdatum
+        type: date
+    time_ago:
+        label: ''
+        type: timesince
+        valueFrom: created_at

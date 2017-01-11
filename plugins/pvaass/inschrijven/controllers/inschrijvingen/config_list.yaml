@@ -9,7 +9,7 @@ list: ~/plugins/pvaass/inschrijven/models/inschrijving/columns.yaml
 modelClass: pvaass\Inschrijven\Models\Inschrijving
 
 # List Title
-title: TITEL
+title: Inschrijvingen
 
 # Link URL for each record
 recordUrl: pvaass/inschrijven/inschrijvingen/preview/:id
@@ -28,11 +28,11 @@ showSorting: true
 
 # Default sorting column
 defaultSort:
-    column: published_at
+    column: created_at
     direction: desc
 
 # Display checkboxes next to each record
-showCheckboxes: true
+showCheckboxes: false
 
 # Toolbar widget configuration
 toolbar:
