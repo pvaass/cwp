@@ -106,7 +106,7 @@ class ContactForm extends ComponentBase{
         {
             $message->replyTo(post('email'), post('name'))
                 ->to(Settings::get('recipient_email'), Settings::get('recipient_name'))
-                ->subject(Settings::get('subject'));
+                ->subject(sprintf(Settings::get('subject'), post('name')));
         });
 
         $this->page["confirmation_text"] = Settings::get('confirmation_text');
