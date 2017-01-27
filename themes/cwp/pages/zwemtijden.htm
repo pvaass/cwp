@@ -10,3 +10,29 @@ crumb_disabled = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
+{% put hero %}
+<section class="hero" id="cta2" style="padding-bottom: 70px;">
+    <div class="container">
+        <div class="text-center">
+            {% partial "doelgroepen/intro" %}
+        </div>
+    </div>
+</section>
+{% endput %}
+<section class="content" style="padding-top:60px" id="gescheiden">
+    <div class="container">
+        {% partial "doelgroepen/gescheiden" %}
+    </div>
+</section>
+<section id="cta2" class="hero">
+    <div class="container">
+        <div class="text-center">
+            {% partial "main/cta2" %}
+        </div>
+    </div>
+</section>
+<section class="content" style="padding-top:60px;" id="prive">
+    <div class="container">
+        {% partial "doelgroepen/prive" %}
+    </div>
+</section>
