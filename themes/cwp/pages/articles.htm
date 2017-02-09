@@ -11,6 +11,11 @@ robot_index = "index"
 robot_follow = "follow"
 ==
 {% if post %}
+    {% put meta %}
+        <meta property="og:image" content="{{ post.blogblock.block_image_big.getPath()|app }}">
+    {% endput %}
+
+
     {% component 'SeoBlogPost' data=post %}
     {% put hero %}
     {% if post.blogblock.header_image %}
