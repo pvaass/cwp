@@ -11,7 +11,7 @@ robot_index = "index"
 robot_follow = "follow"
 ==
 {% if post %}
-    {% put meta %}
+    {% put extra_meta %}
         <meta property="og:image" content="{{ post.blogblock.block_image_big.getPath()|app }}">
     {% endput %}
 
