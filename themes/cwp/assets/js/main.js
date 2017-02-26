@@ -229,8 +229,32 @@ jQuery(function ($) {
         ['De Blinkerd', 52.1062128, 4.2807188, 3],
         ['De Houtzagerij', 52.0699413, 4.3019263, 4],
         ['Steenvoorde', 52.0388966, 4.3071353, 5],
-        ['Het Hoofbad', 52.0530853, 4.3808283, 6],
+        ['Het Hofbad', 52.0530853, 4.3808283, 6],
         ['Escamphof', 52.0650032, 4.2747264, 7]
+    ];
+
+    var locationText = [
+        new google.maps.InfoWindow({
+            content: '<h5>Het Zuiderpark</h5><br />Meester P. Drooglever Fortuynweg 59, <br />2533 SP Den Haag'
+        }),
+        new google.maps.InfoWindow({
+            content: '<h5>De Waterthor</h5><br />Thorbeckelaan 350,<br />2546 BZ Den Haag'
+        }),
+        new google.maps.InfoWindow({
+            content: '<h5>De Blinkerd</h5><br />Seinpoststraat 150,<br />2586 HC Den Haag'
+        }),
+        new google.maps.InfoWindow({
+            content: '<h5>De Houtzagerij</h5><br />Hobbemastraat 93,<br />2526 JG Den Haag'
+        }),
+        new google.maps.InfoWindow({
+            content: '<h5>Steenvoorde</h5><br />Generaal Spoorlaan 62,<br />2285 CH Rijswijk'
+        }),
+        new google.maps.InfoWindow({
+            content: '<h5>Het Hofbad</h5><br />Ypenburgse Boslaan 30,<br />2496 ZA Den Haag'
+        }),
+        new google.maps.InfoWindow({
+            content: '<h5>Escamphof</h5><br />Escamplaan 57,<br />2574 GA Den Haag'
+        })
     ];
 
     //Google Map
@@ -250,10 +274,19 @@ jQuery(function ($) {
         };
         var map = new google.maps.Map(document.getElementById('google-map'), mapOptions);
 
+        var markers = [];
         for (var i = 0; i < locations.length; i++) {
-            new google.maps.Marker({
+            markers[i] = new google.maps.Marker({
                 position: new google.maps.LatLng(locations[i][1], locations[i][2]),
                 map: map
+            });
+            markers[i].infoWindow = locationText[i];
+
+            google.maps.event.addListener(markers[i], 'click', function() {
+                for(var j = 0; j < markers.length; j++) {
+                    markers[j].infoWindow.close();
+                }
+                this.infoWindow.open(map, this);
             });
         }
         // var marker = new google.maps.Marker({
