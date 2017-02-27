@@ -3,29 +3,27 @@ description = "Zwemscore inlog"
 <div class="container" style="overflow: hidden; padding-top: 10px; position:relative;">
     <div class="section-header">
         {% component 'editable'
-            file='leden/zwemscore/intro_title.htm'
-            class='section-title text-center wow fadeInDown'
-            tag='h2'
-            extras='{}'
-        %}
+        file='leden/zwemscore/intro_title.htm'
+        class='section-title text-center wow fadeInDown'
+        tag='h2'
+        extras='{}' %}
         {% component 'editable'
-            file='leden/zwemscore/intro_sub.htm'
-            class='text-center wow fadeInDown'
-            tag='div'
-            extras='{}'
-        %}
+        file='leden/zwemscore/intro_sub.htm'
+        class='text-center wow fadeInDown'
+        tag='div'
+        extras='{}' %}
     </div>
     <form style="overflow:hidden;" action="https://cwp.zwemscore.nl/ControleerInlog.asp" target="_blank" method="POST">
         <div class="form-group" style="overflow:hidden;">
             <div class="col-sm-offset-4 col-sm-4">
                 <label class="control-label">Gebruikersnaam</label>
-                <input class="form-control" type="text" name="txtToegangsNaam" />
+                <input class="form-control" type="text" name="txtToegangsNaam"/>
             </div>
         </div>
         <div class="form-group" style="overflow:hidden;">
             <div class="col-sm-offset-4 col-sm-4">
                 <label class="control-label">Wachtwoord</label>
-                <input class="form-control" type="password" name="txtWachtwoord" />
+                <input class="form-control" type="password" name="txtWachtwoord"/>
             </div>
         </div>
         <div class="form-group">
@@ -34,7 +32,12 @@ description = "Zwemscore inlog"
             </div>
         </div>
     </form>
-     <div style="display:block;"><a href="{{'/instructeurs'|app}}">Instructeurs...</a></div>
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4" style="text-align:right;">
+            <a href="https://cwp.zwemscore.nl/mijnzwemscore/wachtwoord.asp">Wachtwoord vergeten...</a>
+        </div>
+    </div>
+    <div style="display:block;"><a href="{{ '/instructeurs'|app }}">Instructeurs...</a></div>
     <img
             class="img-responsive wow bounceInUp animated"
             src="{{ 'assets/images/leden/zwemscore-logo.jpg'|theme }}"
