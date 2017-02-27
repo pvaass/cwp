@@ -230,7 +230,8 @@ jQuery(function ($) {
         ['De Houtzagerij', 52.0699413, 4.3019263, 4],
         ['Steenvoorde', 52.0388966, 4.3071353, 5],
         ['Het Hofbad', 52.0530853, 4.3808283, 6],
-        ['Escamphof', 52.0650032, 4.2747264, 7]
+        ['Escamphof', 52.0650032, 4.2747264, 7],
+        ['De Schilp', 52.0381758, 4.2966581, 8]
     ];
 
     var locationText = [
@@ -254,6 +255,9 @@ jQuery(function ($) {
         }),
         new google.maps.InfoWindow({
             content: '<h5>Escamphof</h5><br />Escamplaan 57,<br />2574 GA Den Haag'
+        }),
+        new google.maps.InfoWindow({
+            content: '<h5>De Schilp</h5><br />Schaapweg 4,<br />2285 SP Rijswijk'
         })
     ];
 
