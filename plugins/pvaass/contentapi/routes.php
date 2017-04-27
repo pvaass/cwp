@@ -6,5 +6,5 @@ Route::get('/api/v1/posts', ['uses' => 'Pvaass\ContentApi\Controllers\Blog@getLi
 Route::get('/api/v1/posts/{id}', ['uses' => 'Pvaass\ContentApi\Controllers\Blog@get']);
 
 
-Route::post('/ipsen/api/v1/klacht', ['uses' => 'Pvaass\ContentApi\Controllers\Ipsen@post']);
-Route::get('/ipsen/api/v1/klacht', ['uses' => 'Pvaass\ContentApi\Controllers\Ipsen@get']);
+Route::get('/ipsen/api/v1/klacht/post', ['uses' => 'Pvaass\ContentApi\Controllers\Ipsen@post']);
+Route::get('/ipsen/api/v1/klacht/get', ['uses' => 'Pvaass\ContentApi\Controllers\Ipsen@get']);
