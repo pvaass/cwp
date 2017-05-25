@@ -1,17 +1,86 @@
 <style type="text/css">
-    .form-widget {
-        overflow: hidden;
+    .inschrijven-item {
+        border-bottom: 1px solid rgba(0,0,0,0.2)
     }
 </style>
-<form role="form"
-      method="post"
-      data-request="{{ __SELF__ }}::onSave">
+{#<form role="form"#}
+      {#method="post"#}
+      {#data-request="{{ __SELF__ }}::onSave">#}
 
-    {{ form.formRender()|raw }}
+    {#{{ form.formRender()|raw }}#}
 
-    <div class="form-group">
-        <button style="text-align: center;" class="btn btn-primary btn-block btn-lg" type="submit" value="register">
-            Schrijf je in!
-        </button>
+    {#<div class="form-group">#}
+        {#<button style="text-align: center;" class="btn btn-primary btn-block btn-lg" type="submit" value="register">#}
+            {#Schrijf je in!#}
+        {#</button>#}
+    {#</div>#}
+{#</form>#}
+
+<h2 class="text-center" >Waar wilt u zich voor inschrijven?</h2>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3 inschrijven-item">
+        <div class="media service-box wow fadeInLeft animated">
+            <div class="pull-left">
+                <i class="fa cwp-swimming"></i>
+            </div>
+            <div class="media-body">
+                <a href="{{ 'inschrijven/kinderen'|app }}">
+                    <div class="">
+                        <h4 class="media-heading">Zwemles voor kinderen</h4>
+                        <p>Jong of oud, man of vrouw. Zwemles is voor iedereen!<br>CWP geeft zwemles in Den Haag, Rijswijk en Scheveningen.
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
-</form>
+    <div class="col-md-6 col-md-offset-3 inschrijven-item">
+        <div class="media service-box wow fadeInLeft animated">
+            <div class="pull-left">
+                <i class="fa cwp-swimming"></i>
+            </div>
+            <div class="media-body">
+                <a href="http://localhost/zwemles">
+                    <div class="">
+                        <h4 class="media-heading">Zwemles voor volwassenen</h4>
+                        <p>Jong of oud, man of vrouw. Zwemles is voor iedereen!<br>CWP geeft zwemles in Den Haag, Rijswijk en Scheveningen.
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-md-offset-3 inschrijven-item">
+        <div class="media service-box wow fadeInLeft animated">
+            <div class="pull-left">
+                <i class="fa cwp-man"></i>
+            </div>
+            <div class="media-body">
+                <a href="http://localhost/zwemles">
+                    <div class="">
+                        <h4 class="media-heading">Meer Bewegen voor Ouderen</h4>
+                        <p>Jong of oud, man of vrouw. Zwemles is voor iedereen!<br>CWP geeft zwemles in Den Haag, Rijswijk en Scheveningen.
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-md-offset-3 inschrijven-item">
+        <div class="media service-box wow fadeInLeft animated">
+            <div class="pull-left">
+                <i class="fa cwp-ball"></i>
+            </div>
+            <div class="media-body">
+                <a href="http://localhost/zwemles">
+                    <div class="">
+                        <h4 class="media-heading">Waterpolo</h4>
+                        <p>Jong of oud, man of vrouw. Zwemles is voor iedereen!<br>CWP geeft zwemles in Den Haag, Rijswijk en Scheveningen.
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -32,12 +32,12 @@ USER www-data
 RUN git config --global user.name "CWP Dev"
 RUN git config --global user.email "dev@cwp.nu"
 USER root
-COPY docker/.ssh /var/www/.ssh
+COPY .ssh /var/www/.ssh
 RUN ssh-keyscan github.com >> /var/www/.ssh/known_hosts
 RUN chown www-data:www-data /var/www/.ssh -R && chmod 400 /var/www/.ssh/id_rsa
 
-COPY docker/apache2.conf /config/apache2.conf
-COPY docker/php.ini /config/php.ini
+COPY apache2.conf /config/apache2.conf
+COPY php.ini /config/php.ini
 
 # Enable MOD_REWRITE and restart apache
 RUN a2enmod rewrite && a2enmod ssl && service apache2 restart
