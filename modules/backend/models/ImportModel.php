@@ -109,7 +109,7 @@ abstract class ImportModel extends Model
         $reader = CsvReader::createFromPath($filePath, 'r');
 
         // Filter out empty rows
-        $reader->addFilter(function(array $row) {
+        $reader->addFilter(function (array $row) {
             return count($row) > 1 || reset($row) !== null;
         });
 
@@ -195,6 +195,7 @@ abstract class ImportModel extends Model
         $file = $this
             ->import_file()
             ->withDeferred($sessionKey)
+            ->orderBy('id', 'desc')
             ->first()
         ;
 
@@ -232,7 +233,7 @@ abstract class ImportModel extends Model
             'Windows-1252'
         ];
 
-        $translated = array_map(function($option){
+        $translated = array_map(function ($option) {
             return Lang::get('backend::lang.import_export.encodings.'.Str::slug($option, '_'));
         }, $options);
 

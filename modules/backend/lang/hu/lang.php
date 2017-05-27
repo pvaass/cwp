@@ -6,6 +6,7 @@ return [
     ],
     'field' => [
         'invalid_type' => 'A(z) :type mezőtípus érvénytelen.',
+        'options_method_invalid_model' => "A(z) ':field' tulajdonság nem passzol a modellhez. Próbálja meghatározni a beállítást, ami megfelelő a(z) :model osztály számára.",
         'options_method_not_exists' => "A(z) :model modell osztálynak egy :method() nevű metódust kell definiálnia a(z) ':field' űrlapmező számára."
     ],
     'widget' => [
@@ -77,6 +78,8 @@ return [
         'make_default' => 'Elrendezés mentése',
         'make_default_confirm' => 'A jelenlegi elrendezés legyen az alapértelmezett?',
         'make_default_success' => 'A jelenlegi elrendezés lett az alapértelmezett.',
+        'collapse_all' => 'Összes becsukása',
+        'expand_all' => 'Összes kibontása',
         'status' => [
             'widget_title_default' => 'Rendszer állapota',
             'update_available' => '{0} frissítés érhető el!|{1} frissítés érhető el!|[2,Inf] frissítés érhető el!',
@@ -97,7 +100,7 @@ return [
             'welcome_to_name' => 'Köszöntjük a(z) :app weboldalon, :name.',
             'first_sign_in' => 'Ez az első alkalom, hogy bejelentkezett.',
             'last_sign_in' => 'Legutóbb bejelentkezés:',
-            'view_access_logs' => 'Hozzáférésnapló megtekintése',
+            'view_access_logs' => 'Hozzáférés napló megtekintése',
             'nice_message' => 'Legyen jó napja!'
         ]
     ],
@@ -162,8 +165,10 @@ return [
         'missing_definition' => "A lista viselkedés nem tartalmaz oszlopot a(z) ':field' mező számára.",
         'missing_parent_definition' => "A lista viselkedés nem tartalmaz definíciót az alábbihoz: ':definition'.",
         'behavior_not_ready' => 'Nem történt meg a lista viselkedés inicializálása. Kérjük ellenőrizze, hogy meghívta-e a makeLists() függvényt a vezérlőben.',
-        'invalid_column_datetime' => "A(z) ':column' oszlopérték nem DateTime objektum, hiányzik egy \$dates hivatkozás a Modellben?",
+        'invalid_column_datetime' => "A(z) ':column' oszlopérték nem DateTime objektum, hiányzik egy \$dates hivatkozás a modellben?",
         'pagination' => 'Megjelenítve: :from-:to / :total',
+        'first_page' => 'Első lap',
+        'last_page' => 'Utolsó lap',
         'prev_page' => 'Előző lap',
         'next_page' => 'Következő lap',
         'refresh' => 'Frissítés',
@@ -231,14 +236,15 @@ return [
         'close' => 'Bezárás',
         'confirm' => 'Megerősítés',
         'reload' => 'Újratöltés',
-        'complete' => 'Teljes',
+        'complete' => 'Befejezés',
         'ok' => 'OK',
         'or' => 'vagy',
         'confirm_tab_close' => 'Valóban be akarja zárni a fület? El fognak veszni a nem mentett módosítások.',
         'behavior_not_ready' => 'Nem történt meg az űrlap viselkedésének inicializálása. Kérjük ellenőrizze, hogy meghívta-e az initForm() függvényt a vezérlőben.',
         'preview_no_files_message' => 'Nincsenek feltöltve fájlok.',
-        'preview_no_record_message' => 'Egy mező sincs kiválasztva.',
-        'select' => 'Válasszon',
+        'preview_no_media_message' => 'Nincs kiválasztva média.',
+        'preview_no_record_message' => 'Nincs kiválasztva mező.',
+        'select' => 'Kiválaszt',
         'select_all' => 'mind',
         'select_none' => 'egyik sem',
         'select_placeholder' => 'válasszon',
@@ -250,7 +256,12 @@ return [
         'return_to_list' => 'Vissza a listához'
     ],
     'recordfinder' => [
-        'find_record' => 'Rekord keresése'
+        'find_record' => 'Tartalom keresése',
+        'cancel' => 'Mégsem'
+    ],
+    'pagelist' => [
+        'page_link' => 'Lapok',
+        'select_page' => '-- válasszon --'
     ],
     'relation' => [
         'missing_config' => "A reláció viselkedésnek nincs semmilyen konfigurációja a következőhöz: ':config'.",
@@ -302,7 +313,8 @@ return [
         'tips' => 'Rendszer konfigurációs tippek',
         'tips_description' => 'Olyan problémák vannak, melyekre figyeljen oda a rendszer megfelelő konfigurálása érdekében.',
         'permissions'  => 'A(z) :name könyvtár vagy alkönyvtárai a PHP számára nem írhatóak. Adjon megfelelő engedélyeket a kiszolgálónak erre a könyvtárra.',
-        'extension' => 'A(z) :name PHP kiterjesztés nincs telepítve. Telepítse ezt a függvénytárat és aktiválja a kiterjesztést.'
+        'extension' => 'A(z) :name PHP kiterjesztés nincs telepítve. Telepítse ezt a függvénytárat és aktiválja a kiterjesztést.',
+        'plugin_missing' => 'A(z) :name bővítményre szükség van, de nincs telepítve. Kérjük, hogy telepítse ezt a bővítményt.'
     ],
     'editor' => [
         'menu_label' => 'Szövegszerkesztő',
@@ -363,8 +375,8 @@ return [
         'menu_keywords' => 'biztonságos bejelentkezés'
     ],
     'branding' => [
-        'menu_label' => 'Admin felület',
-        'menu_description' => 'A kinézetének módosítása és egyedivé tétele.',
+        'menu_label' => 'Kinézet',
+        'menu_description' => 'Az admin felület megjelenésének módosítása.',
         'brand' => 'Márka',
         'logo' => 'Logó',
         'logo_description' => 'A bejelentkezési felületen, illetve egyes oldalak hátterében fog megjelenni.',
@@ -396,7 +408,7 @@ return [
     ],
     'access_log' => [
         'hint' => 'Ez a napló a felhasználók sikeres bejelentkezési kísérleteit listázza ki. A bejegyzéseket :days napig őrzi meg a rendszer.',
-        'menu_label' => 'Hozzáférésnapló',
+        'menu_label' => 'Hozzáférés napló',
         'menu_description' => 'A felhasználók sikeres bejelentkezéseinek megtekintése.',
         'created_at' => 'Időpont',
         'login' => 'Felhasználónév',
@@ -411,22 +423,22 @@ return [
         'date_all' => 'minden időszak'
     ],
     'import_export' => [
-        'upload_csv_file' => '1. CSV fájl feltöltése',
-        'import_file' => 'Fájl importálása',
+        'upload_csv_file' => '1. CSV fájl',
+        'import_file' => 'Fájl feltöltése',
         'first_row_contains_titles' => 'Az első sor tartalmazza az oszlop neveit',
         'first_row_contains_titles_desc' => 'Hagyja bejelölve, amennyiben a CSV fájl első sora az oszlop neveket tartalmazza.',
-        'match_columns' => '2. Fájl oszlopainak párosítása az adatbázis mezőihez',
+        'match_columns' => '2. Oszlopok párosítása',
         'file_columns' => 'Fájl oszlopok',
-        'database_fields' => 'Adatbázis mezők',
-        'set_import_options' => '3. Importálási beállítások',
-        'export_output_format' => '1. Kimenő formátum exportálása',
-        'file_format' => 'Fájl formátum',
+        'database_fields' => 'Adatbázis oszlopok',
+        'set_import_options' => '3. További beállítások',
+        'export_output_format' => '1. CSV fájl',
+        'file_format' => 'Fájl formátuma',
         'standard_format' => 'Szabvány formátum',
         'custom_format' => 'Egyedi formátum',
         'delimiter_char' => 'Határoló karakter',
         'enclosure_char' => 'Elválasztó karakter',
         'escape_char' => 'Végjel karakter',
-        'select_columns' => '2. Oszlopok kiválasztása exportáláshoz',
+        'select_columns' => '2. Oszlopok kiválasztása',
         'column' => 'Oszlop',
         'columns' => 'Oszlopok',
         'set_export_options' => '3. Exportálási beállítások',
@@ -444,8 +456,8 @@ return [
         'upload_valid_csv' => 'Kérjük töltsön fel érvényes CSV fájlt.',
         'drop_column_here' => 'Húzza ide az oszlopot...',
         'ignore_this_column' => 'Figyelmen kívül hagyott oszlop',
-        'processing_successful_line1' => 'A fájl exportálási folyamat sikeresen lezárult!',
-        'processing_successful_line2' => 'A böngésző most átirányítást hajt végre a fájl letöltéséhez.',
+        'processing_successful_line1' => 'Az exportálási folyamat sikeresen lezárult!',
+        'processing_successful_line2' => 'A böngésző elkezdi a fájl letöltését.',
         'export_progress' => 'Exportálás folyamatban',
         'export_error' => 'Exportálási hiba',
         'column_preview' => 'Oszlop előnézete',

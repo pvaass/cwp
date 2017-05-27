@@ -2534,8 +2534,7 @@ if($.oc.foundation===undefined)
 $.oc.foundation={}
 $.oc.foundation._proxyCounter=0
 var Base=function(){this.proxiedMethods={}}
-Base.prototype.dispose=function()
-{for(var key in this.proxiedMethods){this.proxiedMethods[key]=null}
+Base.prototype.dispose=function(){for(var key in this.proxiedMethods){this.proxiedMethods[key]=null}
 this.proxiedMethods=null}
 Base.prototype.proxy=function(method){if(method.ocProxyId===undefined){$.oc.foundation._proxyCounter++
 method.ocProxyId=$.oc.foundation._proxyCounter}
@@ -2616,24 +2615,130 @@ $(container).triggerHandler('dispose-control')}}
 $.oc.foundation.controlUtils=ControlUtils;$(document).on('ajaxBeforeReplace',function(ev){$.oc.foundation.controlUtils.disposeControls(ev.target)})}(window.jQuery);+function($){"use strict";var FlashMessage=function(options,el){var
 options=$.extend({},FlashMessage.DEFAULTS,options),$element=$(el)
 $('body > p.flash-message').remove()
-if($element.length==0){$element=$('<p/>').addClass(options.class).html(options.text)}
+if($element.length==0){$element=$('<p />').addClass(options.class).html(options.text)}
 $element.addClass('flash-message fade')
 $element.attr('data-control',null)
 $element.append('<button type="button" class="close" aria-hidden="true">&times;</button>')
 $element.on('click','button',remove)
 $element.on('click',remove)
 $(document.body).append($element)
-setTimeout(function(){$element.addClass('in')},1)
+setTimeout(function(){$element.addClass('in')},100)
 var timer=window.setTimeout(remove,options.interval*1000)
 function removeElement(){$element.remove()}
 function remove(){window.clearInterval(timer)
 $element.removeClass('in')
 $.support.transition&&$element.hasClass('fade')?$element.one($.support.transition.end,removeElement).emulateTransitionEnd(500):removeElement()}}
-FlashMessage.DEFAULTS={class:'success',text:'Default text',interval:2}
+FlashMessage.DEFAULTS={class:'success',text:'Default text',interval:5}
 if($.oc===undefined)
 $.oc={}
 $.oc.flashMsg=FlashMessage
-$(document).render(function(){$('[data-control=flash-message]').each(function(){$.oc.flashMsg($(this).data(),this)})})}(window.jQuery);(function($){$(document).on('keydown','div.custom-checkbox',function(e){if(e.keyCode==32)
+$(document).render(function(){$('[data-control=flash-message]').each(function(){$.oc.flashMsg($(this).data(),this)})})}(window.jQuery);!function($){"use strict";var Autocomplete=function(element,options){this.$element=$(element)
+this.options=$.extend({},$.fn.autocomplete.defaults,options)
+this.matcher=this.options.matcher||this.matcher
+this.sorter=this.options.sorter||this.sorter
+this.highlighter=this.options.highlighter||this.highlighter
+this.updater=this.options.updater||this.updater
+this.source=this.options.source
+this.$menu=$(this.options.menu)
+this.shown=false
+this.listen()}
+Autocomplete.prototype={constructor:Autocomplete,select:function(){var val=this.$menu.find('.active').attr('data-value')
+this.$element.val(this.updater(val)).change()
+return this.hide()},updater:function(item){return item},show:function(){var offset=this.options.bodyContainer?this.$element.offset():this.$element.position(),pos=$.extend({},offset,{height:this.$element[0].offsetHeight}),cssOptions={top:pos.top+pos.height,left:pos.left}
+if(this.options.matchWidth){cssOptions.width=this.$element[0].offsetWidth}
+this.$menu.css(cssOptions)
+if(this.options.bodyContainer){$(document.body).append(this.$menu)}
+else{this.$menu.insertAfter(this.$element)}
+this.$menu.show()
+this.shown=true
+return this},hide:function(){this.$menu.hide()
+this.shown=false
+return this},lookup:function(event){var items
+this.query=this.$element.val()
+if(!this.query||this.query.length<this.options.minLength){return this.shown?this.hide():this}
+items=$.isFunction(this.source)?this.source(this.query,$.proxy(this.process,this)):this.source
+return items?this.process(items):this},itemValue:function(item){if(typeof item==='object')
+return item.value;return item;},itemLabel:function(item){if(typeof item==='object')
+return item.label;return item;},itemsToArray:function(items){var newArray=[]
+$.each(items,function(value,label){newArray.push({label:label,value:value})})
+return newArray},process:function(items){var that=this
+if(typeof items=='object')
+items=this.itemsToArray(items)
+items=$.grep(items,function(item){return that.matcher(item)})
+items=this.sorter(items)
+if(!items.length){return this.shown?this.hide():this}
+return this.render(items.slice(0,this.options.items)).show()},matcher:function(item){return~this.itemValue(item).toLowerCase().indexOf(this.query.toLowerCase())},sorter:function(items){var beginswith=[],caseSensitive=[],caseInsensitive=[],item,itemValue
+while(item=items.shift()){itemValue=this.itemValue(item)
+if(!itemValue.toLowerCase().indexOf(this.query.toLowerCase()))beginswith.push(item)
+else if(~itemValue.indexOf(this.query))caseSensitive.push(item)
+else caseInsensitive.push(item)}
+return beginswith.concat(caseSensitive,caseInsensitive)},highlighter:function(item){var query=this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g,'\\$&')
+return item.replace(new RegExp('('+query+')','ig'),function($1,match){return'<strong>'+match+'</strong>'})},render:function(items){var that=this
+items=$(items).map(function(i,item){i=$(that.options.item).attr('data-value',that.itemValue(item))
+i.find('a').html(that.highlighter(that.itemLabel(item)))
+return i[0]})
+items.first().addClass('active')
+this.$menu.html(items)
+return this},next:function(event){var active=this.$menu.find('.active').removeClass('active'),next=active.next()
+if(!next.length){next=$(this.$menu.find('li')[0])}
+next.addClass('active')},prev:function(event){var active=this.$menu.find('.active').removeClass('active'),prev=active.prev()
+if(!prev.length){prev=this.$menu.find('li').last()}
+prev.addClass('active')},listen:function(){this.$element.on('focus.autocomplete',$.proxy(this.focus,this)).on('blur.autocomplete',$.proxy(this.blur,this)).on('keypress.autocomplete',$.proxy(this.keypress,this)).on('keyup.autocomplete',$.proxy(this.keyup,this))
+if(this.eventSupported('keydown')){this.$element.on('keydown.autocomplete',$.proxy(this.keydown,this))}
+this.$menu.on('click.autocomplete',$.proxy(this.click,this)).on('mouseenter.autocomplete','li',$.proxy(this.mouseenter,this)).on('mouseleave.autocomplete','li',$.proxy(this.mouseleave,this))},eventSupported:function(eventName){var isSupported=eventName in this.$element
+if(!isSupported){this.$element.setAttribute(eventName,'return;')
+isSupported=typeof this.$element[eventName]==='function'}
+return isSupported},move:function(e){if(!this.shown)return
+switch(e.keyCode){case 9:case 13:case 27:e.preventDefault()
+break
+case 38:e.preventDefault()
+this.prev()
+break
+case 40:e.preventDefault()
+this.next()
+break}
+e.stopPropagation()},keydown:function(e){this.suppressKeyPressRepeat=~$.inArray(e.keyCode,[40,38,9,13,27])
+this.move(e)},keypress:function(e){if(this.suppressKeyPressRepeat)return
+this.move(e)},keyup:function(e){switch(e.keyCode){case 40:case 38:case 16:case 17:case 18:break
+case 9:case 13:if(!this.shown)return
+this.select()
+break
+case 27:if(!this.shown)return
+this.hide()
+break
+default:this.lookup()}
+e.stopPropagation()
+e.preventDefault()},focus:function(e){this.focused=true},blur:function(e){this.focused=false
+if(!this.mousedover&&this.shown)this.hide()},click:function(e){e.stopPropagation()
+e.preventDefault()
+this.select()
+this.$element.focus()},mouseenter:function(e){this.mousedover=true
+this.$menu.find('.active').removeClass('active')
+$(e.currentTarget).addClass('active')},mouseleave:function(e){this.mousedover=false
+if(!this.focused&&this.shown)this.hide()},destroy:function(){this.hide()
+this.$element.removeData('autocomplete')
+this.$menu.remove()
+this.$element.off('.autocomplete')
+this.$menu.off('.autocomplete')
+this.$element=null
+this.$menu=null}}
+var old=$.fn.autocomplete
+$.fn.autocomplete=function(option){return this.each(function(){var $this=$(this),data=$this.data('autocomplete'),options=typeof option=='object'&&option
+if(!data)$this.data('autocomplete',(data=new Autocomplete(this,options)))
+if(typeof option=='string')data[option]()})}
+$.fn.autocomplete.defaults={source:[],items:8,menu:'<ul class="autocomplete dropdown-menu"></ul>',item:'<li><a href="#"></a></li>',minLength:1,bodyContainer:false}
+$.fn.autocomplete.Constructor=Autocomplete
+$.fn.autocomplete.noConflict=function(){$.fn.autocomplete=old
+return this}
+function paramToObj(name,value){if(value===undefined)value=''
+if(typeof value=='object')return value
+try{return JSON.parse(JSON.stringify(eval("({"+value+"})")))}
+catch(e){throw new Error('Error parsing the '+name+' attribute value. '+e)}}
+$(document).on('focus.autocomplete.data-api','[data-control="autocomplete"]',function(e){var $this=$(this)
+if($this.data('autocomplete'))return
+var opts=$this.data()
+if(opts.source){opts.source=paramToObj('data-source',opts.source)}
+$this.autocomplete(opts)})}(window.jQuery);(function($){$(document).on('keydown','div.custom-checkbox',function(e){if(e.keyCode==32)
 e.preventDefault()})
 $(document).on('keyup','div.custom-checkbox',function(e){if(e.keyCode==32){var $cb=$('input',this)
 if($cb.data('oc-space-timestamp')==e.timeStamp)
@@ -2665,12 +2770,10 @@ $el.prop('checked',false)}
 $el.trigger('change')
 return false})})(jQuery);+function($){"use strict";var BalloonSelector=function(element,options){this.$el=$(element)
 this.$field=$('input',this.$el)
-this.options=options||{};var self=this;$('li',this.$el).click(function(){if(self.$el.hasClass('control-disabled'))
-return
+this.options=options||{};var self=this;$('li',this.$el).click(function(){if(self.$el.hasClass('control-disabled')){return}
 $('li',self.$el).removeClass('active')
 $(this).addClass('active')
-self.$field.val($(this).data('value'))
-self.$el.trigger('change')})}
+self.$field.val($(this).data('value')).trigger('change')})}
 BalloonSelector.DEFAULTS={}
 var old=$.fn.balloonSelector
 $.fn.balloonSelector=function(option){return this.each(function(){var $this=$(this)
@@ -2868,7 +2971,7 @@ if(typeof option=='string')data[option].apply(data,args)})}
 $.fn.toolbar.Constructor=Toolbar
 $.fn.toolbar.noConflict=function(){$.fn.toolbar=old
 return this}
-$(document).on('render',function(){$('[data-control=toolbar]').toolbar()})}(window.jQuery);+function($){"use strict";var FilterWidget=function(element,options){var $el=this.$el=$(element);this.options=options||{}
+$(document).on('render',function(){$('[data-control=toolbar]').toolbar()})}(window.jQuery);+function($){"use strict";var FilterWidget=function(element,options){this.$el=$(element);this.options=options||{}
 this.scopeValues={}
 this.$activeScope=null
 this.activeScopeName=null
@@ -3163,7 +3266,7 @@ this.timezone=$('meta[name="backend-timezone"]').attr('content')
 this.appTimezone=$('meta[name="app-timezone"]').attr('content')
 if(!this.appTimezone){this.appTimezone='UTC'}
 if(!this.timezone){this.timezone='UTC'}}}(window.jQuery);(function($){$(document).render(function(){var formatSelectOption=function(state){if(!state.id)
-return state.text;var $option=$(state.element),iconClass=$option.data('icon'),imageSrc=$option.data('image')
+return state.text;var $option=$(state.element),iconClass=state.icon?state.icon:$option.data('icon'),imageSrc=state.image?state.image:$option.data('image')
 if(iconClass)
 return'<i class="select-icon '+iconClass+'"></i> '+state.text
 if(imageSrc)
@@ -3178,6 +3281,10 @@ if($element.hasClass('select-no-search')){extraOptions.minimumResultsForSearch=I
 if($element.hasClass('select-no-dropdown')){extraOptions.dropdownCssClass+=' select-no-dropdown'
 extraOptions.containerCssClass+=' select-no-dropdown'}
 if($element.hasClass('select-hide-selected')){extraOptions.dropdownCssClass+=' select-hide-selected'}
+var source=$element.data('handler');if(source){extraOptions.ajax={transport:function(params,success,failure){var $request=$element.request(source,{data:params.data})
+$request.done(success)
+$request.fail(failure)
+return $request},dataType:'json'}}
 var separators=$element.data('token-separators')
 if(separators){extraOptions.tags=true
 extraOptions.tokenSeparators=separators.split('|')
@@ -3185,8 +3292,10 @@ if($element.hasClass('select-no-dropdown')){extraOptions.selectOnClose=true
 extraOptions.closeOnSelect=false
 $element.on('select2:closing',function(){$('.select2-dropdown.select-no-dropdown:first .select2-results__option--highlighted').removeClass('select2-results__option--highlighted')
 $('.select2-dropdown.select-no-dropdown:first .select2-results__option:first').addClass('select2-results__option--highlighted')})}}
+var placeholder=$element.data('placeholder')
+if(placeholder){extraOptions.placeholder=placeholder}
 $element.select2($.extend({},selectOptions,extraOptions))})})
-$(document).on('disable','select.custom-select',function(event,status){if($(this).data('select2')!=null){$(this).select2('enable',!status)}})})(jQuery);+function($){"use strict";var LoadIndicator=function(element,options){var $el=this.$el=$(element)
+$(document).on('disable','select.custom-select',function(event,status){if($(this).data('select2')!=null){$(this).select2('enable',!status)}})})(jQuery);+function($){"use strict";var LoadIndicator=function(element,options){this.$el=$(element)
 this.options=options||{}
 this.tally=0
 this.show()}
@@ -3234,7 +3343,7 @@ return
 this.counter++
 if(this.counter>1)
 return
-var self=this,$window=$(window);if(event!==undefined&&event.clientY!==undefined){self.indicator.css({left:event.clientX+15,top:event.clientY+15})}
+var self=this;if(event!==undefined&&event.clientY!==undefined){self.indicator.css({left:event.clientX+15,top:event.clientY+15})}
 this.indicator.removeClass('hide')
 $(window).on('mousemove.cursorLoadIndicator',function(e){self.indicator.css({left:e.clientX+15,top:e.clientY+15,})})}
 CursorLoadIndicator.prototype.hide=function(force){if(Modernizr.touch)
@@ -3298,25 +3407,20 @@ this.options.onCheckDocumentClickTarget=null}
 Popover.prototype.show=function(options){var self=this
 var e=$.Event('showing.oc.popover',{relatedTarget:this.$el})
 this.$el.trigger(e,this)
-if(e.isDefaultPrevented())
-return
+if(e.isDefaultPrevented())return
 this.$container=$('<div />').addClass('control-popover')
-if(this.options.containerClass)
-this.$container.addClass(this.options.containerClass)
-if(this.options.useAnimation)
-this.$container.addClass('fade')
+if(this.options.containerClass){this.$container.addClass(this.options.containerClass)}
+if(this.options.useAnimation){this.$container.addClass('fade')}
 var $content=$('<div />').html(this.getContent())
 this.$container.append($content)
-if(this.options.width)
-this.$container.width(this.options.width)
+if(this.options.width){this.$container.width(this.options.width)}
 if(this.options.modal){this.$overlay=$('<div />').addClass('popover-overlay')
 $(document.body).append(this.$overlay)
 if(this.options.highlightModalTarget){this.$el.addClass('popover-highlight')
-this.$el.blur()}}else{this.$overlay=false}
-if(this.options.container)
-$(this.options.container).append(this.$container)
-else
-$(document.body).append(this.$container)
+this.$el.blur()}}
+else{this.$overlay=false}
+if(this.options.container){$(this.options.container).append(this.$container)}
+else{$(document.body).append(this.$container)}
 this.reposition()
 this.$container.addClass('in')
 if(this.$overlay)this.$overlay.addClass('in')
@@ -3336,7 +3440,9 @@ Popover.prototype.reposition=function(){var
 placement=this.calcPlacement(),position=this.calcPosition(placement)
 this.$container.removeClass('placement-center placement-bottom placement-top placement-left placement-right')
 this.$container.css({left:position.x,top:position.y}).addClass('placement-'+placement)}
-Popover.prototype.getContent=function(){return typeof this.options.content=='function'?this.options.content.call(this.$el[0],this):this.options.content}
+Popover.prototype.getContent=function(){if(this.options.contentFrom){return $(this.options.contentFrom).html()}
+if(typeof this.options.content=='function'){return this.options.content.call(this.$el[0],this)}
+return this.options.content}
 Popover.prototype.calcDimensions=function(){var
 documentWidth=$(document).width(),documentHeight=$(document).height(),targetOffset=this.$el.offset(),targetWidth=this.$el.outerWidth(),targetHeight=this.$el.outerHeight()
 return{containerWidth:this.$container.outerWidth()+this.arrowSize,containerHeight:this.$container.outerHeight()+this.arrowSize,targetOffset:targetOffset,targetHeight:targetHeight,targetWidth:targetWidth,spaceLeft:targetOffset.left,spaceRight:documentWidth-(targetWidth+targetOffset.left),spaceTop:targetOffset.top,spaceBottom:documentHeight-(targetHeight+targetOffset.top),spaceHorizontalBottom:documentHeight-targetOffset.top,spaceVerticalRight:documentWidth-targetOffset.left,documentWidth:documentWidth}}
@@ -3383,7 +3489,7 @@ if(this.options.onCheckDocumentClickTarget&&this.options.onCheckDocumentClickTar
 if($.contains(this.$container.get(0),e.target))
 return
 this.hide();}
-Popover.DEFAULTS={placement:'bottom',fallbackPlacement:'bottom',content:'<p>Popover content<p>',width:false,modal:false,highlightModalTarget:false,closeOnPageClick:true,closeOnEsc:true,container:false,containerClass:null,offset:15,useAnimation:false,onCheckDocumentClickTarget:null}
+Popover.DEFAULTS={placement:'bottom',fallbackPlacement:'bottom',content:'<p>Popover content<p>',contentFrom:null,width:false,modal:false,highlightModalTarget:false,closeOnPageClick:true,closeOnEsc:true,container:false,containerClass:null,offset:15,useAnimation:false,onCheckDocumentClickTarget:null}
 var old=$.fn.ocPopover
 $.fn.ocPopover=function(option){var args=arguments;return this.each(function(){var $this=$(this)
 var data=$this.data('oc.popover')
@@ -3578,7 +3684,8 @@ this.defaultDataSetOptions={shadowSize:0}
 var parsedOptions={}
 try{parsedOptions=JSON.parse(JSON.stringify(eval("({"+options.chartOptions+"})")));}catch(e){throw new Error('Error parsing the data-chart-options attribute value. '+e);}
 this.chartOptions=$.extend({},this.chartOptions,parsedOptions)
-this.options=options,this.$el=$(element)
+this.options=options
+this.$el=$(element)
 this.fullDataSet=[]
 this.resetZoomLink=$(options.resetZoomLink)
 this.$el.trigger('oc.chartLineInit',[this])
@@ -3737,7 +3844,7 @@ $.fn.rowLink.Constructor=RowLink
 $.fn.rowLink.noConflict=function(){$.fn.rowLink=old
 return this}
 $(document).render(function(){$('[data-control="rowlink"]').rowLink()})}(window.jQuery);+function($){"use strict";var Base=$.oc.foundation.base,BaseProto=Base.prototype
-var ChangeMonitor=function(element,options){var $el=this.$el=$(element);this.paused=false
+var ChangeMonitor=function(element,options){this.$el=$(element);this.paused=false
 this.options=options||{}
 $.oc.foundation.controlUtils.markDisposable(element)
 Base.call(this)
@@ -3860,7 +3967,7 @@ if(typeof option=='string')data[option].apply(data,args)})}
 $.fn.hotKey.Constructor=HotKey
 $.fn.hotKey.noConflict=function(){$.fn.hotKey=old
 return this}
-$(document).render(function(){$('[data-hotkey]').hotKey()})}(window.jQuery);+function($){"use strict";var LATIN_MAP={'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Æ':'AE','Ç':'C','È':'E','É':'E','Ê':'E','Ë':'E','Ì':'I','Í':'I','Î':'I','Ï':'I','Ð':'D','Ñ':'N','Ò':'O','Ó':'O','Ô':'O','Õ':'O','Ö':'O','Ő':'O','Ø':'O','Ù':'U','Ú':'U','Û':'U','Ü':'U','Ű':'U','Ý':'Y','Þ':'TH','Ÿ':'Y','ß':'ss','à':'a','á':'a','â':'a','ã':'a','ä':'a','å':'a','æ':'ae','ç':'c','è':'e','é':'e','ê':'e','ë':'e','ì':'i','í':'i','î':'i','ï':'i','ð':'d','ñ':'n','ò':'o','ó':'o','ô':'o','õ':'o','ö':'o','ő':'o','ø':'o','ō':'o','œ':'oe','ù':'u','ú':'u','û':'u','ü':'u','ű':'u','ý':'y','þ':'th','ÿ':'y'},LATIN_SYMBOLS_MAP={'©':'(c)'},GREEK_MAP={'α':'a','β':'b','γ':'g','δ':'d','ε':'e','ζ':'z','η':'h','θ':'8','ι':'i','κ':'k','λ':'l','μ':'m','ν':'n','ξ':'3','ο':'o','π':'p','ρ':'r','σ':'s','τ':'t','υ':'y','φ':'f','χ':'x','ψ':'ps','ω':'w','ά':'a','έ':'e','ί':'i','ό':'o','ύ':'y','ή':'h','ώ':'w','ς':'s','ϊ':'i','ΰ':'y','ϋ':'y','ΐ':'i','Α':'A','Β':'B','Γ':'G','Δ':'D','Ε':'E','Ζ':'Z','Η':'H','Θ':'8','Ι':'I','Κ':'K','Λ':'L','Μ':'M','Ν':'N','Ξ':'3','Ο':'O','Π':'P','Ρ':'R','Σ':'S','Τ':'T','Υ':'Y','Φ':'F','Χ':'X','Ψ':'PS','Ω':'W','Ά':'A','Έ':'E','Ί':'I','Ό':'O','Ύ':'Y','Ή':'H','Ώ':'W','Ϊ':'I','Ϋ':'Y'},TURKISH_MAP={'ş':'s','Ş':'S','ı':'i','İ':'I','ç':'c','Ç':'C','ü':'u','Ü':'U','ö':'o','Ö':'O','ğ':'g','Ğ':'G'},RUSSIAN_MAP={'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'j','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sh','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya','А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'Yo','Ж':'Zh','З':'Z','И':'I','Й':'J','К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R','С':'S','Т':'T','У':'U','Ф':'F','Х':'H','Ц':'C','Ч':'Ch','Ш':'Sh','Щ':'Sh','Ъ':'','Ы':'Y','Ь':'','Э':'E','Ю':'Yu','Я':'Ya'},UKRAINIAN_MAP={'Є':'Ye','І':'I','Ї':'Yi','Ґ':'G','є':'ye','і':'i','ї':'yi','ґ':'g'},CZECH_MAP={'č':'c','ď':'d','ě':'e','ň':'n','ř':'r','š':'s','ť':'t','ů':'u','ž':'z','Č':'C','Ď':'D','Ě':'E','Ň':'N','Ř':'R','Š':'S','Ť':'T','Ů':'U','Ž':'Z'},POLISH_MAP={'ą':'a','ć':'c','ę':'e','ł':'l','ń':'n','ó':'o','ś':'s','ź':'z','ż':'z','Ą':'A','Ć':'C','Ę':'E','Ł':'L','Ń':'N','Ó':'O','Ś':'S','Ź':'Z','Ż':'Z'},LATVIAN_MAP={'ā':'a','č':'c','ē':'e','ģ':'g','ī':'i','ķ':'k','ļ':'l','ņ':'n','š':'s','ū':'u','ž':'z','Ā':'A','Č':'C','Ē':'E','Ģ':'G','Ī':'I','Ķ':'K','Ļ':'L','Ņ':'N','Š':'S','Ū':'U','Ž':'Z'},ARABIC_MAP={'أ':'a','ب':'b','ت':'t','ث':'th','ج':'g','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'th','ع':'aa','غ':'gh','ف':'f','ق':'k','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'o','ي':'y'},PERSIAN_MAP={'آ':'a','ا':'a','پ':'p','چ':'ch','ژ':'zh','ک':'k','گ':'gh','ی':'y'},LITHUANIAN_MAP={'ą':'a','č':'c','ę':'e','ė':'e','į':'i','š':'s','ų':'u','ū':'u','ž':'z','Ą':'A','Č':'C','Ę':'E','Ė':'E','Į':'I','Š':'S','Ų':'U','Ū':'U','Ž':'Z'},SERBIAN_MAP={'ђ':'dj','ј':'j','љ':'lj','њ':'nj','ћ':'c','џ':'dz','đ':'dj','Ђ':'Dj','Ј':'j','Љ':'Lj','Њ':'Nj','Ћ':'C','Џ':'Dz','Đ':'Dj'},AZERBAIJANI_MAP={'ç':'c','ə':'e','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u','Ç':'C','Ə':'E','Ğ':'G','İ':'I','Ö':'O','Ş':'S','Ü':'U'},ROMANIAN_MAP={'ă':'a','â':'a','î':'i','ș':'s','ț':'t','Ă':'A','Â':'A','Î':'I','Ș':'S','Ț':'T'},SPECIFIC_MAPS={'de':{'Ä':'AE','Ö':'OE','Ü':'UE','ä':'ae','ö':'oe','ü':'ue'}},ALL_MAPS=[LATIN_MAP,LATIN_SYMBOLS_MAP,GREEK_MAP,TURKISH_MAP,RUSSIAN_MAP,UKRAINIAN_MAP,CZECH_MAP,POLISH_MAP,LATVIAN_MAP,ARABIC_MAP,PERSIAN_MAP,LITHUANIAN_MAP,SERBIAN_MAP,AZERBAIJANI_MAP,ROMANIAN_MAP]
+$(document).render(function(){$('[data-hotkey]').hotKey()})}(window.jQuery);+function($){"use strict";var VIETNAMESE_MAP={'Á':'A','À':'A','Ã':'A','Ả':'A','Ạ':'A','Ắ':'A','Ằ':'A','Ẵ':'A','Ẳ':'A','Ặ':'A','Ấ':'A','Ầ':'A','Ẫ':'A','Ẩ':'A','Ậ':'A','Đ':'D','É':'E','È':'E','Ẽ':'E','Ẻ':'E','Ẹ':'E','Ế':'E','Ề':'E','Ễ':'E','Ể':'E','Ệ':'E','Ó':'O','Ò':'O','Ỏ':'O','Õ':'O','Ọ':'O','Ố':'O','Ồ':'O','Ổ':'O','Ỗ':'O','Ộ':'O','Ớ':'O','Ờ':'O','Ở':'O','Ỡ':'O','Ợ':'O','Í':'I','Ì':'I','Ỉ':'I','Ĩ':'I','Ị':'I','Ú':'U','Ù':'U','Ủ':'U','Ũ':'U','Ụ':'U','Ứ':'U','Ừ':'U','Ử':'U','Ữ':'U','Ự':'U','Ý':'Y','Ỳ':'Y','Ỷ':'Y','Ỹ':'Y','Ỵ':'Y','á':'a','à':'a','ã':'a','ả':'a','ạ':'a','ắ':'a','ằ':'a','ẵ':'a','ẳ':'a','ặ':'a','ấ':'a','ầ':'a','ẫ':'a','ẩ':'a','ậ':'a','đ':'d','é':'e','è':'e','ẽ':'e','ẻ':'e','ẹ':'e','ế':'e','ề':'e','ễ':'e','ể':'e','ệ':'e','ó':'o','ò':'o','ỏ':'o','õ':'o','ọ':'o','ố':'o','ồ':'o','ổ':'o','ỗ':'o','ộ':'o','ớ':'o','ờ':'o','ở':'o','ỡ':'o','ợ':'o','í':'i','ì':'i','ỉ':'i','ĩ':'i','ị':'i','ú':'u','ù':'u','ủ':'u','ũ':'u','ụ':'u','ứ':'u','ừ':'u','ử':'u','ữ':'u','ự':'u','ý':'y','ỳ':'y','ỷ':'y','ỹ':'y','ỵ':'y'},LATIN_MAP={'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Æ':'AE','Ç':'C','È':'E','É':'E','Ê':'E','Ë':'E','Ì':'I','Í':'I','Î':'I','Ï':'I','Ð':'D','Ñ':'N','Ò':'O','Ó':'O','Ô':'O','Õ':'O','Ö':'O','Ő':'O','Ø':'O','Ù':'U','Ú':'U','Û':'U','Ü':'U','Ű':'U','Ý':'Y','Þ':'TH','Ÿ':'Y','ß':'ss','à':'a','á':'a','â':'a','ã':'a','ä':'a','å':'a','æ':'ae','ç':'c','è':'e','é':'e','ê':'e','ë':'e','ì':'i','í':'i','î':'i','ï':'i','ð':'d','ñ':'n','ò':'o','ó':'o','ô':'o','õ':'o','ö':'o','ő':'o','ø':'o','ō':'o','œ':'oe','ù':'u','ú':'u','û':'u','ü':'u','ű':'u','ý':'y','þ':'th','ÿ':'y'},LATIN_SYMBOLS_MAP={'©':'(c)'},GREEK_MAP={'α':'a','β':'b','γ':'g','δ':'d','ε':'e','ζ':'z','η':'h','θ':'8','ι':'i','κ':'k','λ':'l','μ':'m','ν':'n','ξ':'3','ο':'o','π':'p','ρ':'r','σ':'s','τ':'t','υ':'y','φ':'f','χ':'x','ψ':'ps','ω':'w','ά':'a','έ':'e','ί':'i','ό':'o','ύ':'y','ή':'h','ώ':'w','ς':'s','ϊ':'i','ΰ':'y','ϋ':'y','ΐ':'i','Α':'A','Β':'B','Γ':'G','Δ':'D','Ε':'E','Ζ':'Z','Η':'H','Θ':'8','Ι':'I','Κ':'K','Λ':'L','Μ':'M','Ν':'N','Ξ':'3','Ο':'O','Π':'P','Ρ':'R','Σ':'S','Τ':'T','Υ':'Y','Φ':'F','Χ':'X','Ψ':'PS','Ω':'W','Ά':'A','Έ':'E','Ί':'I','Ό':'O','Ύ':'Y','Ή':'H','Ώ':'W','Ϊ':'I','Ϋ':'Y'},TURKISH_MAP={'ş':'s','Ş':'S','ı':'i','İ':'I','ç':'c','Ç':'C','ü':'u','Ü':'U','ö':'o','Ö':'O','ğ':'g','Ğ':'G'},RUSSIAN_MAP={'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'j','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sh','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya','А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'Yo','Ж':'Zh','З':'Z','И':'I','Й':'J','К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R','С':'S','Т':'T','У':'U','Ф':'F','Х':'H','Ц':'C','Ч':'Ch','Ш':'Sh','Щ':'Sh','Ъ':'','Ы':'Y','Ь':'','Э':'E','Ю':'Yu','Я':'Ya'},UKRAINIAN_MAP={'Є':'Ye','І':'I','Ї':'Yi','Ґ':'G','є':'ye','і':'i','ї':'yi','ґ':'g'},CZECH_MAP={'č':'c','ď':'d','ě':'e','ň':'n','ř':'r','š':'s','ť':'t','ů':'u','ž':'z','Č':'C','Ď':'D','Ě':'E','Ň':'N','Ř':'R','Š':'S','Ť':'T','Ů':'U','Ž':'Z'},POLISH_MAP={'ą':'a','ć':'c','ę':'e','ł':'l','ń':'n','ó':'o','ś':'s','ź':'z','ż':'z','Ą':'A','Ć':'C','Ę':'E','Ł':'L','Ń':'N','Ó':'O','Ś':'S','Ź':'Z','Ż':'Z'},LATVIAN_MAP={'ā':'a','č':'c','ē':'e','ģ':'g','ī':'i','ķ':'k','ļ':'l','ņ':'n','š':'s','ū':'u','ž':'z','Ā':'A','Č':'C','Ē':'E','Ģ':'G','Ī':'I','Ķ':'K','Ļ':'L','Ņ':'N','Š':'S','Ū':'U','Ž':'Z'},ARABIC_MAP={'أ':'a','ب':'b','ت':'t','ث':'th','ج':'g','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'th','ع':'aa','غ':'gh','ف':'f','ق':'k','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'o','ي':'y'},PERSIAN_MAP={'آ':'a','ا':'a','پ':'p','چ':'ch','ژ':'zh','ک':'k','گ':'gh','ی':'y'},LITHUANIAN_MAP={'ą':'a','č':'c','ę':'e','ė':'e','į':'i','š':'s','ų':'u','ū':'u','ž':'z','Ą':'A','Č':'C','Ę':'E','Ė':'E','Į':'I','Š':'S','Ų':'U','Ū':'U','Ž':'Z'},SERBIAN_MAP={'ђ':'dj','ј':'j','љ':'lj','њ':'nj','ћ':'c','џ':'dz','đ':'dj','Ђ':'Dj','Ј':'j','Љ':'Lj','Њ':'Nj','Ћ':'C','Џ':'Dz','Đ':'Dj'},AZERBAIJANI_MAP={'ç':'c','ə':'e','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u','Ç':'C','Ə':'E','Ğ':'G','İ':'I','Ö':'O','Ş':'S','Ü':'U'},ROMANIAN_MAP={'ă':'a','â':'a','î':'i','ș':'s','ț':'t','Ă':'A','Â':'A','Î':'I','Ș':'S','Ț':'T'},SPECIFIC_MAPS={'de':{'Ä':'AE','Ö':'OE','Ü':'UE','ä':'ae','ö':'oe','ü':'ue'}},ALL_MAPS=[VIETNAMESE_MAP,LATIN_MAP,LATIN_SYMBOLS_MAP,GREEK_MAP,TURKISH_MAP,RUSSIAN_MAP,UKRAINIAN_MAP,CZECH_MAP,POLISH_MAP,LATVIAN_MAP,ARABIC_MAP,PERSIAN_MAP,LITHUANIAN_MAP,SERBIAN_MAP,AZERBAIJANI_MAP,ROMANIAN_MAP]
 var removeList=["a","an","as","at","before","but","by","for","from","is","in","into","like","of","off","on","onto","per","since","than","the","this","that","to","up","via","with"]
 var locale=$('meta[name="backend-locale"]').attr('content')
 var Downcoder={Initialize:function(){if(Downcoder.map){return;}
@@ -3896,10 +4003,14 @@ if(prefix===undefined)
 prefix=''
 if($el.val().length&&$el.val()!=prefix)
 return
-$el.val(prefix)
-this.$src=$(options.inputPreset,parent),this.$src.on('keyup',function(){if(self.cancelled)
+$el.val(prefix).trigger('oc.inputPreset.afterUpdate')
+this.$src=$(options.inputPreset,parent)
+this.$src.on('keyup',function(){if(self.cancelled)
 return
-$el.val(prefix+self.formatValue())})
+$el.val(prefix+self.formatValue()).trigger('oc.inputPreset.afterUpdate')})
+this.$src.on('paste',function(){if(self.cancelled)
+return
+setTimeout(function(){$el.val(prefix+self.formatValue()).trigger('oc.inputPreset.afterUpdate')},100)})
 this.$el.on('change',function(){self.cancelled=true})}
 InputPreset.prototype.formatNamespace=function(){var value=toCamel(this.$src.val())
 return value.substr(0,1).toUpperCase()+value.substr(1)}
@@ -3999,7 +4110,7 @@ $editorArea.codeEditor('getEditorObject').insert(this.textValue)}
 DragValue.prototype.handleClickContentEditable=function(){var sel,range,html;if(window.getSelection){sel=window.getSelection();if(sel.getRangeAt&&sel.rangeCount){range=sel.getRangeAt(0);range.deleteContents();range.insertNode(document.createTextNode(this.textValue));}}
 else if(document.selection&&document.selection.createRange){document.selection.createRange().text=this.textValue;}}
 DragValue.prototype.insertAtCaret=function(el,insertValue){if(document.selection){el.focus()
-sel=document.selection.createRange()
+var sel=document.selection.createRange()
 sel.text=insertValue
 el.focus()}
 else if(el.selectionStart||el.selectionStart=='0'){var startPos=el.selectionStart,endPos=el.selectionEnd,scrollTop=el.scrollTop
@@ -4199,8 +4310,8 @@ data[option].apply(data,methodArgs)}})}
 $.fn.dragScroll.Constructor=DragScroll
 $.fn.dragScroll.noConflict=function(){$.fn.dragScroll=old
 return this}}(window.jQuery);+function($){"use strict";var Tab=function(element,options){var $el=this.$el=$(element);this.options=options||{}
-this.$tabsContainer=$('.nav-tabs',$el)
-this.$pagesContainer=$('.tab-content',$el)
+this.$tabsContainer=$('.nav-tabs:first',$el)
+this.$pagesContainer=$('.tab-content:first',$el)
 this.tabId='tabs'+$el.parents().length+Math.round(Math.random()*1000);if(this.options.closable!==undefined&&this.options.closable!==false)
 $el.attr('data-closable','')
 this.init()}
@@ -6308,7 +6419,7 @@ BaseProto.dispose.call(this)}
 ValidationSet.prototype.disposeValidators=function(){for(var i=0,len=this.validators.length;i<len;i++){this.validators[i].dispose()}}
 ValidationSet.prototype.throwError=function(errorMessage){throw new Error(errorMessage+' Property: '+this.propertyName)}
 ValidationSet.prototype.createValidators=function(){if((this.options.required!==undefined||this.options.validationPattern!==undefined||this.options.validationMessage!==undefined)&&this.options.validation!==undefined){this.throwError('Legacy and new validation syntax should not be mixed.')}
-if(this.options.required!==undefined){var validator=new $.oc.inspector.validators.required({message:this.options.validationMessage})
+if(this.options.required!==undefined&&this.options.required){var validator=new $.oc.inspector.validators.required({message:this.options.validationMessage})
 this.validators.push(validator)}
 if(this.options.validationPattern!==undefined){var validator=new $.oc.inspector.validators.regex({message:this.options.validationMessage,pattern:this.options.validationPattern})
 this.validators.push(validator)}
@@ -6542,7 +6653,8 @@ $list.on('dragenter','> li',this.proxy(this.onDragEnter))
 $list.on('dragleave','> li',this.proxy(this.onDragLeave))
 $list.on('drop','> li',this.proxy(this.onDragDrop))
 $list.on('dragend','> li',this.proxy(this.onDragEnd))}
-ListSortable.prototype.unregisterListHandlers=function(list){$list.off('dragstart','> li',this.proxy(this.onDragStart))
+ListSortable.prototype.unregisterListHandlers=function(list){var $list=$(list)
+$list.off('dragstart','> li',this.proxy(this.onDragStart))
 $list.off('dragover','> li',this.proxy(this.onDragOver))
 $list.off('dragenter','> li',this.proxy(this.onDragEnter))
 $list.off('dragleave','> li',this.proxy(this.onDragLeave))
@@ -6559,8 +6671,7 @@ this.unregisterHandlers()
 this.options=null
 this.lists=[]
 BaseProto.dispose.call(this)}
-ListSortable.prototype.elementBelongsToManagedList=function(element){for(var i=this.lists.length-1;i>=0;i--){var list=this.lists[i],children=[].slice.call(list.children)
-if(children.indexOf(element)!==-1){return true}}
+ListSortable.prototype.elementBelongsToManagedList=function(element){for(var i=this.lists.length-1;i>=0;i--){var list=this.lists[i],children=[].slice.call(list.children);if(children.indexOf(element)!==-1){return true}}
 return false}
 ListSortable.prototype.isDragStartAllowed=function(element){return true}
 ListSortable.prototype.elementIsPlaceholder=function(element){return element.getAttribute('class')==='list-sortable-placeholder'}
