@@ -59,7 +59,7 @@ class Calendar extends ComponentBase
                 // Print the next 10 events on the user's calendar.
                 $calendarId = 'primary';
                 $optParams = array(
-                    'maxResults' => 10,
+                    'maxResults' => 1000,
                     'orderBy' => 'startTime',
                     'singleEvents' => TRUE,
                     'timeMin' => date('c'),
