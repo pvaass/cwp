@@ -1,47 +1,4 @@
-<style type="text/css">
-    .inschrijven-item {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2)
-    }
 
-    #portfolio .portfolio-item {
-        width: 49.9%;
-    }
-
-    #portfolio {
-        padding-top: 35px;
-    }
-
-    .inschrijven-tijden {
-        padding: 0;
-        list-style-type: none;
-    }
-
-    .inschrijven-tijden label, .inschrijven-tijden label li {
-        width: 100%;
-        text-align: left;
-    }
-
-    .inschrijven-tijden label li {
-        padding: 10px;
-        padding-left: 40px;
-        margin-bottom: 10px;
-    }
-
-    .zwembad-disable {
-        opacity: 0.4;
-    }
-
-    .inschrijven-zwembad {
-        cursor: pointer;
-    }
-    .tooltip-inner{
-        border-radius: 0;
-        background-color: #45aed6;
-    }
-    .tooltip-arrow {
-        border-top-color:  #45aed6 !important;
-    }
-</style>
 {#<form role="form"#}
       {#method="post"#}
       {#data-request="{{ __SELF__ }}::onSave">#}
@@ -55,21 +12,37 @@
     {#</div>#}
 {#</form>#}
 
-  {% set validZwembaden = [] %}
-  {% for zwembad in zwembaden %}
-      {% for type in zwembad.fields %}
-          {% if type.name == zwembad_type %}
-              {% set validZwembaden = validZwembaden|merge([zwembad.name]) %}
-          {% endif %}
-      {% endfor %}
-  {% endfor %}
+{% set validZwembaden = [] %}
+{% for zwembad in zwembaden %}
+    {% for type in zwembad.fields %}
+        {% if type.name == zwembad_type %}
+            {% set validZwembaden = validZwembaden|merge([zwembad.name]) %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+
+{#<div class="row guide">#}
+    {#<div class="col-md-4 guide-done">#}
+        {#<span class="guide-num">1</span>#}
+        {#<span class="guide-desc">Kies uw zwemtype</span>#}
+    {#</div>#}
+    {#<div class="col-md-4 guide-active">#}
+        {#<span class="guide-num">2</span>#}
+        {#<span class="guide-desc">Kies een zwembad</span>#}
+    {#</div>#}
+    {#<div class="col-md-4">#}
+        {#<span class="guide-num">3</span>#}
+        {#<span class="guide-desc">Uw gegevens</span>#}
+    {#</div>#}
+{#</div>#}
+
 <h2 class="text-center">Top! Kies nu een zwembad en een tijd</h2>
 <section id="portfolio" style="background: transparent">
     <div class="container">
         <div class="row">
             <div class="col-md-6" style="border-right: 1px solid rgba(0,0,0,0.2)">
                 <div class="text-center">
-                    <ul class="portfolio-filter">
+                    <ul class="portfolio-filter hidden-xs">
                         <li><a class="active" href="#" data-filter="*">Alle Zwembaden</a></li>
                         {% set filtersReg = [] %}
                         {% for zwembad in zwembaden %}
@@ -84,7 +57,7 @@
                 <div class="portfolio-items">
                     {% for zwembad in zwembaden %}
                         <div
-                                class="inschrijven-zwembad portfolio-item"
+                                class="inschrijven-zwembad portfolio-item {{ zwembad.location }}"
                                 data-zwembad="{{ zwembad.name }}"
                                 {{ zwembad.name in validZwembaden ? '' : 'data-toggle="tooltip" title="Voor dit type zwemmen hebben we geen lessen in dit zwembad"' }}
                         >
@@ -102,44 +75,54 @@
                 </div>
             </div>
             <div class="col-md-6">
+                <div class="inschrijven-zwembad-tijden" data-zwembad="">
+                    Selecteer eerst een zwembad
+                </div>
 
-                {% for zwembad in zwembaden %}
-                    {% if zwembad.name in validZwembaden %}
-                        <div class="inschrijven-zwembad-tijden" style="display:none" data-zwembad="{{ zwembad.name }}">
-                            <label>Zwembad</label>
-                            <div class="zwembad-preview row">
-                                <div class="col-md-6">
-                                    <img class="img-responsive" src="{{ zwembad.image|theme }}"
-                                         alt="{{ zwembad.name }} - {{ zwembad.description }}">
-                                </div>
+                <form data-request-validate method="POST" data-request="{{ __SELF__ }}::onZwembadSubmit" data-request-success="toTop()">
+                    <input type="hidden" name="type" value="{{ zwembad_type }}">
+                    {% for zwembad in zwembaden %}
+                        {% if zwembad.name in validZwembaden %}
+                            <div class="inschrijven-zwembad-tijden" style="display:none"
+                                 data-zwembad="{{ zwembad.name }}">
+                                <label>Zwembad</label>
+                                <div class="zwembad-preview row">
+                                    <div class="col-xs-6">
+                                        <img class="img-responsive" src="{{ zwembad.image|theme }}"
+                                             alt    ="{{ zwembad.name }} - {{ zwembad.description }}">
+                                    </div>
 
-                                <div class="col-md-6 zwembad-preview-info">
-                                    <h3>{{ zwembad.name }}</h3>
-                                    {{ zwembad.description }}
+                                    <div class="col-xs-6 zwembad-preview-info">
+                                        <h3>{{ zwembad.name }}</h3>
+                                        {{ zwembad.description }}
+                                    </div>
                                 </div>
+                                <br/><br/>
+                                <label>Tijd</label>
+                                <br/>
+                                <div class="inschrijven-tijden funkyradio">
+                                    {% for type in zwembad.fields %}
+                                        {% if type.name == zwembad_type %}
+                                            {% for time in type.fields %}
+                                                <div class="funkyradio-primary">
+                                                    <input required type="radio"
+                                                           value="{{ type.name }}, {{ zwembad.name }}, {{ time }}"
+                                                           name="zwembad-info" id="{{ time }}" checked/>
+                                                    <label for="{{ time }}">{{ time }}</label>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="alert alert-danger" data-validate-error>
+                                </div>
+                                <button class="btn btn-primary" style="float:right;margin-top:10px;" type="submit">
+                                    Volgende
+                                </button>
                             </div>
-                            <br/><br/>
-                            <label>Tijd</label>
-                            <br/>
-                            <ul class="inschrijven-tijden">
-                                {% for type in zwembad.fields %}
-                                    {% if type.name == zwembad_type %}
-                                        {% for time in type.fields %}
-                                            <label>
-                                                <li class="btn btn-primary checkbox">
-                                                    <input type="checkbox"/>
-                                                    {{ time }}
-                                                </li>
-                                            </label>
-                                        {% endfor %}
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-
-
+                        {% endif %}
+                    {% endfor %}
+                </form>
             </div>
 
         </div>

@@ -22,9 +22,21 @@ class ZwembadPicker extends FormWidgetBase
 
     public function render()
     {
-        $this->vars['name'] = $this->formField->getName();
-        $this->vars['value'] = $this->getLoadValue();
-        $this->vars['zwembaden'] = InschrijfSettings::get('zwembaden');
+        $compat = json_decode($this->formField->value, true);
+
+        if(is_array($compat)) {
+            return $this->makePartial('zwembadpicker_compat', [
+                'field' => $this->formField,
+                'value' => $compat['type'] . ", " . $compat['bad'] . ", " . $compat['dag']
+            ]);
+        }
+        if(!empty($this->formField->value)) {
+            return $this->makePartial('zwembadpicker_compat', [
+                'field' => $this->formField,
+                'value' => $this->formField->value
+            ]);
+        }
+
         return $this->makePartial('zwembadpicker');
     }
 }

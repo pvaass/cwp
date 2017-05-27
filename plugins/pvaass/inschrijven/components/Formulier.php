@@ -2,6 +2,7 @@
 
 
 use Cms\Classes\ComponentBase;
+use October\Rain\Exception\ValidationException;
 use pvaass\Inschrijven\Controllers\Inschrijvingen;
 use pvaass\Inschrijven\Models\InschrijfSettings;
 use pvaass\Inschrijven\Models\Inschrijving;
@@ -11,51 +12,7 @@ use Response;
 class Formulier extends ComponentBase
 {
 
-    /**
-     * Returns information about this component, including name and description.
-     */
-    public function componentDetails()
-    {
-        return [
-            'name' => 'Inschrijf formulier',
-            'description' => 'Het CWP inschrijf formulier'
-        ];
-    }
-
-//    /**
-//     * Renders a requested partial in context of this component,
-//     * see Cms\Classes\Controller@renderPartial for usage.
-//     */
-//    public function renderPartial()
-//    {
-//        $this->controller->setComponentContext($this);
-//        $result = call_user_func_array([$this->controller, 'renderPartial'], func_get_args());
-//        $this->controller->setComponentContext(null);
-//
-//        return $result;
-//    }
-
-
-    public function onRun()
-    {
-
-
-        // Build a back-end form with the context of ‘frontend’
-        $formController = new Inschrijvingen();
-        $formController->create('frontend');
-        // Append the formController to the page
-        $this->page['form'] = $formController;
-
-        //$this->addCss('/modules/system/assets/ui/storm.css?v1', 'core');
-
-    }
-
-
-    public function onRender()
-    {
-
-        //$zwembaden = InschrijfSettings::get('zwembaden');
-        $zwembaden = [
+    const ZWEMBADEN = [
             [
                 'name' => "Het Zuiderpark",
                 'description' => 'Moerwijk',
@@ -80,6 +37,12 @@ class Formulier extends ComponentBase
                         'name' => 'volwassen-rec',
                         'fields' => [
                             'Maandag 19:15 - 20:00 (conditie)'
+                        ]
+                    ],
+                    [
+                        'name' => 'waterpolo',
+                        'fields' => [
+                            'Alle uren'
                         ]
                     ]
                 ]
@@ -166,6 +129,12 @@ class Formulier extends ComponentBase
                         'fields' => [
                             'Zaterdag 17:00 -17:45'
                         ]
+                    ],
+                    [
+                        'name' => 'waterpolo',
+                        'fields' => [
+                            'Alle uren'
+                        ]
                     ]
                 ]
             ],
@@ -221,15 +190,87 @@ class Formulier extends ComponentBase
                         ]
                     ]
                 ]
+            ],
+            [
+                'name' => 'Het Hofbad',
+                'description' => 'Ypenburg',
+                'location' => 'denhaag',
+                'location_label' => 'Den Haag',
+                'image' => 'assets/images/portfolio/Hofbad_kl.jpg',
+                'fields' => [
+                    [
+                        'name' => 'waterpolo',
+                        'fields' => [
+                            'Alle uren'
+                        ]
+                    ]
+                ]
+            ],
+
+            [
+                'name' => 'De Schilp',
+                'description' => 'Presidentenbuurt',
+                'location' => 'rijswijk',
+                'location_label' => 'Rijswijk',
+                'image' => 'assets/images/portfolio/XSchilp3_klein.jpg',
+                'fields' => [
+                    [
+                        'name' => 'waterpolo',
+                        'fields' => [
+                            'Alle uren'
+                        ]
+                    ]
+                ]
             ]
         ];
 
 
+    /**
+     * Returns information about this component, including name and description.
+     */
+    public function componentDetails()
+    {
+        return [
+            'name' => 'Inschrijf formulier',
+            'description' => 'Het CWP inschrijf formulier'
+        ];
+    }
+
+//    /**
+//     * Renders a requested partial in context of this component,
+//     * see Cms\Classes\Controller@renderPartial for usage.
+//     */
+//    public function renderPartial()
+//    {
+//        $this->controller->setComponentContext($this);
+//        $result = call_user_func_array([$this->controller, 'renderPartial'], func_get_args());
+//        $this->controller->setComponentContext(null);
+//
+//        return $result;
+//    }
+
+
+    public function onRun()
+    {
+
+
+        $this->addJs('assets/javascript/zwembaden.js');
+        //$this->addCss('/modules/system/assets/ui/storm.css?v1', 'core');
+
+    }
+
+
+    public function onRender()
+    {
+
+        //$zwembaden = InschrijfSettings::get('zwembaden');
+
+
         //assets/images/portfolio/XSchilp3_klein.jpg
         //'assets/images/portfolio/Hofbad_kl.jpg'
-
-        $this->page['zwembaden'] = $zwembaden;
-        $this->page['zwembad_type'] = 'kind';
+//
+//        $this->page['zwembaden'] = $zwembaden;
+//        $this->page['zwembad_type'] = 'kind';
 
         $this->addJs('assets/javascript/zwembaden.js');
 
@@ -243,5 +284,66 @@ class Formulier extends ComponentBase
     {
         Inschrijving::create(post('Inschrijving'));
         return Redirect::to('inschrijven/success');
+    }
+
+    public function onTypeSubmit($back = true)
+    {
+        return [
+            "#inschrijven-content" => $this->renderPartial("inschrijfFormulier::zwembad-picker",
+                [
+                    'zwembaden' => self::ZWEMBADEN,
+                    'zwembad_type' => \Request::get('type')
+                ]
+            ),
+            '.guide' => $this->renderPartial("inschrijfFormulier::guide", [
+                'selected' => 2
+            ])
+        ];
+    }
+
+    public function onZwembadSubmit($back = false) {
+        $zwembad = \Request::get('zwembad-info');
+
+        if(empty($zwembad)) {
+            throw new ValidationException(['name' => 'Je moet eerst een zwembad en een tijd selecteren.']);
+        }
+
+        // Build a back-end form with the context of ‘frontend’
+        $formController = new Inschrijvingen();
+        $formController->create('frontend');
+
+        return [
+            "#inschrijven-content" => $this->renderPartial("inschrijfFormulier::form", [
+                'form' => $formController,
+                'zwembad_type' => \Request::get('type'),
+                'zwembad_all' => \Request::get('zwembad-info')
+            ]),
+            '.guide' => $this->guide(3)
+        ];
+    }
+
+
+    public function onBack() {
+        $back = \Request::get('back');
+
+        if($back == 1) {
+            return [
+                "#inschrijven-content" => $this->renderPartial("inschrijfFormulier::type"),
+                '.guide' => $this->guide(1)
+            ];
+        }
+
+        if($back == 2) {
+            return $this->onTypeSubmit(true);
+        }
+        if($back == 3) {
+            return $this->onZwembadSubmit(true);
+        }
+    }
+
+    private function guide($selected) {
+        return $this->renderPartial("inschrijfFormulier::guide", [
+            'selected' => $selected
+        ]);
     }
 }

@@ -43,6 +43,7 @@ class Inschrijvingen extends \Backend\Classes\Controller
         BackendMenu::setContextSideMenu('new_inschrijving');
         $this->bodyClass = 'compact-container';
         $return = $this->asExtension('FormController')->preview($recordId, $context);
+
         return $return;
     }
 

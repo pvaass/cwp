@@ -21,7 +21,7 @@ fields:
     options:
       man: Man
       vrouw: Vrouw
-  geboortedatum:
+  geboortedatum_string:
     label: Geboortedatum (dd/mm/yyyy)
     type: text
     required: true
@@ -63,8 +63,7 @@ fields:
     required: true
     placeholder: Uw telefoonnummer
   zwembad:
-    hidden: true
-    label: Ik wil op de volgende locatie zwemmen
+    label: Tijd
     type: pvaass\Inschrijven\FormWidgets\ZwembadPicker
     required: true
   zwemdiplomas:
@@ -83,10 +82,9 @@ fields:
     label: Opmerkingen
     type: textarea
   algemene_voorwaarden:
-    cssClass: hide-label
     label: Ik accepteer de algemene voorwaarden
     commentHtml: true
     commentAbove: U dient <a href="inschrijven-algemene-voorwaarden">de algemene voorwaarden</a> te accepteren om uzelf in te schrijven
-    type: pvaass\Inschrijven\FormWidgets\BetterCheckbox
+    type: checkbox
     default: false
     required: true

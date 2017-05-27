@@ -14,4 +14,4 @@ update:
     redirectClose: pvaass/inschrijven/inschrijvingen
 
 preview:
-    redirectClose: pvaass/inschrijven/inschrijvingen
+    form: ~/plugins/pvaass/inschrijven/models/inschrijving/fields_preview.yaml

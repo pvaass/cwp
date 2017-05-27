@@ -27,18 +27,55 @@
 //     });
 // });
 
+function registerZwembadPicker() {
+    var $portfolio_selectors = $('.portfolio-filter >li>a');
+    var $portfolio = $('.portfolio-items');
+    $portfolio.isotope({
+        itemSelector: '.portfolio-item',
+        layoutMode: 'fitRows'
+    });
 
-$ = jQuery;
-$(".inschrijven-zwembad[data-toggle]").tooltip();
-$(".inschrijven-zwembad").on('click', function () {
-    if ($(this).children().hasClass('zwembad-disable')) {
-        return;
+    $portfolio_selectors.on('click', function () {
+        $portfolio_selectors.removeClass('active');
+        $(this).addClass('active');
+        var selector = $(this).attr('data-filter');
+        $portfolio.isotope({filter: selector});
+        return false;
+    });
+
+    $ = jQuery;
+    $(".inschrijven-zwembad[data-toggle]").tooltip();
+
+    $(".inschrijven-zwembad").on('click', function () {
+        if ($(this).children().hasClass('zwembad-disable')) {
+            return;
+        }
+        var zwembad = $(this).data("zwembad");
+        $('.inschrijven-zwembad-tijden[data-zwembad]').hide();
+
+        $("input[type=radio]").attr('checked', false);
+
+        console.log($('[data-zwembad="' + zwembad + '"] input[type=radio]').first());
+        $('[data-zwembad="' + zwembad + '"] input[type=radio]').first().prop('checked', true);
+        $('[data-zwembad="' + zwembad + '"]').show();
+
+        console.log($('#main-menu').height());
+        $('html, body').animate({scrollTop: $('.inschrijven-zwembad-tijden[data-zwembad="' + zwembad + '"]').offset().top - 20 - $('#main-menu').height()}, 300);
+    });
+}
+
+function toTop() {
+    $('html, body').animate({scrollTop: $('.guide').offset().top - 20 - $('#main-menu').height()}, 1);
+}
+
+var formSubmitting = false;
+var setFormSubmitting = function() { formSubmitting = true; };
+window.addEventListener("beforeunload", function (e) {
+    if (formSubmitting) {
+        return undefined;
     }
-    var zwembad = $(this).data("zwembad");
-    $('.inschrijven-zwembad-tijden[data-zwembad]').hide();
+    var confirmationMessage = 'Je hebt de inschrijving nog niet helemaal voltooid. Weet je zeker dat je de pagina wilt verlaten?';
 
-    $(".inschrijven-tijden input[type=checkbox]").attr('checked', false);
-
-    $('[data-zwembad="' + zwembad + '"]').show();
-    console.log(zwembad);
+    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
 });

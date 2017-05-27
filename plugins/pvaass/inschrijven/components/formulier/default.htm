@@ -1,86 +1,189 @@
 <style type="text/css">
+    .form-widget {
+        overflow: hidden;
+    }
+
     .inschrijven-item {
         border-bottom: 1px solid rgba(0,0,0,0.2)
     }
+    .inschrijven-item {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2)
+    }
+
+    #portfolio .portfolio-item {
+        width: 49.9%;
+    }
+
+    #portfolio {
+        padding-top: 35px;
+    }
+
+    .inschrijven-tijden {
+        padding: 0;
+        list-style-type: none;
+    }
+
+    .inschrijven-tijden label, .inschrijven-tijden label li {
+        width: 100%;
+        text-align: left;
+    }
+
+    .inschrijven-tijden label li {
+        padding: 10px;
+        padding-left: 40px;
+        margin-bottom: 10px;
+    }
+
+    .zwembad-disable {
+        opacity: 0.4;
+    }
+
+    .inschrijven-zwembad {
+        cursor: pointer;
+    }
+
+    .tooltip-inner {
+        border-radius: 0;
+        background-color: #45aed6;
+    }
+
+    .tooltip-arrow {
+        border-top-color: #45aed6 !important;
+    }
+
+    .funkyradio div {
+        clear: both;
+        overflow: hidden;
+    }
+
+    .funkyradio label {
+        width: 100%;
+        border-radius: 3px;
+        border: 1px solid #D1D3D4;
+        font-weight: normal;
+    }
+
+    .funkyradio input[type="radio"]:empty,
+    .funkyradio input[type="checkbox"]:empty {
+        display: none;
+    }
+
+    .funkyradio input[type="radio"]:empty ~ label,
+    .funkyradio input[type="checkbox"]:empty ~ label {
+        position: relative;
+        line-height: 2.5em;
+        margin-bottom: 2em;
+        padding-left: 3em;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .funkyradio input[type="radio"]:empty ~ label:before,
+    .funkyradio input[type="checkbox"]:empty ~ label:before {
+        position: absolute;
+        display: block;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        content: '';
+        width: 2.5em;
+        background: #D1D3D4;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .funkyradio input[type="radio"]:hover:not(:checked) ~ label,
+    .funkyradio input[type="checkbox"]:hover:not(:checked) ~ label {
+        color: #888;
+    }
+
+    .funkyradio input[type="radio"]:hover:not(:checked) ~ label:before,
+    .funkyradio input[type="checkbox"]:hover:not(:checked) ~ label:before {
+        content: '\2714';
+        text-indent: .9em;
+        color: #C2C2C2;
+    }
+
+    .funkyradio input[type="radio"]:checked ~ label,
+    .funkyradio input[type="checkbox"]:checked ~ label {
+        color: #777;
+    }
+
+    .funkyradio input[type="radio"]:checked ~ label:before,
+    .funkyradio input[type="checkbox"]:checked ~ label:before {
+        content: '\2714';
+        text-indent: .9em;
+        color: #333;
+        background-color: #ccc;
+    }
+
+    .funkyradio input[type="radio"]:focus ~ label:before,
+    .funkyradio input[type="checkbox"]:focus ~ label:before {
+        box-shadow: 0 0 0 3px #999;
+    }
+
+    .funkyradio-primary input[type="radio"]:checked ~ label:before,
+    .funkyradio-primary input[type="checkbox"]:checked ~ label:before {
+        color: #fff;
+        background-color: #337ab7;
+    }
+
+    .guide {
+        margin-bottom: 20px;
+    }
+    .guide-num, .guide-desc {
+        display: block;
+        text-align: center;
+    }
+
+    .guide-num {
+        font-size: 2em;
+        margin: 0 auto;
+        margin-bottom: 5px;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        border: 4px solid #D1D3D4;
+        background: #D1D3D4;
+        color: white;
+        padding: 10px;
+    }
+
+    .guide-done .guide-num {
+        background: darkolivegreen;
+        border-color: darkolivegreen;
+    }
+    .guide-active .guide-num {
+        background: #337ab7;
+        border-color: #337ab7;
+    }
+
+    .hide-label label {
+        display: none;
+    }
+    .hide-label .checkbox label {
+        display: inline-block;
+    }
 </style>
-{#<form role="form"#}
-      {#method="post"#}
-      {#data-request="{{ __SELF__ }}::onSave">#}
 
-    {#{{ form.formRender()|raw }}#}
-
-    {#<div class="form-group">#}
-        {#<button style="text-align: center;" class="btn btn-primary btn-block btn-lg" type="submit" value="register">#}
-            {#Schrijf je in!#}
-        {#</button>#}
-    {#</div>#}
-{#</form>#}
-
-<h2 class="text-center" >Waar wilt u zich voor inschrijven?</h2>
-<div class="row">
-    <div class="col-md-6 col-md-offset-3 inschrijven-item">
-        <div class="media service-box wow fadeInLeft animated">
-            <div class="pull-left">
-                <i class="fa cwp-swimming"></i>
-            </div>
-            <div class="media-body">
-                <a href="{{ 'inschrijven/kinderen'|app }}">
-                    <div class="">
-                        <h4 class="media-heading">Zwemles voor kinderen</h4>
-                        <p>Jong of oud, man of vrouw. Zwemles is voor iedereen!<br>CWP geeft zwemles in Den Haag, Rijswijk en Scheveningen.
-                        </p>
-                    </div>
-                </a>
-            </div>
-        </div>
+<div class="row guide">
+    <div class="col-md-4 guide-active">
+        <span class="guide-num">1</span>
+        <span class="guide-desc">Kies uw zwemtype</span>
     </div>
-    <div class="col-md-6 col-md-offset-3 inschrijven-item">
-        <div class="media service-box wow fadeInLeft animated">
-            <div class="pull-left">
-                <i class="fa cwp-swimming"></i>
-            </div>
-            <div class="media-body">
-                <a href="http://localhost/zwemles">
-                    <div class="">
-                        <h4 class="media-heading">Zwemles voor volwassenen</h4>
-                        <p>Jong of oud, man of vrouw. Zwemles is voor iedereen!<br>CWP geeft zwemles in Den Haag, Rijswijk en Scheveningen.
-                        </p>
-                    </div>
-                </a>
-            </div>
-        </div>
+    <div class="col-md-4">
+        <span class="guide-num">2</span>
+        <span class="guide-desc">Kies een zwembad</span>
     </div>
-    <div class="col-md-6 col-md-offset-3 inschrijven-item">
-        <div class="media service-box wow fadeInLeft animated">
-            <div class="pull-left">
-                <i class="fa cwp-man"></i>
-            </div>
-            <div class="media-body">
-                <a href="http://localhost/zwemles">
-                    <div class="">
-                        <h4 class="media-heading">Meer Bewegen voor Ouderen</h4>
-                        <p>Jong of oud, man of vrouw. Zwemles is voor iedereen!<br>CWP geeft zwemles in Den Haag, Rijswijk en Scheveningen.
-                        </p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-md-offset-3 inschrijven-item">
-        <div class="media service-box wow fadeInLeft animated">
-            <div class="pull-left">
-                <i class="fa cwp-ball"></i>
-            </div>
-            <div class="media-body">
-                <a href="http://localhost/zwemles">
-                    <div class="">
-                        <h4 class="media-heading">Waterpolo</h4>
-                        <p>Jong of oud, man of vrouw. Zwemles is voor iedereen!<br>CWP geeft zwemles in Den Haag, Rijswijk en Scheveningen.
-                        </p>
-                    </div>
-                </a>
-            </div>
-        </div>
+    <div class="col-md-4">
+        <span class="guide-num">3</span>
+        <span class="guide-desc">Uw gegevens</span>
     </div>
 </div>
+<div id="inschrijven-content">
 
+{% partial __SELF__~"::type" %}
+
+</div>
