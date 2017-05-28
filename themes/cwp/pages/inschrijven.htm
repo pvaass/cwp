@@ -3,12 +3,12 @@ url = "/inschrijven/:success?"
 layout = "single-page"
 meta_title = "Inschrijven voor Zwemles, Waterpolo of MBVO"
 is_hidden = 0
+robot_index = "index"
+robot_follow = "follow"
 child_of = "home"
 hide_crumb = 0
 remove_crumb_trail = 0
 crumb_disabled = 0
-robot_index = "index"
-robot_follow = "follow"
 ==
 {% put hero %}
 {% if this.param.success == 'success' %}
@@ -16,7 +16,7 @@ robot_follow = "follow"
     <section id="content">
         <div class="container">
             <div class="text-center" style="padding:100px 0 150px 0">
-                <a href="{{ '/'|app }}" class="btn btn-primary btn-lg" style="padding:50px">
+                <a onclick="setFormSubmitting()" href="{{ '/'|app }}" class="btn btn-primary btn-lg" style="padding:50px">
                     Klik hier om terug te gaan naar de index
                 </a>
             </div>

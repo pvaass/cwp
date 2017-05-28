@@ -3,7 +3,7 @@
 /**
  * Property container trait
  *
- * Adds properties and methods for classes that could define properties, 
+ * Adds properties and methods for classes that could define properties,
  * like components or report widgets.
  *
  * @package october\system
@@ -53,7 +53,7 @@ trait PropertyContainer
     /**
      * Sets multiple properties.
      * @param array $properties
-     * @return array
+     * @return void
      */
     public function setProperties($properties)
     {

@@ -56,6 +56,10 @@ class Plugin extends PluginBase
             'Backend\FormWidgets\DatePicker' => [
                 'label' => 'Date picker',
                 'code'  => 'datepicker'
+            ],
+            'pvaass\Inschrijven\FormWidgets\BetterCheckbox' => [
+                'label' => 'Checkbox',
+                'code'  => 'bcheckbox'
             ]
         ];
     }

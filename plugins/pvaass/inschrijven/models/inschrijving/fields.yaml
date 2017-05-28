@@ -63,6 +63,7 @@ fields:
     required: true
     placeholder: Uw telefoonnummer
   zwembad:
+    hidden: true
     label: Ik wil op de volgende locatie zwemmen
     type: pvaass\Inschrijven\FormWidgets\ZwembadPicker
     required: true
@@ -82,9 +83,10 @@ fields:
     label: Opmerkingen
     type: textarea
   algemene_voorwaarden:
+    cssClass: hide-label
     label: Ik accepteer de algemene voorwaarden
     commentHtml: true
     commentAbove: U dient <a href="inschrijven-algemene-voorwaarden">de algemene voorwaarden</a> te accepteren om uzelf in te schrijven
-    type: checkbox
+    type: pvaass\Inschrijven\FormWidgets\BetterCheckbox
     default: false
     required: true

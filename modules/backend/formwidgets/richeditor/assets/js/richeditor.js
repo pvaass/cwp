@@ -49,7 +49,8 @@
         paragraphStyles: null,
         tableStyles: null,
         tableCellStyles: null,
-        aceVendorPath: '/'
+        aceVendorPath: '/',
+        readOnly: false
     }
 
     RichEditor.prototype.init = function() {
@@ -76,7 +77,8 @@
             language: this.options.editorLang,
             fullPage: this.options.fullpage,
             pageLinksHandler: this.options.linksHandler,
-            aceEditorVendorPath: this.options.aceVendorPath
+            aceEditorVendorPath: this.options.aceVendorPath,
+            toolbarSticky: false
         }
 
         if (this.options.toolbarButtons) {
@@ -175,6 +177,10 @@
 
         this.editor = this.$textarea.data('froala.editor')
 
+        if (this.options.readOnly) {
+            this.editor.edit.off()
+        }
+
         this.$el.on('keydown', '.fr-view figure', this.proxy(this.onFigureKeydown))
     }
 
@@ -216,6 +222,10 @@
         $(window).on('oc.updateUi', this.proxy(this.updateLayout))
 
         this.$textarea.trigger('init.oc.richeditor', [this])
+    }
+
+    RichEditor.prototype.isCodeViewActive = function() {
+        return this.editor && this.editor.codeView && this.editor.codeView.isActive()
     }
 
     RichEditor.prototype.getElement = function() {
@@ -343,7 +353,7 @@
             return
         }
 
-        if (this.editor.codeView && this.editor.codeView.isActive()) {
+        if (this.isCodeViewActive()) {
             this.editor.html.set(this.editor.codeView.get())
         }
 

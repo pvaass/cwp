@@ -1,0 +1,18 @@
+<form role="form"
+      onsubmit="setFormSubmitting()"
+      method="post"
+      id="inschrijven-form"
+      data-request="{{ __SELF__ }}::onSave">
+    {% if zwembad_type == 'kind' %}
+    <i style="margin-bottom:20px;display:block;">Let op: vul hieronder de gegevens van uw <b>kind</b> in, niet van uzelf</i>
+    {% endif %}
+    <input type="hidden" name="type" value="{{ zwembad_type }}" />
+    <input type="hidden" name="zwembad" value="{{ zwembad_all }}" />
+    {{ form.formRender()|raw }}
+
+    <div class="form-group">
+        <button style="text-align: center;" class="btn btn-primary btn-block btn-lg" type="submit" value="register">
+            Schrijf je in!
+        </button>
+    </div>
+</form>

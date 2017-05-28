@@ -1,0 +1,18 @@
+<div class="col-md-4 {{ selected > 1 ? 'guide-done' }} {{ selected == 1 ? 'guide-active' }}">
+    {% if selected > 1 %} <a data-request-form="#inschrijven-form" data-request="{{ __SELF__ }}::onBack" data-request-data="back: 1" href="#"> {% endif %}
+        <span class="guide-num">1</span>
+        <span class="guide-desc">Kies uw zwemtype</span>
+    {% if selected > 1 %}</a>{% endif %}
+</div>
+<div class="col-md-4 {{ selected > 2 ? 'guide-done' }} {{ selected == 2 ? 'guide-active' }}">
+    {% if selected > 2 %} <a data-request-form="#inschrijven-form" data-request-success="registerZwembadPicker()" data-request="{{ __SELF__ }}::onBack" data-request-data="back: 2" href="#"> {% endif %}
+    <span class="guide-num">2</span>
+    <span class="guide-desc">Kies een zwembad</span>
+    {% if selected > 2%}</a>{% endif %}
+</div>
+<div class="col-md-4 {{ selected > 3 ? 'guide-done' }} {{ selected == 3 ? 'guide-active' }}">
+    {% if selected > 3 %} <a data-request-form="#inschrijven-form" data-request="{{ __SELF__ }}::onBack" data-request-data="back: 3" href="#"> {% endif %}
+    <span class="guide-num">3</span>
+    <span class="guide-desc">Uw gegevens</span>
+    {% if selected > 3 %}</a>{% endif %}
+</div>

@@ -132,7 +132,8 @@ class Preference extends Model
      */
     public function getLocaleOptions()
     {
-        $locales = Config::get('app.localeOptions', [
+        $localeOptions = [
+            'be' => [Lang::get('system::lang.locale.be'), 'flag-by'],
             'cs' => [Lang::get('system::lang.locale.cs'), 'flag-cz'],
             'da' => [Lang::get('system::lang.locale.da'), 'flag-dk'],
             'en' => [Lang::get('system::lang.locale.en'), 'flag-us'],
@@ -149,9 +150,11 @@ class Preference extends Model
             'id' => [Lang::get('system::lang.locale.id'), 'flag-id'],
             'it' => [Lang::get('system::lang.locale.it'), 'flag-it'],
             'ja' => [Lang::get('system::lang.locale.ja'), 'flag-jp'],
+            'lt' => [Lang::get('system::lang.locale.lt'), 'flag-lt'],
             'lv' => [Lang::get('system::lang.locale.lv'), 'flag-lv'],
             'nl' => [Lang::get('system::lang.locale.nl'), 'flag-nl'],
             'pt-br' => [Lang::get('system::lang.locale.pt-br'), 'flag-br'],
+            'pt-pt' => [Lang::get('system::lang.locale.pt-pt'), 'flag-pt'],
             'ro' => [Lang::get('system::lang.locale.ro'), 'flag-ro'],
             'ru' => [Lang::get('system::lang.locale.ru'), 'flag-ru'],
             'sv' => [Lang::get('system::lang.locale.sv'), 'flag-se'],
@@ -162,7 +165,9 @@ class Preference extends Model
             'zh-tw' => [Lang::get('system::lang.locale.zh-tw'), 'flag-tw'],
             'nb-no' => [Lang::get('system::lang.locale.nb-no'), 'flag-no'],
             'el' => [Lang::get('system::lang.locale.el'), 'flag-gr'],
-        ]);
+        ];
+
+        $locales = Config::get('app.localeOptions', $localeOptions);
 
         // Sort locales alphabetically
         asort($locales);
@@ -186,7 +191,7 @@ class Preference extends Model
         }
 
         // Sort the array by offset, identifier ascending
-        usort($tempTimezones, function($a, $b) {
+        usort($tempTimezones, function ($a, $b) {
             return $a['offset'] === $b['offset']
                 ? strcmp($a['identifier'], $b['identifier'])
                 : $a['offset'] - $b['offset'];
