@@ -36,7 +36,7 @@ class Plugin extends PluginBase
         {
             // Set all urls schemas equals to "https://" if HTTP_X_FORWARDED_PROTO is passed by nginx
             if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == "https") {
-                $this->app['url']->forceSchema("https");
+                $this->app['url']->forceScheme("https");
             }
         });
     }
