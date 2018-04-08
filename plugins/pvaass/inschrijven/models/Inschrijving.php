@@ -60,8 +60,7 @@ class Inschrijving extends Model
 
     public function afterCreate()
     {
-        // If everything is fine - send an email
-        \Mail::send('pvaass.inschrijven::emails.message',
+        $view = \View::make('pvaass.inschrijven::emails.message',
             [
                 'zwembad' => $this->zwembad,
                 'naam' => $this->voornaam . ' ' . $this->achternaam,
@@ -76,12 +75,13 @@ class Inschrijving extends Model
                 'ziektes' => $this->ziektes,
                 'opmerkingen' => $this->opmerkingen,
                 'link' => '/backend/pvaass/inschrijven/inschrijvingen/preview/' . $this->id
-            ],
-            function (Message $message) {
-                $message
-                    ->to(InschrijfSettings::get('email'))
-                    ->subject('Nieuwe inschrijving van CWP.nu - ' . $this->voornaam . ' ' . $this->achternaam);
-            }
+            ]
         );
+        
+        \Mail::raw(['html' => $view->render()],  function (Message $message) {
+            $message
+                ->to(InschrijfSettings::get('email'))
+                ->subject('Nieuwe inschrijving van CWP.nu - ' . $this->voornaam . ' ' . $this->achternaam);
+        });
     }
 }
