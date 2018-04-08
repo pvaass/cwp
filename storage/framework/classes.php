@@ -218,4 +218,5 @@
   'System\\Console\\ThemeList' => 'modules/system/console/ThemeList.php',
   'System\\Console\\ThemeUse' => 'modules/system/console/ThemeUse.php',
   'Backend\\FormWidgets\\CodeEditor' => 'modules/backend/formwidgets/CodeEditor.php',
+  'pvaass\\Calendar\\Models\\CalendarSettings' => 'plugins/pvaass/calendar/models/CalendarSettings.php',
 );
