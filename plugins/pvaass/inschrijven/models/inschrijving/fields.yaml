@@ -86,7 +86,7 @@ fields:
     cssClass: hide-label
     label: Ik accepteer de algemene voorwaarden
     commentHtml: true
-    commentAbove: U dient <a href="inschrijven-algemene-voorwaarden">de algemene voorwaarden</a> te accepteren om uzelf in te schrijven
+    commentAbove: U dient <a target="_blank" href="inschrijven-algemene-voorwaarden">de algemene voorwaarden</a> te accepteren om uzelf in te schrijven
     type: pvaass\Inschrijven\FormWidgets\BetterCheckbox
     default: false
     required: true
