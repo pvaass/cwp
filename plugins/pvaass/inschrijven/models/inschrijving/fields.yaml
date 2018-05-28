@@ -90,3 +90,11 @@ fields:
     type: pvaass\Inschrijven\FormWidgets\BetterCheckbox
     default: false
     required: true
+  privacy_ok:
+    cssClass: hide-label
+    label: Ik accepteer de privacy policy
+    commentHtml: true
+    commentAbove: Wij slaan uw ingevulde gegevens een tijdje op zodat we de inschrijving kunnen verwerken. <a target="_blank" href="privacy">Klik hier voor meer informatie</a>.
+    type: pvaass\Inschrijven\FormWidgets\BetterCheckbox
+    default: false
+    required: true

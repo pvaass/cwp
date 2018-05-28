@@ -21,6 +21,7 @@ class Inschrijving extends Model
     protected $appends = ['zwembad_string', 'geboortedatum_string'];
 
     public $rules = [
+        'privacy_ok' => 'required|accepted',
         'algemene_voorwaarden' => 'required|accepted',
         'voornaam' => 'required',
         'achternaam' => 'required',
@@ -55,6 +56,7 @@ class Inschrijving extends Model
     {
         $this->zwembad = \Request::get('zwembad');
         unset($this->algemene_voorwaarden);
+        unset($this->privacy_ok);
         $this->geboortedatum = \DateTime::createFromFormat('d/m/Y', $this->geboortedatum)->format('Y-m-d H:i:s');
     }
 
