@@ -1,8 +1,7 @@
 <?php namespace RainLab\Blog\Components;
 
 use Db;
-use App;
-use Request;
+use Carbon\Carbon;
 use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use RainLab\Blog\Models\Category as BlogCategory;
@@ -39,20 +38,20 @@ class Categories extends ComponentBase
                 'title'       => 'rainlab.blog::lang.settings.category_slug',
                 'description' => 'rainlab.blog::lang.settings.category_slug_description',
                 'default'     => '{{ :slug }}',
-                'type'        => 'string'
+                'type'        => 'string',
             ],
             'displayEmpty' => [
                 'title'       => 'rainlab.blog::lang.settings.category_display_empty',
                 'description' => 'rainlab.blog::lang.settings.category_display_empty_description',
                 'type'        => 'checkbox',
-                'default'     => 0
+                'default'     => 0,
             ],
             'categoryPage' => [
                 'title'       => 'rainlab.blog::lang.settings.category_page',
                 'description' => 'rainlab.blog::lang.settings.category_page_description',
                 'type'        => 'dropdown',
                 'default'     => 'blog/category',
-                'group'       => 'Links',
+                'group'       => 'rainlab.blog::lang.settings.group_links',
             ],
         ];
     }
@@ -69,11 +68,14 @@ class Categories extends ComponentBase
         $this->categories = $this->page['categories'] = $this->loadCategories();
     }
 
+    /**
+     * Load all categories or, depending on the <displayEmpty> option, only those that have blog posts
+     * @return mixed
+     */
     protected function loadCategories()
     {
-        $categories = BlogCategory::orderBy('name');
         if (!$this->property('displayEmpty')) {
-            $categories->whereExists(function($query) {
+            $categories = BlogCategory::whereExists(function($query) {
                 $prefix = Db::getTablePrefix();
 
                 $query
@@ -82,12 +84,16 @@ class Categories extends ComponentBase
                     ->join('rainlab_blog_posts', 'rainlab_blog_posts.id', '=', 'rainlab_blog_posts_categories.post_id')
                     ->whereNotNull('rainlab_blog_posts.published')
                     ->where('rainlab_blog_posts.published', '=', 1)
+                    ->whereNotNull('rainlab_blog_posts.published_at')
+                    ->where('rainlab_blog_posts.published_at', '<', Carbon::now())
                     ->whereRaw($prefix.'rainlab_blog_categories.id = '.$prefix.'rainlab_blog_posts_categories.category_id')
                 ;
             });
+            $categories = $categories->getNested();
         }
-
-        $categories = $categories->getNested();
+        else {
+            $categories = BlogCategory::getNested();
+        }
 
         /*
          * Add a "url" helper attribute for linking to each category

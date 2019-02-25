@@ -1,16 +1,49 @@
 <?php
+/**
+ * October CMS plugin: Adrenth.Redirect
+ *
+ * Copyright (c) 2016 - 2018 Alwin Drenth
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+declare(strict_types=1);
 
 namespace Adrenth\Redirect\Models;
 
 use Adrenth\Redirect\Classes\OptionHelper;
 use Carbon\Carbon;
+use Eloquent;
 use Illuminate\Support\Fluent;
-use Model;
+use Illuminate\Validation\Validator;
+use October\Rain\Database\Builder;
+use October\Rain\Database\Model;
+use October\Rain\Database\Relations\HasMany;
 use October\Rain\Database\Traits\Sortable;
 use October\Rain\Database\Traits\Validation;
 
+/** @noinspection ClassOverridesFieldOfSuperClassInspection */
+
 /**
- * Redirect Model
+ * Class Redirect
+ *
+ * @package Adrenth\Redirect\Models
+ * @mixin Eloquent
  */
 class Redirect extends Model
 {
@@ -23,9 +56,16 @@ class Redirect extends Model
     const TYPE_EXACT = 'exact';
     const TYPE_PLACEHOLDERS = 'placeholders';
 
+    // Target Types
     const TARGET_TYPE_PATH_URL = 'path_or_url';
     const TARGET_TYPE_CMS_PAGE = 'cms_page';
     const TARGET_TYPE_STATIC_PAGE = 'static_page';
+    const TARGET_TYPE_NONE = 'none';
+
+    // Scheme options
+    const SCHEME_HTTP = 'http';
+    const SCHEME_HTTPS = 'https';
+    const SCHEME_AUTO = 'auto';
 
     /** @var array */
     public static $types = [
@@ -38,13 +78,16 @@ class Redirect extends Model
         self::TARGET_TYPE_PATH_URL,
         self::TARGET_TYPE_CMS_PAGE,
         self::TARGET_TYPE_STATIC_PAGE,
+        self::TARGET_TYPE_NONE,
     ];
 
     /** @var array */
     public static $statusCodes = [
         301 => 'permanent',
         302 => 'temporary',
+        303 => 'see_other',
         404 => 'not_found',
+        410 => 'gone',
     ];
 
     /**
@@ -64,12 +107,14 @@ class Redirect extends Model
      */
     public $rules = [
         'from_url' => 'required',
+        'from_scheme' => 'in:http,https,auto',
         'to_url' => 'different:from_url|required_if:target_type,path_or_url',
+        'to_scheme' => 'in:http,https,auto',
         'cms_page' => 'required_if:target_type,cms_page',
         'static_page' => 'required_if:target_type,static_page',
         'match_type' => 'required|in:exact,placeholders',
-        'target_type' => 'required|in:path_or_url,cms_page,static_page',
-        'status_code' => 'required|in:301,302,404',
+        'target_type' => 'required|in:path_or_url,cms_page,static_page,none',
+        'status_code' => 'required|in:301,302,303,404,410',
         'sort_order' => 'numeric',
     ];
 
@@ -98,7 +143,9 @@ class Redirect extends Model
      */
     public $attributeNames = [
         'to_url' => 'adrenth.redirect::lang.redirect.to_url',
+        'to_scheme' => 'adrenth.redirect::lang.redirect.to_scheme',
         'from_url' => 'adrenth.redirect::lang.redirect.from_url',
+        'from_scheme' => 'adrenth.redirect::lang.redirect.to_scheme',
         'match_type' => 'adrenth.redirect::lang.redirect.match_type',
         'target_type' => 'adrenth.redirect::lang.redirect.target_type',
         'cms_page' => 'adrenth.redirect::lang.redirect.target_type_cms_page',
@@ -114,7 +161,7 @@ class Redirect extends Model
     /**
      * {@inheritdoc}
      */
-    public $dates = [
+    protected $dates = [
         'from_date',
         'to_date',
         'last_used_at',
@@ -134,43 +181,79 @@ class Redirect extends Model
         'category' => Category::class,
     ];
 
+    /** @noinspection MoreThanThreeArgumentsInspection */
+
     /**
      * @param array $data
      * @param array $rules
      * @param array $customMessages
      * @param array $attributeNames
-     * @return \Illuminate\Validation\Validator
+     * @return Validator
      */
     protected static function makeValidator(
         array $data,
         array $rules,
         array $customMessages = [],
         array $attributeNames = []
-    ) {
+    ): Validator {
         $validator = self::traitMakeValidator($data, $rules, $customMessages, $attributeNames);
 
         $validator->sometimes('to_url', 'required', function (Fluent $request) {
-            return in_array($request->get('status_code'), ['301', '302'], true)
-            && $request->get('target_type') === 'path_or_url';
+            return in_array($request->get('status_code'), ['301', '302', '303'], true)
+            && $request->get('target_type') === self::TARGET_TYPE_PATH_URL;
         });
 
         $validator->sometimes('cms_page', 'required', function (Fluent $request) {
-            return in_array($request->get('status_code'), ['301', '302'], true)
-            && $request->get('target_type') === 'cms_page';
+            return in_array($request->get('status_code'), ['301', '302', '303'], true)
+            && $request->get('target_type') === self::TARGET_TYPE_CMS_PAGE;
         });
 
         $validator->sometimes('static_page', 'required', function (Fluent $request) {
-            return in_array($request->get('status_code'), ['301', '302'], true)
-            && $request->get('target_type') === 'static_page';
+            return in_array($request->get('status_code'), ['301', '302', '303'], true)
+            && $request->get('target_type') === self::TARGET_TYPE_STATIC_PAGE;
         });
 
         return $validator;
     }
 
     /**
-     * @return \October\Rain\Database\Relations\BelongsTo
+     * @param Builder $builder
+     * @return Builder
      */
-    public function clients()
+    public function scopeEnabled(Builder $builder): Builder
+    {
+        return $builder->where('is_enabled', '=', true);
+    }
+
+    /**
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function scopeTestLabEnabled(Builder $builder): Builder
+    {
+        return $builder->where('test_lab', '=', true);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMatchTypeExact(): bool
+    {
+        return $this->attributes['match_type'] === self::TYPE_EXACT;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMatchTypePlaceholders(): bool
+    {
+        return $this->attributes['match_type'] === self::TYPE_PLACEHOLDERS;
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function clients(): HasMany
     {
         return $this->hasMany(Client::class);
     }
@@ -180,7 +263,7 @@ class Redirect extends Model
      *
      * @param string $value
      */
-    public function setFromUrlAttribute($value)
+    public function setFromUrlAttribute($value)//: void
     {
         $this->attributes['from_url'] = urldecode($value);
     }
@@ -190,7 +273,7 @@ class Redirect extends Model
      *
      * @param mixed $value
      */
-    public function setSortOrderAttribute($value)
+    public function setSortOrderAttribute($value)//: void
     {
         $this->attributes['sort_order'] = (int) $value;
     }
@@ -201,7 +284,7 @@ class Redirect extends Model
      * @param mixed $value
      * @return Carbon|null
      */
-    public function getFromDateAttribute($value)
+    public function getFromDateAttribute($value)//: ?Carbon
     {
         if ($value === '' || $value === null) {
             return null;
@@ -216,7 +299,7 @@ class Redirect extends Model
      * @param mixed $value
      * @return Carbon|null
      */
-    public function getToDateAttribute($value)
+    public function getToDateAttribute($value)//: ?Carbon
     {
         if ($value === '' || $value === null) {
             return null;
@@ -229,16 +312,16 @@ class Redirect extends Model
      * @see OptionHelper::getTargetTypeOptions()
      * @return array
      */
-    public function getTargetTypeOptions()
+    public function getTargetTypeOptions(): array
     {
-        return OptionHelper::getTargetTypeOptions();
+        return OptionHelper::getTargetTypeOptions((int) $this->getAttribute('status_code'));
     }
 
     /**
      * @see OptionHelper::getCmsPageOptions()
      * @return array
      */
-    public function getCmsPageOptions()
+    public function getCmsPageOptions(): array
     {
         return OptionHelper::getCmsPageOptions();
     }
@@ -247,7 +330,7 @@ class Redirect extends Model
      * @see OptionHelper::getStaticPageOptions()
      * @return array
      */
-    public function getStaticPageOptions()
+    public function getStaticPageOptions(): array
     {
         return OptionHelper::getStaticPageOptions();
     }
@@ -256,7 +339,7 @@ class Redirect extends Model
      * @see OptionHelper::getCategoryOptions()
      * @return array
      */
-    public function getCategoryOptions()
+    public function getCategoryOptions(): array
     {
         return OptionHelper::getCategoryOptions();
     }
@@ -266,7 +349,7 @@ class Redirect extends Model
      *
      * @return array
      */
-    public function filterMatchTypeOptions()
+    public function filterMatchTypeOptions(): array
     {
         $options = [];
 
@@ -282,7 +365,7 @@ class Redirect extends Model
      *
      * @return array
      */
-    public function filterTargetTypeOptions()
+    public function filterTargetTypeOptions(): array
     {
         $options = [];
 
@@ -296,7 +379,7 @@ class Redirect extends Model
     /**
      * @return array
      */
-    public function filterStatusCodeOptions()
+    public function filterStatusCodeOptions(): array
     {
         $options = [];
 
@@ -313,9 +396,15 @@ class Redirect extends Model
      *
      * @return void
      */
-    public function beforeSave()
+    public function beforeSave()//: void
     {
         switch ($this->getAttribute('target_type')) {
+            case Redirect::TARGET_TYPE_NONE:
+                $this->setAttribute('to_url', null);
+                $this->setAttribute('cms_page', null);
+                $this->setAttribute('static_page', null);
+                $this->setAttribute('to_scheme', self::SCHEME_AUTO);
+                break;
             case Redirect::TARGET_TYPE_PATH_URL:
                 $this->setAttribute('cms_page', null);
                 $this->setAttribute('static_page', null);
@@ -329,5 +418,37 @@ class Redirect extends Model
                 $this->setAttribute('cms_page', null);
                 break;
         }
+    }
+
+    /**
+     * Check if this redirect is active on certain date.
+     *
+     * @param Carbon $date
+     * @return bool
+     */
+    public function isActiveOnDate(Carbon $date): bool
+    {
+        if ($this->getAttribute('from_date') instanceof Carbon
+            && $this->getAttribute('to_date') instanceof Carbon
+        ) {
+            return $date->between(
+                $this->getAttribute('from_date'),
+                $this->getAttribute('to_date')
+            );
+        }
+
+        if ($this->getAttribute('from_date') instanceof Carbon
+            && $this->getAttribute('to_date') === null
+        ) {
+            return $date->gte($this->getAttribute('from_date'));
+        }
+
+        if ($this->getAttribute('to_date') instanceof Carbon
+            && $this->getAttribute('from_date') === null
+        ) {
+            return $date->lte($this->getAttribute('to_date'));
+        }
+
+        return true;
     }
 }

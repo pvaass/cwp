@@ -79,7 +79,9 @@ return [
     ],
     'menuitem' => [
         'blog_category' => 'Catégories du blog',
-        'all_blog_categories' => 'Toutes les catégories du blog'
+        'all_blog_categories' => 'Toutes les catégories du blog',
+        'blog_post' => 'Articles du blog',
+        'all_blog_posts' => 'Tous les articles du blog'
     ],
     'settings' => [
         'category_title' => 'Liste des catégories',
@@ -108,6 +110,8 @@ return [
         'posts_no_posts_description' => 'Message à afficher dans la liste d’articles lorsqu’il n’y a aucun article. Cette propriété est utilisée par le partial par défaut du composant.',
         'posts_order' => 'Ordre des articles',
         'posts_order_description' => 'Attribut selon lequel les articles seront ordonnés',
+        'posts_except_post' => 'Except post',
+        'posts_except_post_description' => 'Enter ID/URL or variable with post ID/URL you want to except',
         'posts_category' => 'Page des catégories',
         'posts_category_description' => 'Nom de la page des catégories pour les liens de catégories "Publié dans". Cette propriété est utilisée par le partial par défaut du composant.',
         'posts_post' => 'Page d’article',

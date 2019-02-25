@@ -7,6 +7,7 @@ jQuery(function ($) {
     });
 
     $('.scroll a').on('click', function () {
+        $('.navbar-collapse').collapse('hide');
         $('html, body').animate({scrollTop: $(this.hash).offset().top - 50}, 1000);
         return false;
     });

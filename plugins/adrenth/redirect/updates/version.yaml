@@ -58,3 +58,59 @@
     - Add redirect log
     - create_redirect_logs_table.php
 2.0.16: Add spanish language (gracias arzola)
+2.0.17: Minor fixes and code optimization
+2.0.18: Add redirect statistics (WIP) (please submit your ideas!)
+2.0.19: Fix SQLite compatibility issues (thanks jan-vince)
+2.0.20: Add HTTP status code 410 (Gone) (requested by jan-vince)
+2.0.21: Add HTTP status code 303 (See Other) (requested by ayumihamsaki) and some small fixes.
+2.0.22: Add Russian language and fix backend menu navigation issue (спасибо sheck87)
+2.0.23: Add missing query part of the URL when creating a Redirect from Request Log
+2.0.24: Minor fixes and code optimization
+3.0.0: New major version; license change and as of now a paid plugin
+3.1.0:
+    - Add TestLab (beta); allows you to mass test your redirects
+    - 310_01_AddTestLabToRedirectsTable.php
+    - 310_02_AddTestLabPathToRedirectsTable.php
+3.1.1: Resolves PHP 5.6 compatibility issues and other minor fixes
+3.1.2: Fix redirect schedule issue
+3.2.0: Improvements to Statistics dashboard
+3.3.0:
+    - Add Redirect settings (see Settings > Misc > Redirect) and minor fixes
+    - 330_01_AddDefaultSettings.php
+3.4.0: UI Improvements and bugfixes
+3.5.0:
+    - Add scheme matching HTTP <-> HTTPS (advanced)
+    - 350_01_AddFromToSchemeToRedirectsTable.php
+3.5.1: Fix MySQL query issue on Statistics dashboard (sql_mode=ONLY_FULL_GROUP_BY)
+3.5.2: Add Dutch (nl) translation (dank je Arnoud van Susteren)
+3.5.3:
+    - Fix CSV reader issues after updating to 3.5.0
+    - 353_01_PublishRedirectsToPreventCsvReaderIssues.php
+3.5.4: Small fixes and UI improvements
+3.6.0: Add a quick Create Redirect widget for Dashboard
+3.7.0: Improve Import and Export of Redirects (also fixes several reported issues)
+3.7.1: Update French (fr) translation (merci Pierre-André Vullioud)
+3.8.0: Add Top 10 Redirects widget for Dashboard
+3.9.0: Add redirect caching (enable in Plugin settings section)
+3.9.1: Minor code and documentation changes
+3.10.0: Add Bulk actions (delete / enable / disable all redirects)
+3.10.1: Fix issue when creating redirect with unsupported cache driver
+3.10.2: Fix issues related to unvalidated imported redirects
+3.10.3: Minor improvements to settings screen and plugin documentation
+3.11.0:
+    - Performance improvements to statistics Dashboard
+    - 3110_01_AddMonthYearIndexToClientsTable.php
+3.12.0: Add new plugin icon for main navigation
+3.13.0: Minor UI improvements and bugfixes
+3.14.0: Fix PosgreSQL compatibility issues and minor code improvements
+3.14.1: Fix issue with cache key (if caching is enabled)
+3.15.0: Improve code and redirect handling logic
+3.16.0: Add X-Redirect-By header to identify redirects handled by this plugin
+4.0.0: !!! New major version optimized for PHP7 and OctoberCMS build 428+
+4.0.1: Fix issue to support older MySQL versions (thanks hauserj22885)
+4.0.2: Improve Dutch (nl) translation and update vis.js dependency
+4.0.3: Fixes type error; mktime() expects parameter 4 to be integer, string given
+4.1.0: Update plugin license
+4.2.0:
+    - Add statistics sparkline graphs to redirects list view
+    - 420_01_AddRedirectTimestampIndexToClientsTable.php

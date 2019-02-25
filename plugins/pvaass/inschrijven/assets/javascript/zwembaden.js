@@ -71,7 +71,7 @@ function toTop() {
 var formSubmitting = false;
 var setFormSubmitting = function() { formSubmitting = true; };
 window.addEventListener("beforeunload", function (e) {
-    if (formSubmitting) {
+    if (formSubmitting || window.isApp) {
         return undefined;
     }
     var confirmationMessage = 'Je hebt de inschrijving nog niet helemaal voltooid. Weet je zeker dat je de pagina wilt verlaten?';

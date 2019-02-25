@@ -1,9 +1,34 @@
 <?php
+/**
+ * October CMS plugin: Adrenth.Redirect
+ *
+ * Copyright (c) 2016 - 2018 Alwin Drenth
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+declare(strict_types=1);
 
 namespace Adrenth\Redirect\Classes;
 
 use Adrenth\Redirect\Models\Redirect;
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 /**
  * Class RedirectRule
@@ -25,7 +50,13 @@ class RedirectRule
     private $fromUrl;
 
     /** @var string */
+    private $fromScheme;
+
+    /** @var string */
     private $toUrl;
+
+    /** @var string */
+    private $toScheme;
 
     /** @var string */
     private $cmsPage;
@@ -39,10 +70,10 @@ class RedirectRule
     /** @var array */
     private $requirements;
 
-    /** @var Carbon */
+    /** @var Carbon|null */
     private $fromDate;
 
-    /** @var Carbon */
+    /** @var Carbon|null */
     private $toDate;
 
     /** @var array */
@@ -50,115 +81,132 @@ class RedirectRule
 
     /**
      * @param array $attributes
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(array $attributes)
     {
-        if (count($attributes) !== 11
-            || array_sum(array_keys($attributes)) !== 55
-        ) {
-            throw new \InvalidArgumentException('Invalid attributes provided');
+        foreach ($attributes as $key => $value) {
+            $property = camel_case($key);
+
+            if (property_exists($this, $property)) {
+                $this->{$property} = $value;
+            }
         }
 
-        list(
-            $this->id,
-            $this->matchType,
-            $this->targetType,
-            $this->fromUrl,
-            $this->toUrl,
-            $this->cmsPage,
-            $this->staticPage,
-            $this->statusCode,
-            $this->requirements,
-            $this->fromDate,
-            $this->toDate,
-            ) = $attributes;
+        try {
+            $this->fromDate = Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                substr($this->fromDate, 0, 10) . ' 00:00:00'
+            );
+        } catch (InvalidArgumentException $e) {
+            $this->fromDate = null;
+        }
 
-        $this->requirements = json_decode($this->requirements, true);
+        try {
+            $this->toDate = Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                substr($this->toDate, 0, 10) . ' 00:00:00'
+            );
+        } catch (InvalidArgumentException $e) {
+            $this->toDate = null;
+        }
+
+        $this->requirements = json_decode((string) $this->requirements, true);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            $this->requirements = [];
+        }
     }
 
     /**
      * @param Redirect $model
      * @return RedirectRule
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public static function createWithModel(Redirect $model)
+    public static function createWithModel(Redirect $model): RedirectRule
     {
-        return new self([
-            $model->getAttribute('id'),
-            $model->getAttribute('match_type'),
-            $model->getAttribute('target_type'),
-            $model->getAttribute('from_url'),
-            $model->getAttribute('to_url'),
-            $model->getAttribute('cms_page'),
-            $model->getAttribute('static_page'),
-            $model->getAttribute('status_code'),
-            json_encode($model->getAttribute('requirements')),
-            $model->getAttribute('from_date'),
-            $model->getAttribute('to_date'),
-        ]);
+        $attributes = $model->getAttributes();
+        $attributes['requirements'] = json_encode($model->getAttribute('requirements'));
+
+        return new self($attributes);
     }
 
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
     /**
      * @return string
      */
-    public function getMatchType()
+    public function getMatchType(): string
     {
-        return $this->matchType;
+        return (string) $this->matchType;
     }
 
     /**
      * @return string
      */
-    public function getTargetType()
+    public function getTargetType(): string
     {
-        return $this->targetType;
+        return (string) $this->targetType;
     }
 
     /**
      * @return string
      */
-    public function getFromUrl()
+    public function getFromUrl(): string
     {
-        return $this->fromUrl;
+        return (string) $this->fromUrl;
     }
 
     /**
      * @return string
      */
-    public function getToUrl()
+    public function getFromScheme(): string
     {
-        return $this->toUrl;
+        return (string) $this->fromScheme;
     }
 
     /**
      * @return string
      */
-    public function getCmsPage()
+    public function getToUrl(): string
     {
-        return $this->cmsPage;
+        return (string) $this->toUrl;
     }
 
     /**
      * @return string
      */
-    public function getStaticPage()
+    public function getToScheme(): string
     {
-        return $this->staticPage;
+        return (string) $this->toScheme;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCmsPage(): string
+    {
+        return (string) $this->cmsPage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStaticPage(): string
+    {
+        return (string) $this->staticPage;
     }
 
     /**
      * @return int
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return (int) $this->statusCode;
     }
@@ -166,7 +214,7 @@ class RedirectRule
     /**
      * @return array
      */
-    public function getRequirements()
+    public function getRequirements(): array
     {
         return (array) $this->requirements;
     }
@@ -174,7 +222,7 @@ class RedirectRule
     /**
      * @return Carbon|null
      */
-    public function getFromDate()
+    public function getFromDate()//: ?Carbon
     {
         return $this->fromDate;
     }
@@ -182,7 +230,7 @@ class RedirectRule
     /**
      * @return Carbon|null
      */
-    public function getToDate()
+    public function getToDate()//: ?Carbon
     {
         return $this->toDate;
     }
@@ -190,7 +238,7 @@ class RedirectRule
     /**
      * @return bool
      */
-    public function isExactMatchType()
+    public function isExactMatchType(): bool
     {
         return $this->matchType === Redirect::TYPE_EXACT;
     }
@@ -198,7 +246,7 @@ class RedirectRule
     /**
      * @return bool
      */
-    public function isPlaceholdersMatchType()
+    public function isPlaceholdersMatchType(): bool
     {
         return $this->matchType === Redirect::TYPE_PLACEHOLDERS;
     }
@@ -206,16 +254,16 @@ class RedirectRule
     /**
      * @return array
      */
-    public function getPlaceholderMatches()
+    public function getPlaceholderMatches(): array
     {
         return (array) $this->placeholderMatches;
     }
 
     /**
      * @param array $placeholderMatches
-     * @return $this
+     * @return RedirectRule
      */
-    public function setPlaceholderMatches(array $placeholderMatches = [])
+    public function setPlaceholderMatches(array $placeholderMatches = []): RedirectRule
     {
         $this->placeholderMatches = $placeholderMatches;
         return $this;

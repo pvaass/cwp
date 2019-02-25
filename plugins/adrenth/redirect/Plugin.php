@@ -1,18 +1,47 @@
 <?php
+/**
+ * October CMS plugin: Adrenth.Redirect
+ *
+ * Copyright (c) 2016 - 2018 Alwin Drenth
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+declare(strict_types=1);
 
 namespace Adrenth\Redirect;
 
+use Adrenth\Redirect\Classes\CacheManager;
 use Adrenth\Redirect\Classes\PageHandler;
 use Adrenth\Redirect\Classes\PublishManager;
-use Adrenth\Redirect\Classes\RedirectManager;
+use Adrenth\Redirect\Classes\RedirectMiddleware;
 use Adrenth\Redirect\Classes\StaticPageHandler;
 use Adrenth\Redirect\Models\Redirect;
+use Adrenth\Redirect\Models\Settings;
+use Adrenth\Redirect\ReportWidgets\CreateRedirect;
+use Adrenth\Redirect\ReportWidgets\TopTenRedirects;
 use App;
 use Backend;
 use Cms\Classes\Page;
 use Event;
-use Request;
+use Exception;
 use System\Classes\PluginBase;
+use Illuminate\Contracts\Http\Kernel;
 
 /**
  * Class Plugin
@@ -24,66 +53,44 @@ class Plugin extends PluginBase
     /**
      * {@inheritdoc}
      */
-    public function pluginDetails()
+    public function pluginDetails(): array
     {
         return [
             'name' => 'adrenth.redirect::lang.plugin.name',
             'description' => 'adrenth.redirect::lang.plugin.description',
             'author' => 'Alwin Drenth',
             'icon' => 'icon-link',
-            'homepage' => 'https://github.com/adrenth/redirect',
+            'homepage' => 'https://octobercms.com/plugin/adrenth-redirect',
         ];
     }
 
     /**
      * {@inheritdoc}
+     * @throws Exception
      */
     public function boot()
     {
-        if (App::runningInBackend()
-            && !App::runningInConsole()
-            && !App::runningUnitTests()
-        ) {
-            $this->bootBackend();
-        }
-
-        if (!App::runningInBackend()
-            && !App::runningUnitTests()
-            && !App::runningInConsole()
-        ) {
-            $this->bootFrontend();
-        }
-    }
-
-    /**
-     * Boot stuff for Frontend
-     *
-     * @return void
-     */
-    public function bootFrontend()
-    {
-        // Check for running in console or backend before route matching
-        $rulesPath = storage_path('app/redirects.csv');
-
-        if (!file_exists($rulesPath) || !is_readable($rulesPath)) {
+        if (App::runningInConsole() || App::runningUnitTests()) {
             return;
         }
 
-        $requestUri = str_replace(Request::getBasePath(), '', Request::getRequestUri());
-        $manager = RedirectManager::createWithRulesPath($rulesPath);
-        $rule = $manager->match($requestUri);
-
-        if ($rule) {
-            $manager->redirectWithRule($rule, $requestUri);
+        if (!App::runningInBackend()) {
+            /** @var Kernel $kernel */
+            $kernel = $this->app[Kernel::class];
+            $kernel->prependMiddleware(RedirectMiddleware::class);
+            return;
         }
+
+        $this->bootBackend();
     }
 
     /**
      * Boot stuff for Backend
      *
      * @return void
+     * @throws Exception
      */
-    public function bootBackend()
+    public function bootBackend()//: void
     {
         Page::extend(function (Page $page) {
             $handler = new PageHandler($page);
@@ -111,7 +118,12 @@ class Plugin extends PluginBase
             });
         }
 
+        // When one or more redirects have been changed.
         Event::listen('redirects.changed', function () {
+            if (CacheManager::cachingEnabledAndSupported()) {
+                CacheManager::instance()->flush();
+            }
+
             PublishManager::instance()->publish();
         });
     }
@@ -119,7 +131,7 @@ class Plugin extends PluginBase
     /**
      * {@inheritdoc}
      */
-    public function registerPermissions()
+    public function registerPermissions(): array
     {
         return [
             'adrenth.redirect.access_redirects' => [
@@ -132,46 +144,37 @@ class Plugin extends PluginBase
     /**
      * {@inheritdoc}
      */
-    public function registerNavigation()
+    public function registerNavigation(): array
     {
-        return [
+        $defaultBackendUrl = Backend::url(
+            'adrenth/redirect/' . (Settings::isStatisticsEnabled() ? 'statistics' : 'redirects')
+        );
+
+        $navigation = [
             'redirect' => [
                 'label' => 'adrenth.redirect::lang.navigation.menu_label',
+                'iconSvg' => '/plugins/adrenth/redirect/assets/images/redirect-icon.svg',
                 'icon' => 'icon-link',
-                'url' => Backend::url('adrenth/redirect/redirects'),
-                'order' => 50,
+                'url' => $defaultBackendUrl,
+                'order' => 201,
                 'permissions' => [
                     'adrenth.redirect.access_redirects',
                 ],
                 'sideMenu' => [
-                    'index' => [
-                        'icon' => 'icon-link',
+                    'redirects' => [
+                        'icon' => 'icon-list',
                         'label' => 'adrenth.redirect::lang.navigation.menu_label',
                         'url' => Backend::url('adrenth/redirect/redirects'),
+                        'order' => 20,
                         'permissions' => [
                             'adrenth.redirect.access_redirects',
                         ],
                     ],
-                    'reorder' => [
-                        'label' => 'adrenth.redirect::lang.buttons.reorder_redirects',
-                        'url' => Backend::url('adrenth/redirect/redirects/reorder'),
-                        'icon' => 'icon-sort-amount-asc',
-                        'permissions' => [
-                            'adrenth.redirect.access_redirects',
-                        ],
-                    ],
-                    'logs' => [
-                        'label' => 'adrenth.redirect::lang.buttons.logs',
-                        'url' => Backend::url('adrenth/redirect/logs'),
-                        'icon' => 'icon-file-text-o',
-                        'permissions' => [
-                            'adrenth.redirect.access_redirects',
-                        ],
-                    ],
-                    'category' => [
+                    'categories' => [
                         'label' => 'adrenth.redirect::lang.buttons.categories',
                         'url' => Backend::url('adrenth/redirect/categories'),
                         'icon' => 'icon-tag',
+                        'order' => 60,
                         'permissions' => [
                             'adrenth.redirect.access_redirects',
                         ],
@@ -180,6 +183,7 @@ class Plugin extends PluginBase
                         'label' => 'adrenth.redirect::lang.buttons.import',
                         'url' => Backend::url('adrenth/redirect/redirects/import'),
                         'icon' => 'icon-download',
+                        'order' => 70,
                         'permissions' => [
                             'adrenth.redirect.access_redirects',
                         ],
@@ -188,6 +192,16 @@ class Plugin extends PluginBase
                         'label' => 'adrenth.redirect::lang.buttons.export',
                         'url' => Backend::url('adrenth/redirect/redirects/export'),
                         'icon' => 'icon-upload',
+                        'order' => 80,
+                        'permissions' => [
+                            'adrenth.redirect.access_redirects',
+                        ],
+                    ],
+                    'settings' => [
+                        'label' => 'adrenth.redirect::lang.buttons.settings',
+                        'url' => Backend::url('system/settings/update/adrenth/redirect/config'),
+                        'icon' => 'icon-cogs',
+                        'order' => 90,
                         'permissions' => [
                             'adrenth.redirect.access_redirects',
                         ],
@@ -195,12 +209,91 @@ class Plugin extends PluginBase
                 ],
             ],
         ];
+
+        if (Settings::isStatisticsEnabled()) {
+            $navigation['redirect']['sideMenu']['statistics'] = [
+                'icon' => 'icon-bar-chart',
+                'label' => 'adrenth.redirect::lang.title.statistics',
+                'url' => Backend::url('adrenth/redirect/statistics'),
+                'order' => 10,
+                'permissions' => [
+                    'adrenth.redirect.access_redirects',
+                ],
+            ];
+        }
+
+        if (Settings::isTestLabEnabled()) {
+            $navigation['redirect']['sideMenu']['test_lab'] = [
+                'icon' => 'icon-flask',
+                'label' => 'adrenth.redirect::lang.title.test_lab',
+                'url' => Backend::url('adrenth/redirect/testlab'),
+                'order' => 30,
+                'permissions' => [
+                    'adrenth.redirect.access_redirects',
+                ],
+            ];
+        }
+
+        if (Settings::isLoggingEnabled()) {
+            $navigation['redirect']['sideMenu']['logs'] = [
+                'label' => 'adrenth.redirect::lang.buttons.logs',
+                'url' => Backend::url('adrenth/redirect/logs'),
+                'icon' => 'icon-file-text-o',
+                'visible' => false,
+                'order' => 50,
+                'permissions' => [
+                    'adrenth.redirect.access_redirects',
+                ],
+            ];
+        }
+
+        return $navigation;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function registerListColumnTypes()
+    public function registerSettings(): array
+    {
+        /** @noinspection ClassConstantCanBeUsedInspection */
+        return [
+            'config' => [
+                'label' => 'adrenth.redirect::lang.settings.menu_label',
+                'description' => 'adrenth.redirect::lang.settings.menu_description',
+                'icon' => 'icon-link',
+                'class' => 'Adrenth\Redirect\Models\Settings',
+                'order' => 600,
+                'permissions' => [
+                    'adrenth.redirect.access_redirects',
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function registerReportWidgets(): array
+    {
+        $reportWidgets[CreateRedirect::class] = [
+            'label' => 'adrenth.redirect::lang.buttons.create_redirect',
+            'context' => 'dashboard'
+        ];
+
+        if (Settings::isStatisticsEnabled()) {
+            $reportWidgets[TopTenRedirects::class] = [
+                'label' => trans('adrenth.redirect::lang.statistics.top_redirects_this_month', ['top' => 10]),
+                'context' => 'dashboard',
+            ];
+        }
+
+        return $reportWidgets;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function registerListColumnTypes(): array
     {
         return [
             'redirect_switch_color' => function ($value) {
@@ -217,7 +310,7 @@ class Plugin extends PluginBase
                     case Redirect::TYPE_EXACT:
                         return e(trans('adrenth.redirect::lang.redirect.exact'));
                     case Redirect::TYPE_PLACEHOLDERS:
-                        return e(trans('adrenth.redirect::lang.redirect.exact'));
+                        return e(trans('adrenth.redirect::lang.redirect.placeholders'));
                     default:
                         return $value;
                 }
@@ -228,8 +321,12 @@ class Plugin extends PluginBase
                         return e(trans('adrenth.redirect::lang.redirect.permanent'));
                     case 302:
                         return e(trans('adrenth.redirect::lang.redirect.temporary'));
+                    case 303:
+                        return e(trans('adrenth.redirect::lang.redirect.see_other'));
                     case 404:
                         return e(trans('adrenth.redirect::lang.redirect.not_found'));
+                    case 410:
+                        return e(trans('adrenth.redirect::lang.redirect.gone'));
                     default:
                         return $value;
                 }

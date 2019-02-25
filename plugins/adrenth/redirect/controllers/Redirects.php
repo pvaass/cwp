@@ -1,30 +1,71 @@
 <?php
+/**
+ * October CMS plugin: Adrenth.Redirect
+ *
+ * Copyright (c) 2016 - 2018 Alwin Drenth
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+declare(strict_types=1);
 
 namespace Adrenth\Redirect\Controllers;
 
+use Adrenth\Redirect\Classes\CacheManager;
 use Adrenth\Redirect\Classes\PublishManager;
 use Adrenth\Redirect\Classes\RedirectManager;
 use Adrenth\Redirect\Classes\RedirectRule;
+use Adrenth\Redirect\Models\Client;
 use Adrenth\Redirect\Models\Redirect;
+use Adrenth\Redirect\Models\Settings;
+use ApplicationException;
+use Backend;
+use Backend\Behaviors\FormController;
+use Backend\Behaviors\ImportExportController;
+use Backend\Behaviors\ListController;
+use Backend\Behaviors\ReorderController;
 use Backend\Classes\Controller;
 use Backend\Classes\FormField;
 use Backend\Widgets\Form;
 use BackendMenu;
+use BadMethodCallException;
 use Carbon\Carbon;
 use Event;
+use Exception;
 use Flash;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Lang;
 use Redirect as RedirectFacade;
 use Request;
 use System\Models\RequestLog;
+use SystemException;
+
+/** @noinspection ClassOverridesFieldOfSuperClassInspection */
 
 /**
  * Class Redirects
  *
+ * @property array requiredPermissions
  * @package Adrenth\Redirect\Controllers
- * @method array listRefresh()
- * @method void makeLists()
+ * @mixin FormController
+ * @mixin ListController
+ * @mixin ReorderController
+ * @mixin ImportExportController
  */
 class Redirects extends Controller
 {
@@ -63,19 +104,40 @@ class Redirects extends Controller
     {
         parent::__construct();
 
-        BackendMenu::setContext('Adrenth.Redirect', 'redirect', $this->action);
+        $sideMenuItemCode = in_array($this->action, ['reorder', 'import', 'export'], true)
+            ? $this->action
+            : 'redirects';
+
+        BackendMenu::setContext('Adrenth.Redirect', 'redirect', $sideMenuItemCode);
 
         $this->requiredPermissions = ['adrenth.redirect.access_redirects'];
+
+        $this->addCss('/plugins/adrenth/redirect/assets/css/redirect.css', 'Adrenth.Redirect');
 
         $this->vars['match'] = null;
     }
 
     /**
-     * Edit Controller action
+     * Index Controller action.
+     *
+     * @return void
+     */
+    public function index()//: void
+    {
+        parent::index();
+
+        if (CacheManager::cachingEnabledButNotSupported()) {
+            $this->vars['warningMessage'] = Lang::get('adrenth.redirect::lang.redirect.cache_warning');
+        }
+    }
+
+    /**
+     * Edit Controller action.
      *
      * @param int $recordId The model primary key to update.
      * @param string $context Explicitly define a form context.
-     * @return RedirectResponse
+     * @return mixed
+     * @throws ModelNotFoundException
      */
     public function update($recordId = null, $context = null)
     {
@@ -89,15 +151,36 @@ class Redirects extends Controller
             return RedirectFacade::back();
         }
 
+        if (!$redirect->isActiveOnDate(Carbon::now())) {
+            $this->vars['warningMessage'] = Lang::get('adrenth.redirect::lang.scheduling.not_active_warning');
+        }
+
         parent::update($recordId, $context);
     }
 
     // @codingStandardsIgnoreStart
 
     /**
+     * @param string|null $context
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function create_onSave($context = null)
+    {
+        $redirect = parent::create_onSave($context);
+
+        if (post('new')) {
+            return Backend::redirect('adrenth/redirect/redirects/create');
+        }
+
+        return $redirect;
+    }
+
+    /**
+     * Delete selected redirects.
+     *
      * @return array
      */
-    public function index_onDelete()
+    public function index_onDelete(): array
     {
         Redirect::destroy($this->getCheckedIds());
         Event::fire('redirects.changed');
@@ -105,9 +188,11 @@ class Redirects extends Controller
     }
 
     /**
+     * Enable selected redirects.
+     *
      * @return array
      */
-    public function index_onEnable()
+    public function index_onEnable(): array
     {
         Redirect::whereIn('id', $this->getCheckedIds())->update(['is_enabled' => 1]);
         Event::fire('redirects.changed');
@@ -115,11 +200,105 @@ class Redirects extends Controller
     }
 
     /**
+     * Disable selected redirects.
+     *
      * @return array
      */
-    public function index_onDisable()
+    public function index_onDisable(): array
     {
         Redirect::whereIn('id', $this->getCheckedIds())->update(['is_enabled' => 0]);
+        Event::fire('redirects.changed');
+        return $this->listRefresh();
+    }
+
+    /**
+     * Reset all statistics for selected redirects.
+     *
+     * @return array
+     */
+    public function index_onResetStatistics(): array
+    {
+        $checkedIds = $this->getCheckedIds();
+
+        foreach ($checkedIds as $checkedId) {
+            /** @var Redirect $redirect */
+            $redirect = Redirect::find($checkedId);
+            $redirect->update(['hits' => 0]);
+            $redirect->clients()->delete();
+        }
+
+        return $this->listRefresh();
+    }
+
+    /**
+     * Clears redirect cache.
+     *
+     * @throws BadMethodCallException
+     */
+    public function index_onClearCache()//: void
+    {
+        CacheManager::instance()->flush();
+        Flash::success(Lang::get('adrenth.redirect::lang.flash.cache_cleared_success'));
+    }
+
+    /**
+     * Renders actions partial.
+     *
+     * @return string
+     */
+    public function index_onLoadActions(): string
+    {
+        return (string) $this->makePartial('popup_actions', [], true);
+    }
+
+    /**
+     * Resets all statistics.
+     *
+     * @return array
+     */
+    public function index_onResetAllStatistics(): array
+    {
+        Redirect::query()->update(['hits' => 0]);
+        Client::query()->delete();
+        Flash::success(Lang::get('adrenth.redirect::lang.flash.statistics_reset_success'));
+        return $this->listRefresh();
+    }
+
+    /**
+     * Enables all redirects.
+     *
+     * @return array
+     */
+    public function index_onEnableAllRedirects(): array
+    {
+        Redirect::query()->update(['is_enabled' => 1]);
+        Flash::success(Lang::get('adrenth.redirect::lang.flash.enabled_all_redirects_success'));
+        Event::fire('redirects.changed');
+        return $this->listRefresh();
+    }
+
+    /**
+     * Disables all redirects.
+     *
+     * @return array
+     */
+    public function index_onDisableAllRedirects(): array
+    {
+        Redirect::query()->update(['is_enabled' => 0]);
+        Flash::success(Lang::get('adrenth.redirect::lang.flash.disabled_all_redirects_success'));
+        Event::fire('redirects.changed');
+        return $this->listRefresh();
+    }
+
+    /**
+     * Deletes all redirects.
+     *
+     * @return array
+     */
+    public function index_onDeleteAllRedirects(): array
+    {
+        Redirect::query()->delete();
+        Flash::success(Lang::get('adrenth.redirect::lang.flash.deleted_all_redirects_success'));
         Event::fire('redirects.changed');
         return $this->listRefresh();
     }
@@ -127,12 +306,23 @@ class Redirects extends Controller
     // @codingStandardsIgnoreEnd
 
     /**
+     * Renders status code information partial.
+     *
+     * @return string
+     */
+    public function onShowStatusCodeInfo(): string
+    {
+        return (string) $this->makePartial('status_code_info', [], false);
+    }
+
+    /**
      * Called after the form fields are defined.
      *
      * @param Form $host
      * @param array $fields
+     * @return void
      */
-    public function formExtendFields(Form $host, array $fields = [])
+    public function formExtendFields(Form $host, array $fields = [])//: void
     {
         $disableFields = [
             'from_url',
@@ -147,28 +337,93 @@ class Redirects extends Controller
             $field = $host->getField($disableField);
             $field->disabled = $host->model->getAttribute('system');
         }
+
+        if (!Settings::isTestLabEnabled()) {
+            $host->removeTab('adrenth.redirect::lang.tab.tab_test_lab');
+        }
+
+        if (Request::method() === 'GET') {
+            $this->formExtendRefreshFields($host, $fields);
+        }
     }
 
     /**
-     * Test Input Path
+     * Called when the form is refreshed, giving the opportunity to modify the form fields.
      *
-     * @throws \ApplicationException
+     * @param Form $host The hosting form widget
+     * @param array $fields Current form fields
+     * @return void
      */
-    public function onTest()
+    public function formExtendRefreshFields(Form $host, $fields)//: void
+    {
+        if ($fields['status_code']->value
+            && $fields['status_code']->value[0] === '4'
+        ) {
+            $host->getField('to_url')->hidden = true;
+            $host->getField('static_page')->hidden = true;
+            $host->getField('cms_page')->hidden = true;
+            $host->getField('to_scheme')->hidden = true;
+            return;
+        }
+
+        switch ($fields['target_type']->value) {
+            case Redirect::TARGET_TYPE_CMS_PAGE:
+                $host->getField('to_url')->hidden = true;
+                $host->getField('static_page')->hidden = true;
+                $host->getField('cms_page')->hidden = false;
+                break;
+            case Redirect::TARGET_TYPE_STATIC_PAGE:
+                $host->getField('to_url')->hidden = true;
+                $host->getField('static_page')->hidden = false;
+                $host->getField('cms_page')->hidden = true;
+                break;
+            default:
+                $host->getField('to_url')->hidden = false;
+                $host->getField('static_page')->hidden = true;
+                $host->getField('cms_page')->hidden = true;
+                break;
+        }
+    }
+
+    /**
+     * Returns a CSS class name for a list row (<tr class="...">).
+     *
+     * @param mixed $record The populated model used for the column
+     * @return string CSS class name
+     */
+    public function listInjectRowClass($record): string
+    {
+        if ($record instanceof Redirect
+            && !$record->isActiveOnDate(Carbon::now())
+        ) {
+            return 'special';
+        }
+
+        return '';
+    }
+
+    /**
+     * Test Input Path.
+     *
+     * @throws ApplicationException
+     * @return array
+     */
+    public function onTest(): array
     {
         $inputPath = Request::get('inputPath');
         $redirect = new Redirect(Request::get('Redirect'));
 
         try {
             $rule = RedirectRule::createWithModel($redirect);
+
             $manager = RedirectManager::createWithRule($rule);
 
-            $testDate = new Carbon(Request::get('test_date', date('Y-m-d')));
+            $testDate = Carbon::createFromFormat('Y-m-d', Request::get('test_date', date('Y-m-d')));
             $manager->setMatchDate($testDate);
 
-            $match = $manager->match($inputPath);
-        } catch (\Exception $e) {
-            throw new \ApplicationException($e->getMessage());
+            $match = $manager->match($inputPath, Request::get('test_scheme', Request::getScheme()));
+        } catch (Exception $e) {
+            throw new ApplicationException($e->getMessage());
         }
 
         return [
@@ -180,23 +435,23 @@ class Redirects extends Controller
     }
 
     /**
-     * Triggers Request Log dialog
+     * Triggers Request Log dialog.
      *
      * @return string
-     * @throws \SystemException
+     * @throws SystemException
      */
-    public function onOpenRequestLog()
+    public function onOpenRequestLog(): string
     {
         $this->makeLists();
         return $this->makePartial('request-log/modal');
     }
 
     /**
-     * Create Redirects from Request Log items
+     * Create Redirects from Request Log items.
      *
      * @return array
      */
-    public function onCreateRedirectFromRequestLogItems()
+    public function onCreateRedirectFromRequestLogItems(): array
     {
         $checkedIds = $this->getCheckedIds();
         $redirectsCreated = 0;
@@ -204,16 +459,17 @@ class Redirects extends Controller
         foreach ($checkedIds as $checkedId) {
             /** @var RequestLog $requestLog */
             $requestLog = RequestLog::find($checkedId);
-            $path = parse_url($requestLog->getAttribute('url'), PHP_URL_PATH);
 
-            if ($path === false || $path === '/' || $path === '') {
+            $url = $this->parseRequestLogItemUrl($requestLog->getAttribute('url'));
+
+            if ($url === '') {
                 continue;
             }
 
             Redirect::create([
                 'match_type' => Redirect::TYPE_EXACT,
                 'target_type' => Redirect::TARGET_TYPE_PATH_URL,
-                'from_url' => $path,
+                'from_url' => $url,
                 'to_url' => '/',
                 'status_code' => 301,
                 'is_enabled' => false,
@@ -241,26 +497,11 @@ class Redirects extends Controller
     }
 
     /**
+     * Check checked ID's from POST request.
+     *
      * @return array
      */
-    public function onResetStatistics()
-    {
-        $checkedIds = $this->getCheckedIds();
-
-        foreach ($checkedIds as $checkedId) {
-            /** @var Redirect $redirect */
-            $redirect = Redirect::find($checkedId);
-            $redirect->update(['hits' => 0]);
-            $redirect->clients()->delete();
-        }
-
-        return $this->listRefresh();
-    }
-
-    /**
-     * @return array
-     */
-    private function getCheckedIds()
+    private function getCheckedIds(): array
     {
         if (($checkedIds = post('checked'))
             && is_array($checkedIds)
@@ -273,21 +514,49 @@ class Redirects extends Controller
     }
 
     /**
+     * @param string $url
+     * @return string
+     */
+    private function parseRequestLogItemUrl($url): string
+    {
+        $path = parse_url($url, PHP_URL_PATH);
+
+        if ($path === false || $path === '/' || $path === '') {
+            return '';
+        }
+
+        // Using `parse_url($url, PHP_URL_QUERY)` will result in a string of sorted query params (2.0.23):
+        // e.g ?a=z&z=a becomes ?z=a&a=z
+        // So let's just grab the query part using string functions to make sure whe have the exact query string.
+        $questionMarkPosition = strpos($url, '?');
+
+        if ($questionMarkPosition !== false) {
+            $path .= substr($url, $questionMarkPosition);
+        }
+
+        return $path;
+    }
+
+    /** @noinspection PhpUnusedParameterInspection */
+
+    /**
      * Called after the creation or updating form is saved.
      *
      * @param Model
      */
-    public function formAfterSave($model)
+    public function formAfterSave($model)//: void
     {
         Event::fire('redirects.changed');
     }
+
+    /** @noinspection PhpUnusedParameterInspection */
 
     /**
      * Called after the form model is deleted.
      *
      * @param Model
      */
-    public function formAfterDelete($model)
+    public function formAfterDelete($model)//: void
     {
         Event::fire('redirects.changed');
     }

@@ -3,11 +3,6 @@
 # ===================================
 
 columns:
-    system:
-        label: adrenth.redirect::lang.redirect.type
-        width: 16px
-        type: redirect_system
-        sortable: false
     from_url:
         label: adrenth.redirect::lang.redirect.from_url
         type: redirect_from_url
@@ -28,8 +23,21 @@ columns:
         default: '-'
     hits:
         label: adrenth.redirect::lang.redirect.hits
+        type: number
+    sparkline:
+        label: adrenth.redirect::lang.redirect.sparkline_30d
+        sortable: false
+        searchable: false
+        cssClass: column-button
+        type: partial
     sort_order:
         label: adrenth.redirect::lang.redirect.priority
     is_enabled:
         label: adrenth.redirect::lang.redirect.enabled
         type: redirect_switch_color
+    system:
+        label: adrenth.redirect::lang.redirect.type
+        width: 16px
+        type: redirect_system
+        sortable: false
+        invisible: true
