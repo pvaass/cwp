@@ -1,10 +1,36 @@
 <?php
+/**
+ * October CMS plugin: Adrenth.Redirect
+ *
+ * Copyright (c) 2016 - 2018 Alwin Drenth
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+declare(strict_types=1);
 
 namespace Adrenth\Redirect\Updates;
 
 use Illuminate\Database\Schema\Blueprint;
-use Schema;
 use October\Rain\Database\Updates\Migration;
+use Schema;
+
+/** @noinspection AutoloadingIssuesInspection */
 
 /**
  * Class AddDateFieldsToRedirectsTable
@@ -13,21 +39,22 @@ use October\Rain\Database\Updates\Migration;
  */
 class AddDateFieldsToRedirectsTable extends Migration
 {
-    const TABLE = 'adrenth_redirect_redirects';
-
-    public function up()
+    public function up()//: void
     {
-        Schema::table(self::TABLE, function (Blueprint $table) {
-            $table->date('from_date')->nullable()->after('hits');
-            $table->date('to_date')->nullable()->after('from_date');
+        Schema::table('adrenth_redirect_redirects', function (Blueprint $table) {
+            $table->date('from_date')
+                ->nullable()
+                ->after('hits');
+            $table->date('to_date')
+                ->nullable()
+                ->after('from_date');
         });
     }
 
-    public function down()
+    public function down()//: void
     {
-        Schema::table(self::TABLE, function (Blueprint $table) {
-            $table->dropColumn('from_date');
-            $table->dropColumn('to_date');
+        Schema::table('adrenth_redirect_redirects', function (Blueprint $table) {
+            $table->dropColumn(['from_date', 'to_date']);
         });
     }
 }

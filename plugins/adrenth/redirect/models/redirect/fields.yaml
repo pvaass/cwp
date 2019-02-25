@@ -3,6 +3,34 @@
 # ===================================
 
 fields:
+    status_code:
+        type: balloon-selector
+        required: true
+        span: full
+        default: 301
+        options:
+            301: adrenth.redirect::lang.redirect.permanent
+            302: adrenth.redirect::lang.redirect.temporary
+            303: adrenth.redirect::lang.redirect.see_other
+            404: adrenth.redirect::lang.redirect.not_found
+            410: adrenth.redirect::lang.redirect.gone
+        commentHtml: true
+        commentAbove: '<label>HTTP Status Code <span class="status-code-info icon-question-circle"data-control="popup" data-handler="onShowStatusCodeInfo" data-keyboard="true" data-size="huge"></span></label>'
+    match_type:
+        label: adrenth.redirect::lang.redirect.match_type
+        type: dropdown
+        required: true
+        span: right
+        options:
+            exact: adrenth.redirect::lang.redirect.exact
+            placeholders: adrenth.redirect::lang.redirect.placeholders
+    target_type:
+        label: adrenth.redirect::lang.redirect.target_type
+        required: true
+        type: dropdown
+        default: path_or_url
+        span: left
+        dependsOn: status_code
     from_url:
         label: adrenth.redirect::lang.redirect.from_url
         placeholder: adrenth.redirect::lang.redirect.from_url_placeholder
@@ -10,35 +38,31 @@ fields:
         span: left
         comment: adrenth.redirect::lang.redirect.from_url_comment
         required: true
+        attributes:
+            autofocus: ''
     to_url:
         label: adrenth.redirect::lang.redirect.to_url
         placeholder: adrenth.redirect::lang.redirect.to_url_placeholder
         type: text
         span: right
         comment: adrenth.redirect::lang.redirect.to_url_comment
-        cssClass: redirect-target
-        trigger:
-            action: show
-            field: target_type
-            condition: value[path_or_url]
+        dependsOn:
+            - target_type
+            - status_code
     cms_page:
         label: adrenth.redirect::lang.redirect.target_type_cms_page
         span: right
         type: dropdown
-        cssClass: redirect-target
-        trigger:
-            action: show
-            field: target_type
-            condition: value[cms_page]
+        dependsOn:
+            - target_type
+            - status_code
     static_page:
         label: adrenth.redirect::lang.redirect.target_type_static_page
         span: right
         type: dropdown
-        cssClass: redirect-target
-        trigger:
-            action: show
-            field: target_type
-            condition: value[static_page]
+        dependsOn:
+            - target_type
+            - status_code
 
 tabs:
     defaultTab: adrenth.redirect::lang.tab.tab_general
@@ -46,46 +70,22 @@ tabs:
         #
         # General
         #
-        target_type:
-            label: adrenth.redirect::lang.redirect.target_type
-            required: true
-            type: dropdown
-            default: path_or_url
+        category:
+            label: adrenth.redirect::lang.redirect.category
             span: left
-        match_type:
-            label: adrenth.redirect::lang.redirect.match_type
-            type: dropdown
-            required: true
-            span: right
-            options:
-                exact: adrenth.redirect::lang.redirect.exact
-                placeholders: adrenth.redirect::lang.redirect.placeholders
-        status_code:
-            label: adrenth.redirect::lang.redirect.status_code
-            type: dropdown
-            required: true
-            span: left
-            options:
-                301: adrenth.redirect::lang.redirect.permanent
-                302: adrenth.redirect::lang.redirect.temporary
-                404: adrenth.redirect::lang.redirect.not_found
-            attributes:
-                onchange: "$('.redirect-target').toggle($(this).val() !== '404')"
+            nameFrom: name
+            type: relation
         sort_order:
             label: adrenth.redirect::lang.redirect.priority
             type: text
             span: right
+            context: update
         is_enabled:
             label: adrenth.redirect::lang.redirect.enabled
             comment: adrenth.redirect::lang.redirect.enabled_comment
             span: left
             type: switch
             default: true
-        category:
-            label: adrenth.redirect::lang.redirect.category
-            span: right
-            nameFrom: name
-            type: relation
         #
         # Requirements
         #
@@ -125,7 +125,6 @@ tabs:
                         comment: adrenth.redirect::lang.redirect.replacement_comment
                         span: left
                         required: false
-
         #
         # Test
         #
@@ -162,3 +161,54 @@ tabs:
             type: datepicker
             mode: date
             span: right
+        #
+        # TestLab
+        #
+        section_test_lab:
+            tab: adrenth.redirect::lang.tab.tab_test_lab
+            type: section
+            commentAbove: adrenth.redirect::lang.test_lab.section_test_lab_comment
+        test_lab:
+            tab: adrenth.redirect::lang.tab.tab_test_lab
+            label: adrenth.redirect::lang.test_lab.test_lab_label
+            comment: adrenth.redirect::lang.test_lab.test_lab_enable
+            type: switch
+            span: left
+        test_lab_path:
+            tab: adrenth.redirect::lang.tab.tab_test_lab
+            label: adrenth.redirect::lang.test_lab.test_lab_path_label
+            comment: adrenth.redirect::lang.test_lab.test_lab_path_comment
+            type: text
+            span: left
+            trigger:
+                action: show
+                field: match_type
+                condition: value[placeholders]
+        #
+        # Advanced
+        #
+        from_scheme:
+            tab: adrenth.redirect::lang.tab.tab_advanced
+            label: adrenth.redirect::lang.redirect.from_scheme
+            comment: adrenth.redirect::lang.redirect.from_scheme_comment
+            commentHtml: true
+            type: balloon-selector
+            span: left
+            default: auto
+            options:
+                http: http
+                https: https
+                auto: adrenth.redirect::lang.redirect.scheme_auto
+        to_scheme:
+            tab: adrenth.redirect::lang.tab.tab_advanced
+            label: adrenth.redirect::lang.redirect.to_scheme
+            comment: adrenth.redirect::lang.redirect.to_scheme_comment
+            commentHtml: true
+            type: balloon-selector
+            span: right
+            default: auto
+            options:
+                http: http
+                https: https
+                auto: adrenth.redirect::lang.redirect.scheme_auto
+            dependsOn: status_code

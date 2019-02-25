@@ -219,4 +219,11 @@
   'System\\Console\\ThemeUse' => 'modules/system/console/ThemeUse.php',
   'Backend\\FormWidgets\\CodeEditor' => 'modules/backend/formwidgets/CodeEditor.php',
   'pvaass\\Calendar\\Models\\CalendarSettings' => 'plugins/pvaass/calendar/models/CalendarSettings.php',
+  'carlosrgzm\\cookieconsent\\Plugin' => 'plugins/carlosrgzm/cookieconsent/Plugin.php',
+  'flynsarmy\\idehelper\\Plugin' => 'plugins/flynsarmy/idehelper/Plugin.php',
+  'Adrenth\\Redirect\\Models\\Settings' => 'plugins/adrenth/redirect/models/Settings.php',
+  'Adrenth\\Redirect\\Classes\\RedirectMiddleware' => 'plugins/adrenth/redirect/classes/RedirectMiddleware.php',
+  'Adrenth\\Redirect\\Classes\\RedirectManager' => 'plugins/adrenth/redirect/classes/RedirectManager.php',
+  'Adrenth\\Redirect\\Classes\\CacheManager' => 'plugins/adrenth/redirect/classes/CacheManager.php',
+  'Cms\\Twig\\DefaultNode' => 'modules/cms/twig/DefaultNode.php',
 );

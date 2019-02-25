@@ -66,7 +66,7 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-pencil',
                 'iconSvg'     => 'plugins/rainlab/blog/assets/images/blog-icon.svg',
                 'permissions' => ['rainlab.blog.*'],
-                'order'       => 30,
+                'order'       => 300,
 
                 'sideMenu' => [
                     'new_post' => [
@@ -88,16 +88,6 @@ class Plugin extends PluginBase
                         'permissions' => ['rainlab.blog.access_categories']
                     ]
                 ]
-            ]
-        ];
-    }
-
-    public function registerFormWidgets()
-    {
-        return [
-            'RainLab\Blog\FormWidgets\Preview' => [
-                'label' => 'Preview',
-                'code'  => 'preview'
             ]
         ];
     }
@@ -137,6 +127,7 @@ class Plugin extends PluginBase
                 'all-blog-categories' => 'rainlab.blog::lang.menuitem.all_blog_categories',
                 'blog-post'           => 'rainlab.blog::lang.menuitem.blog_post',
                 'all-blog-posts'      => 'rainlab.blog::lang.menuitem.all_blog_posts',
+                'category-blog-posts' => 'rainlab.blog::lang.menuitem.category_blog_posts',
             ];
         });
 
@@ -144,7 +135,7 @@ class Plugin extends PluginBase
             if ($type == 'blog-category' || $type == 'all-blog-categories') {
                 return Category::getMenuTypeInfo($type);
             }
-            elseif ($type == 'blog-post' || $type == 'all-blog-posts') {
+            elseif ($type == 'blog-post' || $type == 'all-blog-posts' || $type == 'category-blog-posts') {
                 return Post::getMenuTypeInfo($type);
             }
         });
@@ -153,7 +144,7 @@ class Plugin extends PluginBase
             if ($type == 'blog-category' || $type == 'all-blog-categories') {
                 return Category::resolveMenuItem($item, $url, $theme);
             }
-            elseif ($type == 'blog-post' || $type == 'all-blog-posts') {
+            elseif ($type == 'blog-post' || $type == 'all-blog-posts' || $type == 'category-blog-posts') {
                 return Post::resolveMenuItem($item, $url, $theme);
             }
         });

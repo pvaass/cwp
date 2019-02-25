@@ -1,10 +1,35 @@
 <?php
+/**
+ * October CMS plugin: Adrenth.Redirect
+ *
+ * Copyright (c) 2016 - 2018 Alwin Drenth
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+declare(strict_types=1);
 
 namespace Adrenth\Redirect\Classes;
 
 use Adrenth\Redirect\Models\Redirect;
 use Cms\Classes\CmsCompoundObject;
 use Event;
+use Exception;
 
 /**
  * Class PageHandler
@@ -29,7 +54,7 @@ class PageHandler
      *
      * @return void
      */
-    public function onBeforeUpdate()
+    public function onBeforeUpdate()//: void
     {
         if ($this->page->getAttribute('is_hidden')) {
             return;
@@ -59,8 +84,9 @@ class PageHandler
      * Triggered after a Page has been deleted.
      *
      * @return void
+     * @throws Exception
      */
-    public function onAfterDelete()
+    public function onAfterDelete()//: void
     {
         Redirect::where($this->getTargetType(), '=', $this->page->getBaseFileName())
             ->where('system', '=', 1)
@@ -79,7 +105,7 @@ class PageHandler
     /**
      * @return bool
      */
-    protected function hasUrlChanged()
+    protected function hasUrlChanged(): bool
     {
         return array_key_exists('url', $this->page->getDirty());
     }
@@ -87,23 +113,23 @@ class PageHandler
     /**
      * @return bool
      */
-    protected function newUrlContainsParams()
+    protected function newUrlContainsParams(): bool
     {
         return strpos($this->getNewUrl(), ':') !== false;
     }
 
     /**
-     * @return array
+     * @return string
      */
-    protected function getOriginalUrl()
+    protected function getOriginalUrl(): string
     {
-        return $this->page->getOriginal('url');
+        return (string) $this->page->getOriginal('url');
     }
 
     /**
-     * @return array
+     * @return string
      */
-    protected function getNewUrl()
+    protected function getNewUrl(): string
     {
         $dirty = $this->page->getDirty();
 
@@ -111,13 +137,13 @@ class PageHandler
             return $dirty['url'];
         }
 
-        return $this->page->getOriginal('url');
+        return (string) $this->page->getOriginal('url');
     }
 
     /**
      * @return string
      */
-    protected function getTargetType()
+    protected function getTargetType(): string
     {
         return Redirect::TARGET_TYPE_CMS_PAGE;
     }
@@ -127,7 +153,7 @@ class PageHandler
      *
      * @return void
      */
-    protected function createRedirect()
+    protected function createRedirect()//: void
     {
         Redirect::create([
             'match_type' => Redirect::TYPE_EXACT,

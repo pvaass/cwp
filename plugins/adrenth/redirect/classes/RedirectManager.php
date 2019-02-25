@@ -1,14 +1,44 @@
 <?php
+/**
+ * October CMS plugin: Adrenth.Redirect
+ *
+ * Copyright (c) 2016 - 2018 Alwin Drenth
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+declare(strict_types=1);
 
 namespace Adrenth\Redirect\Classes;
 
+use Adrenth\Redirect\Classes\Exceptions\InvalidScheme;
+use Adrenth\Redirect\Classes\Exceptions\RulesPathNotReadable;
 use Adrenth\Redirect\Models\Client;
 use Adrenth\Redirect\Models\Redirect;
 use Adrenth\Redirect\Models\RedirectLog;
+use BadMethodCallException;
 use Carbon\Carbon;
+use Cms;
 use Cms\Classes\Controller;
 use Cms\Classes\Theme;
 use DB;
+use Exception;
+use InvalidArgumentException;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use League\Csv\Reader;
 use Log;
@@ -37,8 +67,27 @@ class RedirectManager
     /** @var string */
     private $basePath;
 
+    /** @var bool */
+    private $loggingEnabled = true;
+
+    /** @var bool */
+    private $statisticsEnabled = true;
+
     /**
-     * Constructs a RedirectManager instance
+     * HTTP 1.1 headers
+     *
+     * @var array
+     */
+    private static $headers = [
+        301 => 'HTTP/1.1 301 Moved Permanently',
+        302 => 'HTTP/1.1 302 Found',
+        303 => 'HTTP/1.1 303 See Other',
+        404 => 'HTTP/1.1 404 Not Found',
+        410 => 'HTTP/1.1 410 Gone',
+    ];
+
+    /**
+     * Constructs a RedirectManager instance.
      */
     protected function __construct()
     {
@@ -47,10 +96,29 @@ class RedirectManager
     }
 
     /**
-     * @param $redirectRulesPath
+     * Creates an instance of the RedirectManager with the default rules path.
+     *
+     * @return RedirectManager
+     * @throws RulesPathNotReadable
+     */
+    public static function createWithDefaultRulesPath(): RedirectManager
+    {
+        $rulesPath = storage_path('app/redirects.csv');
+
+        if (!file_exists($rulesPath) || !is_readable($rulesPath)) {
+            throw RulesPathNotReadable::withPath($rulesPath);
+        }
+
+        return self::createWithRulesPath($rulesPath);
+    }
+
+    /**
+     * Create an instance of the RedirectManager with a specific rules path.
+     *
+     * @param string $redirectRulesPath
      * @return RedirectManager
      */
-    public static function createWithRulesPath($redirectRulesPath)
+    public static function createWithRulesPath(string $redirectRulesPath): RedirectManager
     {
         $instance = new self();
         $instance->redirectRulesPath = $redirectRulesPath;
@@ -58,10 +126,12 @@ class RedirectManager
     }
 
     /**
+     * Create an instance of the RedirectManager with a redirect rule.
+     *
      * @param RedirectRule $rule
      * @return RedirectManager
      */
-    public static function createWithRule(RedirectRule $rule)
+    public static function createWithRule(RedirectRule $rule): RedirectManager
     {
         $instance = new self();
         $instance->redirectRules[] = $rule;
@@ -69,10 +139,34 @@ class RedirectManager
     }
 
     /**
-     * @param string $basePath
-     * @return $this
+     * Enable or disable logging.
+     *
+     * @param bool $loggingEnabled
+     * @return RedirectManager
      */
-    public function setBasePath($basePath)
+    public function setLoggingEnabled(bool $loggingEnabled): RedirectManager
+    {
+        $this->loggingEnabled = $loggingEnabled;
+        return $this;
+    }
+
+    /**
+     * Enable or disable gathering of statistics.
+     *
+     * @param bool $statisticsEnabled
+     * @return RedirectManager
+     */
+    public function setStatisticsEnabled(bool $statisticsEnabled): RedirectManager
+    {
+        $this->statisticsEnabled = $statisticsEnabled;
+        return $this;
+    }
+
+    /**
+     * @param string $basePath
+     * @return RedirectManager
+     */
+    public function setBasePath(string $basePath): RedirectManager
     {
         $this->basePath = rtrim($basePath, '/');
         return $this;
@@ -81,25 +175,31 @@ class RedirectManager
     /**
      * @return string
      */
-    public function getBasePath()
+    public function getBasePath(): string
     {
         return $this->basePath;
     }
 
     /**
-     * Find a match based on given URL
+     * Find a match based on given URL.
      *
-     * @param string $url
+     * @param string $requestPath
+     * @param string $scheme 'http' or 'https'
      * @return RedirectRule|false
+     * @throws InvalidScheme
      */
-    public function match($url)
+    public function match(string $requestPath, string $scheme)
     {
-        $url = urldecode($url);
+        if ($scheme !== Redirect::SCHEME_HTTP && $scheme !== Redirect::SCHEME_HTTPS) {
+            throw InvalidScheme::withScheme($scheme);
+        }
+
+        $requestPath = urldecode($requestPath);
 
         $this->loadRedirectRules();
 
         foreach ($this->redirectRules as $rule) {
-            if ($matchedRule = $this->matchesRule($rule, $url)) {
+            if ($matchedRule = $this->matchesRule($rule, $requestPath, $scheme)) {
                 return $matchedRule;
             }
         }
@@ -108,19 +208,55 @@ class RedirectManager
     }
 
     /**
-     * Redirect with specific rule
+     * Find a match based on given URL (uses caching).
+     *
+     * @param string $requestPath
+     * @param string $scheme 'http' or 'https'
+     * @return RedirectRule|false|mixed
+     * @throws InvalidScheme
+     * @throws BadMethodCallException
+     */
+    public function matchCached(string $requestPath, string $scheme)
+    {
+        $cacheManager = CacheManager::instance();
+        $cacheKey = $cacheManager->cacheKey($requestPath, $scheme);
+
+        if ($cacheManager->has($cacheKey)) {
+            $cachedItem = $cacheManager->get($cacheKey);
+
+            // Verify the data from cache. In some cases a cache driver can not unserialize
+            // (due to invalid php configuration) the cached data which causes this function to return invalid data.
+            //
+            // E.g. memcache:
+            // - Memcached::get(): could not unserialize value, no igbinary support in ...
+            // - Memcached::get(): could not unserialize value, no msgpack support in ...
+            if ($cachedItem === false || $cachedItem instanceof RedirectRule) {
+                return $cachedItem;
+            }
+        }
+
+        $matchedRule = $this->match($requestPath, $scheme);
+
+        return $cacheManager->putMatch($cacheKey, $matchedRule);
+    }
+
+    /**
+     * Redirect with specific rule.
      *
      * @param RedirectRule $rule
      * @param string $requestUri
      * @return void
      */
-    public function redirectWithRule(RedirectRule $rule, $requestUri)
+    public function redirectWithRule(RedirectRule $rule, string $requestUri)//: void
     {
         $this->updateStatistics($rule->getId());
 
-        if ($rule->getStatusCode() === 404) {
+        $statusCode = $rule->getStatusCode();
+
+        if ($statusCode === 404 || $statusCode === 410) {
+            header(self::$headers[$statusCode], true, $statusCode);
             $this->addLogEntry($rule, $requestUri, '');
-            abort($rule->getStatusCode(), 'Not Found');
+            exit(0);
         }
 
         $toUrl = $this->getLocation($rule);
@@ -131,12 +267,15 @@ class RedirectManager
 
         $this->addLogEntry($rule, $requestUri, $toUrl);
 
-        header('Location: ' . $toUrl, true, $rule->getStatusCode());
-        exit();
+        header(self::$headers[$statusCode], true, $statusCode);
+        header('X-Redirect-By: Adrenth.Redirect');
+        header('Location: ' . $toUrl, true, $statusCode);
+
+        exit(0);
     }
 
     /**
-     * Get Location URL to redirect to
+     * Get Location URL to redirect to.
      *
      * @param RedirectRule $rule
      * @return bool|string
@@ -160,6 +299,10 @@ class RedirectManager
                     $toUrl = $this->basePath . '/' . $toUrl;
                 }
 
+                if ($toUrl[0] === '/') {
+                    $toUrl = Cms::url($toUrl);
+                }
+
                 break;
             case Redirect::TARGET_TYPE_CMS_PAGE:
                 $toUrl = $this->redirectToCmsPage($rule);
@@ -169,6 +312,10 @@ class RedirectManager
                 break;
         }
 
+        if ($rule->getToScheme() !== Redirect::SCHEME_AUTO) {
+            $toUrl = str_replace(['https://', 'http://'], $rule->getToScheme() . '://', $toUrl);
+        }
+
         return $toUrl;
     }
 
@@ -176,7 +323,7 @@ class RedirectManager
      * @param RedirectRule $rule
      * @return string
      */
-    private function redirectToPathOrUrl(RedirectRule $rule)
+    private function redirectToPathOrUrl(RedirectRule $rule): string
     {
         if ($rule->isExactMatchType()) {
             return $rule->getToUrl();
@@ -195,7 +342,7 @@ class RedirectManager
      * @param RedirectRule $rule
      * @return string
      */
-    private function redirectToCmsPage(RedirectRule $rule)
+    private function redirectToCmsPage(RedirectRule $rule): string
     {
         $controller = new Controller(Theme::getActiveTheme());
 
@@ -216,6 +363,7 @@ class RedirectManager
     private function redirectToStaticPage(RedirectRule $rule)
     {
         if (class_exists('\RainLab\Pages\Classes\Page')) {
+            /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
             return \RainLab\Pages\Classes\Page::url($rule->getStaticPage());
         }
 
@@ -223,62 +371,66 @@ class RedirectManager
     }
 
     /**
-     * Change the match date; can be used to perform tests
+     * Change the match date; can be used to perform tests.
      *
      * @param Carbon $matchDate
-     * @return $this
+     * @return RedirectManager
      */
-    public function setMatchDate(Carbon $matchDate)
+    public function setMatchDate(Carbon $matchDate): RedirectManager
     {
         $this->matchDate = $matchDate;
         return $this;
     }
 
     /**
+     * Check if rule matches against request path and scheme.
+     *
      * @param RedirectRule $rule
-     * @param string $url
+     * @param string $requestPath
+     * @param string $scheme
      * @return RedirectRule|bool
      */
-    private function matchesRule(RedirectRule $rule, $url)
+    private function matchesRule(RedirectRule $rule, string $requestPath, string $scheme)
     {
-        // 1. Check if rule matches period
-        if (!$this->matchesPeriod($rule)) {
+        if (!$this->matchesScheme($rule, $scheme)
+            || !$this->matchesPeriod($rule)
+        ) {
             return false;
         }
 
-        // 2. Perform exact match if applicable
+        // Perform exact match if applicable
         if ($rule->isExactMatchType()) {
-            return $this->matchExact($rule, $url);
+            return $this->matchExact($rule, $requestPath);
         }
 
-        // 3. Perform placeholders match if applicable
+        // Perform placeholders match if applicable
         if ($rule->isPlaceholdersMatchType()) {
-            return $this->matchPlaceholders($rule, $url);
+            return $this->matchPlaceholders($rule, $requestPath);
         }
 
         return false;
     }
 
     /**
-     * Perform an exact URL match
+     * Perform an exact URL match.
      *
      * @param RedirectRule $rule
      * @param string $url
      * @return RedirectRule|bool
      */
-    private function matchExact(RedirectRule $rule, $url)
+    private function matchExact(RedirectRule $rule, string $url)
     {
         return $url === $rule->getFromUrl() ? $rule : false;
     }
 
     /**
-     * Perform a placeholder URL match
+     * Perform a placeholder URL match.
      *
      * @param RedirectRule $rule
      * @param string $url
      * @return RedirectRule|bool
      */
-    private function matchPlaceholders(RedirectRule $rule, $url)
+    private function matchPlaceholders(RedirectRule $rule, string $url)
     {
         $route = new Route($rule->getFromUrl());
 
@@ -288,7 +440,7 @@ class RedirectManager
                     str_replace(['{', '}'], '', $requirement['placeholder']),
                     $requirement['requirement']
                 );
-            } catch (\InvalidArgumentException $e) {
+            } catch (InvalidArgumentException $e) {
                 // Catch empty requirement / placeholder
             }
         }
@@ -305,12 +457,12 @@ class RedirectManager
             foreach ($items as $key => $value) {
                 $placeholder = '{' . $key . '}';
                 $replacement = $this->findReplacementForPlaceholder($rule, $placeholder);
-                $items[$placeholder] = $replacement === null ? $value : $replacement;
+                $items[$placeholder] = $replacement ?? $value;
                 unset($items[$key]);
             }
 
             $rule->setPlaceholderMatches($items);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 
@@ -318,12 +470,12 @@ class RedirectManager
     }
 
     /**
-     * Check if rule matches a period
+     * Check if rule matches a period.
      *
      * @param RedirectRule $rule
      * @return bool
      */
-    private function matchesPeriod(RedirectRule $rule)
+    private function matchesPeriod(RedirectRule $rule): bool
     {
         if ($rule->getFromDate() instanceof Carbon
             && $rule->getToDate() instanceof Carbon
@@ -337,8 +489,8 @@ class RedirectManager
             return $this->matchDate->gte($rule->getFromDate());
         }
 
-        if ($rule->getFromDate() === null
-            && $rule->getToDate() instanceof Carbon
+        if ($rule->getToDate() instanceof Carbon
+            && $rule->getFromDate() === null
         ) {
             return $this->matchDate->lte($rule->getToDate());
         }
@@ -347,13 +499,27 @@ class RedirectManager
     }
 
     /**
-     * Find replacement value for placeholder
+     * @param RedirectRule $rule
+     * @param string $scheme
+     * @return bool
+     */
+    private function matchesScheme(RedirectRule $rule, string $scheme): bool
+    {
+        if ($rule->getFromScheme() === Redirect::SCHEME_AUTO) {
+            return true;
+        }
+
+        return $rule->getFromScheme() === $scheme;
+    }
+
+    /**
+     * Find replacement value for placeholder.
      *
      * @param RedirectRule $rule
      * @param string $placeholder
      * @return string|null
      */
-    private function findReplacementForPlaceholder(RedirectRule $rule, $placeholder)
+    private function findReplacementForPlaceholder(RedirectRule $rule, string $placeholder)//: ?string
     {
         foreach ($rule->getRequirements() as $requirement) {
             if ($requirement['placeholder'] === $placeholder && !empty($requirement['replacement'])) {
@@ -365,11 +531,11 @@ class RedirectManager
     }
 
     /**
-     * Load definitions into memory
+     * Load definitions into memory.
      *
-     * @return RedirectRule[]
+     * @return void
      */
-    private function loadRedirectRules()
+    private function loadRedirectRules()//: void
     {
         if ($this->redirectRules !== null) {
             return;
@@ -378,25 +544,38 @@ class RedirectManager
         $rules = [];
 
         try {
+            /** @var Reader $reader */
             $reader = Reader::createFromPath($this->redirectRulesPath);
 
-            foreach ($reader as $row) {
-                $rules[] = new RedirectRule($row);
+            // WARNING: this is deprecated method in league/csv:8.0, when league/csv is upgraded to version 9 we should
+            // follow the instructions on this page: http://csv.thephpleague.com/upgrading/9.0/
+            $results = $reader->fetchAssoc(0);
+
+            foreach ($results as $row) {
+                $rule = new RedirectRule($row);
+
+                if ($this->matchesPeriod($rule)) {
+                    $rules[] = $rule;
+                }
             }
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+        } catch (Exception $e) {
+            Log::error($e);
         }
 
         $this->redirectRules = $rules;
     }
 
     /**
-     * Update database statistics
+     * Update database statistics.
      *
      * @param int $redirectId
      */
-    private function updateStatistics($redirectId)
+    private function updateStatistics(int $redirectId)//: void
     {
+        if (!$this->statisticsEnabled) {
+            return;
+        }
+
         /** @var Redirect $redirect */
         $redirect = Redirect::find($redirectId);
 
@@ -406,6 +585,7 @@ class RedirectManager
 
         $now = Carbon::now();
 
+        /** @noinspection PhpUndefinedClassInspection */
         $redirect->update([
             'hits' => DB::raw('hits + 1'),
             'last_used_at' => $now,
@@ -424,12 +604,19 @@ class RedirectManager
     }
 
     /**
+     * Adds a log entry to the database.
+     *
      * @param RedirectRule $rule
-     * @param $requestUri
-     * @param $toUrl
+     * @param string $requestUri
+     * @param string $toUrl
+     * @return void
      */
-    private function addLogEntry(RedirectRule $rule, $requestUri, $toUrl)
+    private function addLogEntry(RedirectRule $rule, string $requestUri, string $toUrl)//: void
     {
+        if (!$this->loggingEnabled) {
+            return;
+        }
+
         /** @var Redirect $redirect */
         $redirect = Redirect::find($rule->getId());
 

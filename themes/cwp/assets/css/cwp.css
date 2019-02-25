@@ -32,3 +32,34 @@
 .cwp-ball:before {
     content: '\0044';
 }
+
+
+.navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
+    max-height: 100vh;
+    height: 100vh;
+}
+
+.navbar-collapse.collapse.in ul li a, .navbar-collapse.collapsing ul li a {
+    padding: 20px;
+}
+
+.nav-zwemscore a {
+    background-color: #F88711;
+    color: white !important;
+    font-weight: bold;
+}
+
+@media (max-width: 576px)  {
+    #portfolio .portfolio-item {
+        padding: 1px !important;
+    }
+
+    #portfolio .portfolio-item .portfolio-item-inner .portfolio-info {
+        height: 100%;
+    }
+
+    #blog .blog-post.blog-media .entry-thumbnail {
+        margin: 0 !important;
+        padding-left: 15px;
+    }
+}

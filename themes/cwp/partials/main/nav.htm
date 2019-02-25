@@ -11,7 +11,7 @@
                     <a class="navbar-brand" href="{{ '/#home'|app }}"><img style="max-height:50px;" src="{{ 'assets/images/logo.png'|theme }}" alt="logo"></a>
                     {#<a class="navbar-brand" href="#home"><img src="{{ 'assets/images/logo.png'|theme }}" alt="logo"></a>#}
                 </div>
-				
+
                 <div class="collapse navbar-collapse navbar-right">
                     <ul class="nav navbar-nav">
                         <li class="{% if this.page.id == 'home' %} scroll {% endif %} active"><a href="{{ '/#home'|app }}">Home</a></li>
@@ -20,7 +20,8 @@
                         <li class="{% if this.page.id == 'home' %} scroll {% endif %} "><a href="{{ '/#cta2'|app }}">Inschrijven</a></li>
                         <li class="{% if this.page.id == 'home' %} scroll {% endif %} "><a href="{{ '/#blog'|app }}">Nieuws</a></li>
                         <li class="{% if this.page.id == 'home' %} scroll {% endif %} "><a href="{{ '/#get-in-touch'|app }}">Contact</a></li>
-                        <li><a href="/leden">Al Lid?</a></li>
+                        <li class="hidden-xs"><a href="/leden">Al Lid?</a></li>
+                        <li class="visible-xs nav-zwemscore"><a href="https://cwp.zwemscore.nl">Zwemscore</a></li>
                     </ul>
                 </div>
             </div><!--/.container-->

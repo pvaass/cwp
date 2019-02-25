@@ -1,6 +1,5 @@
 <?php Block::put('breadcrumb') ?>
     <ul>
-        <li><a href="<?= Backend::url('system/settings') ?>"><?= e(trans('system::lang.settings.menu_label')) ?></a></li>
         <li><a href="<?= Backend::url('adrenth/redirect/redirects') ?>"><?= e(trans('adrenth.redirect::lang.navigation.menu_label')) ?></a></li>
         <li><?= e($this->pageTitle) ?></li>
     </ul>
@@ -16,6 +15,15 @@
 
         <div class="form-buttons">
             <div class="loading-indicator-container">
+                <button
+                    type="submit"
+                    data-request="onSave"
+                    data-request-data="new:1"
+                    data-hotkey="ctrl+shift+s, cmd+shift+s"
+                    data-load-indicator="<?= e(trans('backend::lang.form.saving')) ?>"
+                    class="btn btn-primary">
+                    <?= e(trans('adrenth.redirect::lang.buttons.create_and_new')) ?>
+                </button>
                 <button
                     type="submit"
                     data-request="onSave"
